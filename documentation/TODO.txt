@@ -1,0 +1,10 @@
+sizeof/typeid
+
+static initialisation
+
+non-type template parameters
+
+vector iterators
+
+cxxtest representation of wrappers????
+

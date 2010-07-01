@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4efb224c-4871-4444-ba3d-9341d531199d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\display">
+      <UniqueIdentifier>{3bdb1e41-7e69-4641-8438-55988803f18f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\wrappers">
+      <UniqueIdentifier>{6547fb40-d778-4795-b208-b01d1bcbc8d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests">
+      <UniqueIdentifier>{41f4e0a2-1a93-403f-b992-5d164f1646f9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\conversions.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\display\display.h">
+      <Filter>src\display</Filter>
+    </ClInclude>
+    <ClInclude Include="src\display\registry.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrappers\doubleWrapper.h">
+      <Filter>src\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrappers\floatWrapper.h">
+      <Filter>src\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrappers\intWrapper.h">
+      <Filter>src\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrappers\primitiveWrapper.h">
+      <Filter>src\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrappers\vectorWrapper.h">
+      <Filter>src\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrappers\wrapper.h">
+      <Filter>src\wrappers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\display\displayPipe.cpp">
+      <Filter>src\display</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

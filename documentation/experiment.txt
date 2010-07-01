@@ -1,0 +1,40 @@
+attempts to handle many test suites with one test runner
+
+
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --part -o test2.cpp "D:\Project\trunk\branches\c++\algovis c++ unit-tests\test2.h"
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --part -o MyTestSuite.cpp "D:\Project\trunk\branches\c++\algovis c++ unit-tests\MyTestSuite.h"
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --root --error-printer -o aac.cpp test2.cpp MyTestSuite.cpp
+
+
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --root -–error-printer  -o tests.cpp
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --part -o tests.cpp "D:\Project\trunk\branches\c++\algovis c++ unit-tests\test2.h"
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --part -o tests.cpp "D:\Project\trunk\branches\c++\algovis c++ unit-tests\MyTestSuite.h"
+
+
+
+
+
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --root --error-printer -o testA.cpp testB.cpp
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --part -o testA.cpp "C:\a.h"
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --part -o testB.cpp "C:\b.h"
+
+
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --root --error-printer -o testRunner.cpp
+
+
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" -o testRunner.cpp --root --error-printer 
+
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --part -o testA.cpp "C:\a.h"
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" --part -o testB.cpp "C:\b.h"
+
+
+
+
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" -o testRunner.cpp --root --error-printer a.cpp 
+
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" -o a.cpp --part "C:\a.h"
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" -o b.cpp --part "C:\b.h"
+
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" -o b.cpp --part "C:\a.h"
+python "D:\Project\trunk\cxxtest\v3.10.1\cxxtestgen.py" -o b.cpp --part "C:\b.h"
+

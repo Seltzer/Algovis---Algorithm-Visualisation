@@ -1,0 +1,34 @@
+add existing project (utilities-lib) from branches\resources\utilities-lib 
+go to solution properties and specify that algovis test depends on algovis c++ and utilities-lib
+
+
+algovis c++ additional include
+	"..\..\..\resources"
+
+algovis c++ unit tests additional include
+	"$(SolutionDir)\algovis c++\src";"$(SolutionDir)..\..\resources\cxxtest\v3.10.1\"
+
+algovis c++ unit tests pre-build
+	python "$(SolutionDir)\..\..\resources\cxxtest\v3.10.1\cxxtestgen.py" --error-printer -o TestSuite.cpp "$(ProjectDir)\Tests\AlgoVisTestSuite.h"
+
+algovis test additional include
+	"..\algovis c++\src";"..\..\..\resources\utilities-lib\include"
+
+algovis test additional include
+	"$(SolutionDir)\Debug\utilities-lib.lib"
+
+
+set startup proj to algovis test
+
+
+5/5/10
+
+add the project view
+
+view depends on SFML (include and lib paths)
+
+algovis c++ depends on utilities-lib (include and library)
+
+algovis c++ no longer depends on sfml at all
+
+algovis c++ depends on view (not include or lib, just to make sure it gets built)
