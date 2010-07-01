@@ -3,8 +3,15 @@
  * Theoretically cross-platform
  */
 
-
+// Stdlib includes
 #include <string>
+
+// Other components of utilities-lib (for now, include all of them)
+#include "templateMP.h"
+#include "process.h"
+#include "enum.h"
+#include "exceptions.h"
+
 
 
 // Keystroke friendly print macro
@@ -13,37 +20,27 @@
 // Variable name/value printing macro
 #define prtVar(x) std::cout << #x " = '" << x << "'" << std::endl;
 
+
+
 namespace util
 {
 
 
-
-
-
+// Random Numbers
+void platformSeed();
 
 int generateRandomNumber(int min, int max);
 
+
+// Strings
 std::string indent(short tabs);
 
 std::string intToString(int);
 
-// Class for spawning and talking to another process
-class FriendProcess
-{
-public:
-	FriendProcess(std::string process);
-
-	// TODO: Read
-
-	void Write(std::string data);
-private:
-#ifdef _WIN32
-	void* pipe; // windows HANDLE, declare as pointer to avoid including windows.h here
-#else //_WIN32
-	// TODO: Unix pipe
-#endif //_WIN32
-};
-
+std::string formatString(std::string inputString, ...);
+std::string formatString(std::string inputString, va_list varargs);
+	
+// Misc
 void PlatformSleep(float time);
 
 

@@ -17,7 +17,7 @@ namespace util
 bool seeded = false;
 
 
-void seed()
+void platformSeed()
 {
 	assert(!seeded);
 
@@ -41,7 +41,7 @@ void seed()
 int generateRandomNumber(int min, int max)
 {
 	if (!seeded)
-		seed();
+		platformSeed();
 	
 
 	int randomNumber = min + (int) (rand() / (RAND_MAX + 1.0) * (max + 1 - min));
