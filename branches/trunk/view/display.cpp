@@ -27,7 +27,7 @@ public:
 		closed = true;
 		delete renderThread;
 	}
-	void Draw(void* dataStructure, const std::vector<std::string>& newData)
+	void Draw(const void* dataStructure, const std::vector<std::string>& newData)
 	{
 		//sf::Sleep(0.5);
 		{
@@ -44,7 +44,7 @@ private:
 		float xGap = 1;
 		float yGap = 5;
 		float y = yGap;
-		std::map<void*, std::vector<std::string> >::iterator i;
+		std::map<const void*, std::vector<std::string> >::iterator i;
 		for (i = data.begin(); i != data.end(); i++)
 		{
 			std::stringstream strm;
@@ -84,6 +84,7 @@ private:
 	void RenderLoop()
 	{
 		win = new sf::RenderWindow(sf::VideoMode(800, 600, 32), "Algovis");
+		win->SetActive(true);
 		glViewport(0, 0, win->GetWidth(), win->GetHeight());
 		win->PreserveOpenGLStates(true);
 		font.LoadFromFile("consola.ttf");
@@ -130,7 +131,7 @@ private:
 	}
 
 	sf::Mutex dataMutex;
-	std::map<void*, std::vector<std::string> > data;
+	std::map<const void*, std::vector<std::string> > data;
 	sf::Thread* renderThread;
 	sf::RenderWindow* win;
 	sf::Font font;
@@ -138,7 +139,7 @@ private:
 	bool closed;
 };
 
-void Draw(void* dataStructure, const std::vector<std::string>& data)
+void Draw(const void* dataStructure, const std::vector<std::string>& data)
 {
 	if (drawingEnabled)
 	{

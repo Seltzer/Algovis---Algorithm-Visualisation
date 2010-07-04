@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="D:\Project\branches\resources"
+				AdditionalIncludeDirectories="..\..\resources"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,8 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;C:\Program Files\SFML-1.6\lib\sfml-system-s-d.lib&quot; &quot;C:\Program Files\SFML-1.6\lib\sfml-window-s-d.lib&quot; &quot;C:\Program Files\SFML-1.6\lib\sfml-graphics-s-d.lib&quot;"
+				AdditionalDependencies="sfml-system-s-d.lib sfml-window-s-d.lib sfml-graphics-s-d.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\SFML-1.6\lib\&quot;;&quot;D:\Programming\SFML-1.6\lib\&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -116,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="D:\Project\branches\resources"
+				AdditionalIncludeDirectories="..\resources"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -137,6 +138,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="&quot;C:\Program Files\SFML-1.6\lib\sfml-system-s-d.lib&quot; &quot;C:\Program Files\SFML-1.6\lib\sfml-window-s-d.lib&quot; &quot;C:\Program Files\SFML-1.6\lib\sfml-graphics-s-d.lib&quot;"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="C:\Program Files\SFML-1.6\lib\"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"

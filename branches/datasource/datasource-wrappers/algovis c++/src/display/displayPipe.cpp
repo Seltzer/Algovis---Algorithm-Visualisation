@@ -13,11 +13,11 @@ void EnableDrawing(bool enable)
 	enabled = enable;
 }
 
-void Draw(void* dataStructure, const std::vector<std::string>& data)
+void Draw(const void* dataStructure, const std::vector<std::string>& data)
 {	
 	if (enabled)
 	{
-		static util::FriendProcess viewer("../Debug/view.exe");
+		static util::FriendProcess viewer("../Debug/view 2008.exe");
 
 		// Block till animation completed?
 		// Block waiting for user input?

@@ -9,14 +9,14 @@
 // A bit like RMI
 void EnableDrawing(bool enable);
 
-void Draw(void* dataStructure, const std::vector<std::string>& data);
+void Draw(const void* dataStructure, const std::vector<std::string>& data);
 
 template<class T>
-void Display(T dataStructure)
+void Display(const T& dataStructure)
 {
-	void* dataAddr = &dataStructure;
+	const void* dataAddr = &dataStructure;
 	std::vector<std::string> data;
-	for (T::iterator i = dataStructure.begin(); i != dataStructure.end(); i++)
+	for (T::const_iterator i = dataStructure.begin(); i != dataStructure.end(); i++)
 	{
 		std::stringstream strm;
 		strm << *i;
