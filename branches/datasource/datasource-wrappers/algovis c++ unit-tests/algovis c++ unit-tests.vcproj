@@ -109,6 +109,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\algovis c++\src&quot;;&quot;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
+				RuntimeLibrary="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
