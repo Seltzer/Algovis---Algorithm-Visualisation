@@ -1,10 +1,10 @@
 sizeof/typeid
 
-static initialisation
-
 non-type template parameters
 
-vector iterators
+test vector iterators
 
 cxxtest representation of wrappers????
+
+get rid of compiler warnings
 

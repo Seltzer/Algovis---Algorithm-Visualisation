@@ -20,7 +20,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			CharacterSet="1"
 			>
 			<Tool
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\resources"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\resources&quot;;&quot;$(ProjectDir)..\..\resources\utilities-lib\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,11 +61,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="false"
+				IgnoreImportLibrary="false"
 				AdditionalDependencies="sfml-system-s-d.lib sfml-window-s-d.lib sfml-graphics-s-d.lib"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\SFML-1.6\lib\&quot;;&quot;D:\Programming\SFML-1.6\lib\&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				ResourceOnlyDLL="false"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -94,7 +97,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -117,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\resources"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\resources&quot;;&quot;$(ProjectDir)..\..\resources\utilities-lib\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -136,6 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="false"
 				AdditionalDependencies="sfml-system-s.lib sfml-window-s.lib sfml-graphics-s.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\SFML-1.6\lib\&quot;;&quot;D:\Programming\SFML-1.6\lib\&quot;"
@@ -143,6 +147,7 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				ResourceOnlyDLL="false"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -171,18 +176,58 @@
 	<References>
 	</References>
 	<Files>
-		<File
-			RelativePath=".\display.cpp"
+		<Filter
+			Name="include"
 			>
-		</File>
-		<File
-			RelativePath=".\display.h"
+			<File
+				RelativePath=".\include\registry.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="src"
 			>
-		</File>
-		<File
-			RelativePath=".\main.cpp"
-			>
-		</File>
+			<File
+				RelativePath=".\src\display.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\display.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\registry.cpp"
+				>
+			</File>
+			<Filter
+				Name="viewableObjects"
+				>
+				<File
+					RelativePath=".\src\viewableObjects\viewableObject.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\viewableObjects\viewableObject.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\viewableObjects\vo_array.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\viewableObjects\vo_array.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\viewableObjects\vo_singlePrintable.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

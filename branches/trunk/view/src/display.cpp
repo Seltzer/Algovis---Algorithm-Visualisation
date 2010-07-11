@@ -1,11 +1,17 @@
-
-#include "SFML/Window.hpp"
-#include "SFML/Graphics.hpp"
 #include "display.h"
 
 #include <map>
 #include <sstream>
+#include "SFML/Window.hpp"
+#include "SFML/Graphics.hpp"
 
+#include "utilities.h"
+
+namespace Algovis_Viewer
+{
+
+
+	
 bool drawingEnabled = true;
 
 void EnableDrawing(bool enable)
@@ -13,8 +19,11 @@ void EnableDrawing(bool enable)
 	drawingEnabled = enable;
 }
 
+
 class Displayer
 {
+
+
 public:
 	Displayer()
 	{
@@ -35,14 +44,17 @@ public:
 			data[dataStructure] = newData;
 		}
 	}
+
+
 private:
+
 	void Render()
 	{
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		float xGap = 1;
-		float yGap = 5;
+		float yGap = 50;
 		float y = yGap;
 		std::map<const void*, std::vector<std::string> >::iterator i;
 		for (i = data.begin(); i != data.end(); i++)
@@ -139,6 +151,8 @@ private:
 	bool closed;
 };
 
+
+
 void Draw(const void* dataStructure, const std::vector<std::string>& data)
 {
 	if (drawingEnabled)
@@ -146,4 +160,10 @@ void Draw(const void* dataStructure, const std::vector<std::string>& data)
 		static Displayer displayer; // Only one window, created on first draw
 		displayer.Draw(dataStructure, data);
 	}
+}
+
+
+
+
+
 }

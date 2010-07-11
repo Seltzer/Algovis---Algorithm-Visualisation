@@ -15,6 +15,7 @@ void EnableDrawing(bool enable)
 
 void Draw(const void* dataStructure, const std::vector<std::string>& data)
 {	
+	/*
 	if (enabled)
 	{
 		static util::FriendProcess viewer("../Debug/view 2008.exe");
@@ -30,5 +31,5 @@ void Draw(const void* dataStructure, const std::vector<std::string>& data)
 		for (int i = 0; i < data.size(); i++)
 			message << data[i] << '\0';
 		viewer.Write(message.str());
-	}
+	}*/
 }

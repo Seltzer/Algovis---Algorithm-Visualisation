@@ -99,12 +99,21 @@ int32_t wmain()
 
 
 	// Populate
+	
+
+
+	
 	vector<int> collectionToModify;
-	for (int i = 0; i < 10; i++)
+	collectionToModify.reserve(20);
+
+	for (int i = 0; i < 10; i = i + 1)
 	{
 		collectionToModify.push_back(util::generateRandomNumber(0,9));
 		vector<int>::iterator endIt = collectionToModify.end() - 1;
 	}
+
+
+	
 
 	// Sort
 	bool sortOccurred;
@@ -113,20 +122,22 @@ int32_t wmain()
 	{
 		sortOccurred = false;
 
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 9; i = i + 1)
 		{
 			if (collectionToModify[i] > collectionToModify[i+1])
 			{
 				int temp = collectionToModify[i];
 				collectionToModify[i] = collectionToModify[i+1];
 				collectionToModify[i+1] = temp;
+
 				sortOccurred = true;
+				util::PlatformSleep(0.5);
 			}
 		}
 	}
 	while(sortOccurred);
 
-
+	
 	getchar();
 
 	return 0;

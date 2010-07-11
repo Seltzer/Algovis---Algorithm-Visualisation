@@ -5,17 +5,16 @@
 #include <iostream>
 #include <iterator>
 
-#include "display/display.h"
+// TODO temporary
+#include <sstream>
 
-using namespace std;
+
 
 /* TODO - Finish implementing vector ops
  *		- Replace all size_type args with LongWrappers
  *
- *
+ * TODO finish integrating with viewer
  */
-
-
 namespace Algovis
 {
 
@@ -43,7 +42,11 @@ public:
 
 	// Constructors
 	VectorWrapper<T, Alloc>()
-		: value() {};
+		: value() 
+	{
+		Algovis_Viewer::Registry* reg = Algovis_Viewer::Registry::GetInstance();
+		reg->RegisterArray(this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
+	};
 
 	explicit VectorWrapper<T, Alloc>(const allocator_type& a)
 		: value(a) {}
@@ -60,6 +63,7 @@ public:
 		
 		return *this;
 	}
+
 
 
 
@@ -82,7 +86,9 @@ public:
 	void resize(IntWrapper sz, T c = T() ) { value.resize(sz.AVGetValue(), c); }
 	inline size_type capacity() { return value.capacity(); };
 	inline bool empty() { return value.size() == 0; };
-	inline void reserve (IntWrapper n) { value.reserve(n); };
+	
+	// can't handle unsigned at the moment
+	inline void reserve (IntWrapper n) { value.reserve((unsigned) n.AVGetValue()); };
 
 
 	
@@ -90,7 +96,6 @@ public:
 	// Change IntWrapper& arg to LongWrapper& since implicit conversion can happen	
 	reference operator[] (const IntWrapper& b) 
 	{ 
-		Display(*this);
 		return value[b.AVGetValue()]; 
 	}
 
@@ -104,8 +109,18 @@ public:
 	inline reference front() { return value.front(); };
 	inline reference back() { return value.back(); };
 
+	// For now, T must be printable
+	inline void push_back (const T& x) 
+	{ 
+		value.push_back(x);
 
-	inline void push_back (const T& x) { Display(*this); value.push_back(x); }
+		std::stringstream ss;
+		ss << x;
+		void* xAddress = &value[value.size()-1];
+
+		Algovis_Viewer::Registry* reg = Algovis_Viewer::Registry::GetInstance();
+		reg->AddElementToArray(this, xAddress, value.size() - 1);
+	}
 	inline void pop_back () { Display(*this); value.pop_back(); };
 
 	inline iterator insert (iterator position, const T& x)

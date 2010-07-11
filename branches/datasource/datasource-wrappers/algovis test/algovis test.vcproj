@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\algovis c++\src&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)algovis c++\src&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\trunk\view\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;..\algovis c++\src&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)algovis c++\src&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\trunk\view\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
