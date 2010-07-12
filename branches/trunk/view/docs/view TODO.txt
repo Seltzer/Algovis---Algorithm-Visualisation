@@ -1,0 +1,8 @@
+FUNCTIONALITY:
+* History of dataflow
+* Other types of view object types
+
+
+
+DESIGN:
+* Refactor design.cpp drawing code

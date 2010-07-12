@@ -10,7 +10,7 @@ namespace Algovis_Viewer
 {
 
 
-	class DECLSPEC VO_SinglePrintable : ViewableObject
+	class VO_SinglePrintable : ViewableObject
 	{
 
 	private:

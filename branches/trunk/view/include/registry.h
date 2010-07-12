@@ -37,6 +37,9 @@ namespace Algovis_Viewer
 	// TODO: Add method for destroying Registry
 	// TODO: Constify methods and ds____ method args
 	// TODO: Change return type of register/deregister methods? Throw exceptions?
+	#pragma warning(push)	
+	#pragma warning(disable:4251)
+
 	class DECLSPEC Registry
 	{
 
@@ -54,28 +57,27 @@ namespace Algovis_Viewer
 		// Returns NULL if !IsRegistered(dsAddress)
 		ViewableObject* GetRepresentation(void* dsAddress);
 		
-		// Returns NULL if !IsRegistered(dsAddress, voType) where voType corresponds to T
+
+
+		
+		// /// OLD OLD OLD(Returns NULL if !IsRegistered(dsAddress, voType) where voType corresponds to T
+		// Currently aborts if....
+
 		// TODO ViewableObjectType should be a member of ViewableObject 
 		// TODO change - this sucks atm
 		template<class T>
 		T* GetRepresentation(void* dsAddress)
 		{
-			try
-			{
-				UL_ASSERT(dsAddress);
-				UL_ASSERT(GetRepresentation(dsAddress));
+			UL_ASSERT(dsAddress);
 
-				//return ((T*) GetRepresentation(dsAddress));
-				return reinterpret_cast<T*>(GetRepresentation(dsAddress));
-			}
-			catch(bad_cast& e)
-			{
-				UL_ASSERT(false);
-				return NULL;
-			}
+			ViewableObject* viewRepresentation = GetRepresentation(dsAddress);
+			UL_ASSERT(viewRepresentation);
+
+			T* result = reinterpret_cast<T*>(viewRepresentation);
+			UL_ASSERT(result);
+
+			return result;
 		}
-
-		
 
 		// Non-copyable singleton
 		static Registry* instance;
@@ -144,9 +146,7 @@ namespace Algovis_Viewer
 		// The View can figure it out
 		void UpdateSinglePrintable(void* dsSinglePrintableAddress, const std::string& newValue);
 	};
-
-
-
+	#pragma warning( pop ) 
 }
 
 

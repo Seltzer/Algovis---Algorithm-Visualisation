@@ -1,6 +1,8 @@
 #include <cxxtest/TestSuite.h>
 
+#include <cstdarg>
 #include "utilities.h"
+
 
 using namespace util;
 
@@ -61,6 +63,31 @@ class UtilitiesLibTestSuite : public CxxTest::TestSuite
 
 		}
 
+
+		//std::string formatString(std::string inputString, ...);
+		//	std::string formatString(std::string inputString, va_list varargs);
+
+		void testFormatString()
+		{	
+			std::string cat("cat"), rat("rat"), bat("bat");
+			
+			TS_ASSERT_EQUALS("cat rat bat", formatString("%s %s %s", cat.c_str(), rat.c_str(), bat.c_str()));
+
+			std::string result(testing_FormatString("%s %s %s", cat.c_str(), rat.c_str(), bat.c_str()));
+			TS_ASSERT_EQUALS("cat rat bat", result);
+
+		}
+
+		std::string testing_FormatString(std::string input, ...)
+		{
+			va_list varargs;
+
+			va_start(varargs, input);
+			std::string returnString(formatString(input,varargs));
+			va_end(varargs);
+
+			return returnString;
+		}
 
 
 	

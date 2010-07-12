@@ -146,26 +146,10 @@
 	</References>
 	<Files>
 		<Filter
-			Name="include"
+			Name="docs"
 			>
 			<File
-				RelativePath=".\include\enum.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\exceptions.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\process.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\templateMP.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\utilities.h"
+				RelativePath=".\docs\utilities-lib TODO.txt"
 				>
 			</File>
 		</Filter>
@@ -182,6 +166,34 @@
 			</File>
 			<File
 				RelativePath=".\src\strings.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="include"
+			>
+			<File
+				RelativePath=".\include\enum.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\exceptions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\macros.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\process.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\templateMP.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\utilities.h"
 				>
 			</File>
 		</Filter>

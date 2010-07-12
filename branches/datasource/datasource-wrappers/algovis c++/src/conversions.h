@@ -14,9 +14,15 @@
 
 
 #define int Algovis::IntWrapper
+//#define unsigned
 //#define double Algovis::DoubleWrapper
 #define float Algovis::FloatWrapper
 #define vector Algovis::VectorWrapper
+
+// stub TODO
+void EnableDrawing(bool enabled)
+{
+}
 
 
 

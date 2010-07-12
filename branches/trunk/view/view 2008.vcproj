@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="view 2008"
+	Name="view"
 	ProjectGUID="{C5ABD0EA-42C6-4C50-A70D-6244AE4793F5}"
 	RootNamespace="view2008"
 	Keyword="Win32Proj"
@@ -63,9 +63,9 @@
 				Name="VCLinkerTool"
 				RegisterOutput="false"
 				IgnoreImportLibrary="false"
-				AdditionalDependencies="sfml-system-s-d.lib sfml-window-s-d.lib sfml-graphics-s-d.lib"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\SFML-1.6\lib\&quot;;&quot;D:\Programming\SFML-1.6\lib\&quot;"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories=""
+				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				ResourceOnlyDLL="false"
@@ -140,9 +140,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				RegisterOutput="false"
-				AdditionalDependencies="sfml-system-s.lib sfml-window-s.lib sfml-graphics-s.lib"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\SFML-1.6\lib\&quot;;&quot;D:\Programming\SFML-1.6\lib\&quot;"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories=""
+				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -227,6 +227,14 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="docs"
+			>
+			<File
+				RelativePath=".\docs\view TODO.txt"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

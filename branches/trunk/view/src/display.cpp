@@ -69,7 +69,7 @@ private:
 			float ySize = 0;
 			float x = address.GetRect().Right + xGap;
 			std::vector<std::string>& container = i->second;
-			for (int j = 0; j < container.size(); j++)
+			for (unsigned j = 0; j < container.size(); j++)
 			{
 				sf::String text(container[j].c_str(), font);
 				text.SetColor(sf::Color(255, 255, 255));
@@ -111,7 +111,7 @@ private:
 				{
 					int width = Event.Size.Width;
 					int height = Event.Size.Height;
-					win->SetView(sf::View(sf::FloatRect(0, 0, width, height)));
+					win->SetView(sf::View(sf::FloatRect(0, 0, (float) width, (float) height)));
 					glViewport(0, 0, width, height);
 				}
 

@@ -20,7 +20,6 @@ Registry* Registry::instance(NULL);
 ///////////////////////// Private methods
 bool const Registry::IsRegistered(const void* dsAddress, ViewableObjectType voType)
 {
-	// TODO my ul_enum class is dodgy - shouldn't have to refer to the enum def
 	switch(voType)
 	{
 		case ARRAY:
@@ -32,11 +31,9 @@ bool const Registry::IsRegistered(const void* dsAddress, ViewableObjectType voTy
 			return (registeredSinglePrintables.count(dsAddress) > 0);
 		
 			break;
-	
-		default:
-			UL_ASSERT(false);	
-			break;
 	}
+
+	return false;	
 }
 
 
@@ -136,9 +133,9 @@ void Registry::AddElementToArray(void* dsArray, void* dsElement, unsigned positi
 	UL_ASSERT(IsRegistered(dsArray,ARRAY));
 	UL_ASSERT(IsRegistered(dsElement,SINGLE_PRINTABLE));
 
-	// asserts on position TODO
-
 	VO_Array* arrayAddress = GetRepresentation<VO_Array>(dsArray);
+	UL_ASSERT(position <= arrayAddress->GetSize());
+
 	VO_SinglePrintable* element = GetRepresentation<VO_SinglePrintable>(dsElement);
 
 	arrayAddress->AddElement((ViewableObject*)element, position);

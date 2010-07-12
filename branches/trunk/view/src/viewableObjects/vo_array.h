@@ -12,7 +12,7 @@ namespace Algovis_Viewer
 {
 
 	// TODO template maybe? consider implications
-	class DECLSPEC VO_Array : ViewableObject, IViewableObjectObserver
+	class VO_Array : ViewableObject, IViewableObjectObserver
 	{
 
 	private:
@@ -31,7 +31,6 @@ namespace Algovis_Viewer
 		
 		unsigned GetSize() { return elements.size(); }
 
-		// TODO here for testing purposes - move to cpp
 		void AddElement(ViewableObject* element, unsigned position);
 
 		void SwapElements(unsigned firstElement, unsigned secondElement);

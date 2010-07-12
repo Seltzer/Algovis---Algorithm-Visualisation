@@ -29,7 +29,7 @@ namespace Algovis_Viewer
 
 		for (std::vector<ViewableObject*>::iterator it = elements.begin(); it < elements.end(); it++)
 		{
-			ViewableObject* element;
+			ViewableObject* element = *it;
 			element->RemoveObserver(this);
 			registry->DeregisterObject(element);
 		}

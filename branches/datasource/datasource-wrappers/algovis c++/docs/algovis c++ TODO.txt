@@ -1,0 +1,15 @@
+Functionality:
+* Finish vector (esp. vector resizing)
+* Do other STL types and primitives
+* Implement a graphs library
+* Deal with unsigned types
+* Deal with non-type template parameter problem
+
+
+Testing:
+* Write more unit-tests
+* Test algovis c++ against existing code 
+		(we know it's incompatible with some boost libraries as they use non-type template parameters)
+
+Bugs:
+* PrimitiveWrapper unary increment/decrement ops

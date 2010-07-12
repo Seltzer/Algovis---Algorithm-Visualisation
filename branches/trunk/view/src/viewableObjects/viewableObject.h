@@ -12,14 +12,14 @@
  *		Consider moving this to include to allow the user to write their own viewable object classes???
  *
  *  NB: All ViewableObjects are currently mutable objects identified by their dsAddress. We will likely
- *      convert them into immutable objects identified by dsAddress and timestamp.
+ *      convert them into immutable objects identified by dsAddress and timestamp in the future.
  *
  */
 namespace Algovis_Viewer
 {
 
 	// Interface for an observer of all changes to a ViewableObject
-	class DECLSPEC IViewableObjectObserver
+	class IViewableObjectObserver
 	{
 	public:
 		virtual void Notify(ViewableObject* subject) = 0;
@@ -28,7 +28,7 @@ namespace Algovis_Viewer
 	
 	
 	// ViewableObject abstract class
-	class DECLSPEC ViewableObject
+	class ViewableObject
 	{
 
 	protected:

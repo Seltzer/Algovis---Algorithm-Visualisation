@@ -43,7 +43,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\algovis c++\src&quot;;&quot;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)\algovis c++\src&quot;;&quot;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
 				RuntimeLibrary="3"
 			/>
 			<Tool
@@ -108,7 +108,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\algovis c++\src&quot;;&quot;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)\algovis c++\src&quot;;&quot;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
 				RuntimeLibrary="2"
 			/>
 			<Tool
@@ -158,10 +158,22 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\TestSuite.cpp"
+		<Filter
+			Name="docs"
 			>
-		</File>
+			<File
+				RelativePath=".\docs\experiment.txt"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Generated Tests"
+			>
+			<File
+				RelativePath=".\GeneratedTests\TestSuite.cpp"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

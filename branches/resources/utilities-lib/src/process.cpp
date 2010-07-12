@@ -49,7 +49,7 @@ FriendProcess::FriendProcess(std::string process)
 void FriendProcess::Write(std::string data)
 {
 	DWORD bytesWritten;
-	bool success = WriteFile(pipe, &data[0], data.size(), &bytesWritten, NULL);
+	BOOL success = WriteFile(pipe, &data[0], data.size(), &bytesWritten, NULL);
 	if (!success)
 		std::cout << "Failed to write to pipe " << GetLastError() << std::endl;
 }

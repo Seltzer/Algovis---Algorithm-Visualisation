@@ -1,6 +1,5 @@
 #include <cxxtest/TestSuite.h>
 
-#include "display/display.h"
 #include "utilities.h"
 #include "conversions.h"
 
