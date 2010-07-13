@@ -7,7 +7,7 @@
 #include "SFML/Graphics.hpp"
 
 #include "utilities.h"
-
+#include "../../include/registry.h"
 
 
 namespace Algovis_Viewer
@@ -60,6 +60,9 @@ void Displayer::RenderLoop()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Talk to the VO_Array instances
+		Registry* reg = Registry::GetInstance();
+		reg->DrawEverything(*win, font);
+
 
 		win->Display();
 

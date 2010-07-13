@@ -1,20 +1,22 @@
-//#include "boost/foreach.hpp"
+#include <sstream>
+#include "SFML/Window.hpp"
+#include "SFML/Graphics.hpp"
+#include "boost/foreach.hpp"
 
 #include "vo_array.h"
 #include "vo_singlePrintable.h"
 
-#include <sstream>
 
-#include "SFML/Window.hpp"
-#include "SFML/Graphics.hpp"
+
+using namespace std;
 
 
 namespace Algovis_Viewer
 {
 	
 	VO_Array::VO_Array
-			(void* dsAddress, ViewableObjectType elementType, const std::vector<ViewableObject*>& elements)
-			: ViewableObject(dsAddress), elementType(elementType)
+			(const void* dsAddress, ViewableObjectType elementType, const std::vector<ViewableObject*>& elements)
+				: ViewableObject(dsAddress), elementType(elementType)
 	{
 		for (std::vector<ViewableObject*>::const_iterator it = elements.begin(); it < elements.end(); it++)
 		{
@@ -30,7 +32,7 @@ namespace Algovis_Viewer
 	{
 		Registry* registry = Registry::GetInstance();
 
-		for (std::vector<ViewableObject*>::iterator it = elements.begin(); it < elements.end(); it++)
+		for (vector<ViewableObject*>::iterator it = elements.begin(); it < elements.end(); it++)
 		{
 			ViewableObject* element = *it;
 			element->RemoveObserver(this);
@@ -70,12 +72,13 @@ namespace Algovis_Viewer
 	}
 
 
-	void VO_Array::Draw(sf::RenderWindow* renderWindow)
+	void VO_Array::Draw(sf::RenderWindow& renderWindow, sf::Font& font)
 	{
-		/*
+		
 		float xGap = 1;
 		float yGap = 50;
-
+		
+		float y = 50;
 
 		std::vector<std::string> elementsAsStrings;
 
@@ -88,12 +91,11 @@ namespace Algovis_Viewer
 
 		// Print address
 		std::stringstream strm;
-		//zomg
-		//strm << i->first << ":";
-		//sf::String address(strm.str().c_str(), font);
+		strm << dsAddress << ":";
+		sf::String address(strm.str().c_str(), font);
 		address.SetColor(sf::Color(255, 255, 255));
 		address.Move(0, y);
-		renderWindow->Draw(address);
+		renderWindow.Draw(address);
 
 		// Print elements
 		float ySize = 0;
@@ -109,7 +111,7 @@ namespace Algovis_Viewer
 			sf::String text(spElement->GetValue().c_str(), font);
 			text.SetColor(sf::Color(255, 255, 255));
 			text.Move(x, y);
-			renderWindow->Draw(text);
+			renderWindow.Draw(text);
 
 			// Draw bounding box
 			sf::FloatRect rect = text.GetRect();
@@ -126,7 +128,7 @@ namespace Algovis_Viewer
 		}
 		
 		// Each element now draws itself
-		//y += ySize + yGap;*/
+		//y += ySize + yGap;
 	}
 
 

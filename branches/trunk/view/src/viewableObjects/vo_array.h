@@ -19,14 +19,13 @@ namespace Algovis_Viewer
 		ViewableObjectType elementType;
 
 	public:
-		VO_Array(void* dsAddress, ViewableObjectType elementType, const std::vector<ViewableObject*>& elements);
-
-
+		VO_Array(const void* dsAddress, ViewableObjectType elementType, 
+							const std::vector<ViewableObject*>& elements);
 		~VO_Array();
 	
 		virtual ViewableObjectType GetType() { return ARRAY; }
 
-		virtual void Draw(sf::RenderWindow*); 
+		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& font); 
 		
 		unsigned GetSize() { return elements.size(); }
 

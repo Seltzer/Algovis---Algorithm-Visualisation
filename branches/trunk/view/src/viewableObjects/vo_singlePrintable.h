@@ -17,8 +17,8 @@ namespace Algovis_Viewer
 		std::string value;
 
 	public:
-		VO_SinglePrintable(void* dsAddress, const std::string& value)
-			: ViewableObject(dsAddress), value(value)
+		VO_SinglePrintable(const void* dsAddress, const std::string& value)
+				: ViewableObject(dsAddress), value(value)
 		{
 		}
 
@@ -26,7 +26,7 @@ namespace Algovis_Viewer
 
 		virtual ViewableObjectType GetType() { return SINGLE_PRINTABLE; }
 
-		virtual void Draw(sf::RenderWindow*) {}
+		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& font) {}
 
 		std::string GetValue() { return value; }
 		

@@ -3,6 +3,8 @@
 #include "viewableObjects/vo_array.h"
 #include "viewableObjects/vo_singlePrintable.h"
 
+#include "boost/foreach.hpp"
+
 using namespace std;
 
 
@@ -17,27 +19,22 @@ namespace Algovis_Viewer
 Registry* Registry::instance(NULL);
 
 
+
+
 ///////////////////////// Private methods
-bool const Registry::IsRegistered(const void* dsAddress, ViewableObjectType voType)
+
+Registry::~Registry()
 {
-	switch(voType)
-	{
-		case ARRAY:
-			return (registeredArrays.count(dsAddress) > 0);
-		
-			break;
+	// Delete arrays first, as their destruction currently relies on their child elements 
+	// being alive (since they deregister themselves from their elements as observers
+	BOOST_FOREACH(ArrayMap::value_type arrayPair, registeredArrays)
+		delete arrayPair.second;
 
-		case SINGLE_PRINTABLE:
-			return (registeredSinglePrintables.count(dsAddress) > 0);
-		
-			break;
-	}
-
-	return false;	
+	BOOST_FOREACH(SPMap::value_type spPair, registeredSinglePrintables)
+		delete spPair.second;
 }
 
-
-ViewableObject* Registry::GetRepresentation(void* dsAddress)
+ViewableObject* Registry::GetRepresentation(const void* dsAddress)
 {
 	if (registeredArrays.count(dsAddress))
 		return (ViewableObject*) registeredArrays[dsAddress];
@@ -52,19 +49,58 @@ ViewableObject* Registry::GetRepresentation(void* dsAddress)
 
 ///////////////////////// Public dll export methods
 
-bool const Registry::IsRegistered(const void* dsAddress)
+
+void Registry::DrawEverything(sf::RenderWindow& renderWindow, sf::Font& font)
+{
+	BOOST_FOREACH(ArrayMap::value_type arrayPair, registeredArrays)
+		arrayPair.second->Draw(renderWindow, font);
+
+}
+
+
+Registry* Registry::GetInstance() 
+{
+	if (!Registry::instance)
+		Registry::instance = new Registry();
+
+	return Registry::instance;
+}
+
+void Registry::DestroyInstance()
+{
+	if (Registry::instance)
+	{
+		delete Registry::instance;
+		Registry::instance = NULL;
+	}
+}
+
+
+bool Registry::IsRegistered(const void* dsAddress) const
 {
 	return ( (registeredArrays.count(dsAddress) == 1) || 
 				(registeredSinglePrintables.count(dsAddress) == 1) );
 }
 
-unsigned const Registry::GetNumberOfRegisteredObjects() 
-{ 
-	return registeredArrays.size() + registeredSinglePrintables.size();
+bool Registry::IsRegistered(const void* dsAddress, ViewableObjectType voType) const
+{
+	switch(voType)
+	{
+		case ARRAY:
+			return (registeredArrays.count(dsAddress) > 0);
+			break;
+
+		case SINGLE_PRINTABLE:
+			return (registeredSinglePrintables.count(dsAddress) > 0);
+			break;
+	}
+
+	return false;	
 }
 
+
 void Registry::RegisterArray
-	(void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
+		(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
 {
 	// Verify that array hasn't already been registered
 	UL_ASSERT(!IsRegistered(dsArrayAddress));
@@ -93,7 +129,7 @@ void Registry::RegisterArray
 
 
 
-void Registry::RegisterSinglePrintable(void* dsSinglePrintableAddress, const std::string& value)
+void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, const std::string& value)
 {
 	// Verify that SINGLE_PRINTABLE hasn't already been registered
 	UL_ASSERT(!IsRegistered(dsSinglePrintableAddress));
@@ -102,10 +138,8 @@ void Registry::RegisterSinglePrintable(void* dsSinglePrintableAddress, const std
 }
 
 
-void Registry::DeregisterObject(void* dsAddress)
+bool Registry::DeregisterObject(const void* dsAddress)
 {
-	UL_ASSERT(IsRegistered(dsAddress));
-
 	if (registeredArrays.count(dsAddress))
 	{
 		VO_Array* voArray = registeredArrays[dsAddress];
@@ -113,7 +147,7 @@ void Registry::DeregisterObject(void* dsAddress)
 
 		registeredArrays.erase(registeredArrays.find(dsAddress));
 
-		return;
+		return true;
 	}
 
 	if (registeredSinglePrintables.count(dsAddress))
@@ -123,13 +157,13 @@ void Registry::DeregisterObject(void* dsAddress)
 
 		registeredSinglePrintables.erase(registeredSinglePrintables.find(dsAddress));
 
-		return;
+		return true;
 	}
 
-	UL_ASSERT(false);
+	return false;
 }
 
-void Registry::AddElementToArray(void* dsArray, void* dsElement, unsigned position)
+void Registry::AddElementToArray(const void* dsArray, void* dsElement, unsigned position)
 {
 	UL_ASSERT(IsRegistered(dsArray,ARRAY));
 	UL_ASSERT(IsRegistered(dsElement,SINGLE_PRINTABLE));
@@ -145,7 +179,7 @@ void Registry::AddElementToArray(void* dsArray, void* dsElement, unsigned positi
 
 }
 
-void Registry::SwapElementsInArray(void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex)
+void Registry::SwapElementsInArray(const void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex)
 {
 	UL_ASSERT(IsRegistered(dsArray, ARRAY));
 
@@ -156,7 +190,7 @@ void Registry::SwapElementsInArray(void* dsArray, unsigned firstElementIndex, un
 }
 
 
-void Registry::UpdateSinglePrintable(void* dsSinglePrintableAddress, const std::string& newValue)
+void Registry::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue)
 {
 	UL_ASSERT(IsRegistered(dsSinglePrintableAddress, SINGLE_PRINTABLE));
 

@@ -32,12 +32,12 @@ namespace Algovis_Viewer
 	{
 
 	protected:
-		void* dsAddress;
+		const void* dsAddress;
 		bool suppressed;
 		std::set<IViewableObjectObserver*> observers; 
 
 	
-		ViewableObject(void* dsAddress) 
+		ViewableObject(const void* dsAddress) 
 			: dsAddress(dsAddress), suppressed(false) {}
 
 		virtual ~ViewableObject() {}
@@ -46,11 +46,11 @@ namespace Algovis_Viewer
 
 
 	public:
-		virtual void Draw(sf::RenderWindow*) = 0;
+		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& font) = 0;
 
 		virtual ViewableObjectType GetType() = 0;
 		
-		void* GetDSAddress() { return dsAddress; }
+		const void* GetDSAddress() { return dsAddress; }
 		
 		void AddObserver(IViewableObjectObserver*);
 		void RemoveObserver(IViewableObjectObserver*);

@@ -24,7 +24,7 @@ using namespace std;
 #include "conversions.h"
 
 
-
+ bool DISPLAY_ENABLED(true);
 
 
 
@@ -131,14 +131,19 @@ int32_t wmain()
 				collectionToModify[i+1] = temp;
 
 				sortOccurred = true;
-				util::PlatformSleep(0.5);
+				
+				if (DISPLAY_ENABLED)
+					util::PlatformSleep(0.5);
 			}
 		}
 	}
 	while(sortOccurred);
 
-	
+	cout << "Done" << endl;
 	getchar();
+
+	
+
 
 	return 0;
 }

@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources\SFML\include&quot;;&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -108,7 +108,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources\SFML\include&quot;;&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

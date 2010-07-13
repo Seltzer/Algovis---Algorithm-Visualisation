@@ -75,6 +75,8 @@ public:
 
 
 	// Public instance methods - stubs atm
+	sf::Font& GetFont() { return font; }
+
 	void AddToTheDrawingList(ViewableObject*) {}
 		
 	void RemoveFromDrawingList(ViewableObject*) {}

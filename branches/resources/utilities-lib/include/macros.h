@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 
 // Keystroke friendly print macro
 #define prt(x) std::cout << x << std::endl;
