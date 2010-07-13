@@ -2,16 +2,15 @@
 #define VO_ARRAY_H_
 
 
-#include "viewableObject.h"
-
 #include <vector>
+
+#include "viewableObject.h"
 
 
 
 namespace Algovis_Viewer
 {
 
-	// TODO template maybe? consider implications
 	class VO_Array : ViewableObject, IViewableObjectObserver
 	{
 
@@ -27,7 +26,7 @@ namespace Algovis_Viewer
 	
 		virtual ViewableObjectType GetType() { return ARRAY; }
 
-		virtual void Draw(); 
+		virtual void Draw(sf::RenderWindow*); 
 		
 		unsigned GetSize() { return elements.size(); }
 

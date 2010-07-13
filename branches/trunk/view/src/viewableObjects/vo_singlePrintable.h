@@ -26,7 +26,7 @@ namespace Algovis_Viewer
 
 		virtual ViewableObjectType GetType() { return SINGLE_PRINTABLE; }
 
-		virtual void Draw() {}
+		virtual void Draw(sf::RenderWindow*) {}
 
 		std::string GetValue() { return value; }
 		

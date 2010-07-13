@@ -3,7 +3,7 @@
 
 #include <set>
 #include "../../include/registry.h"
-#include "../display.h"
+#include "../displayer/display.h"
 
 
 /* ViewableObject and IViewableObjectObserver classes
@@ -46,7 +46,7 @@ namespace Algovis_Viewer
 
 
 	public:
-		virtual void Draw() = 0;
+		virtual void Draw(sf::RenderWindow*) = 0;
 
 		virtual ViewableObjectType GetType() = 0;
 		

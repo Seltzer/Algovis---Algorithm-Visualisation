@@ -87,7 +87,8 @@ void Registry::RegisterArray
 	VO_Array* newArray = new VO_Array(dsArrayAddress, elementType, arrayElements);
 	
 	registeredArrays[dsArrayAddress] = newArray;
-	newArray->Draw();
+	//ZOMG
+	//newArray->Draw();
 }
 
 

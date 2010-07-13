@@ -1,4 +1,4 @@
-// To be included by all users of view 2008.dll
+// To be included by all users of view.dll
 //
 //
 // Conventions:
@@ -118,20 +118,18 @@ namespace Algovis_Viewer
 
 		void RegisterSinglePrintable(void* dsSinglePrintableAddress, const std::string& value);
 
-		// TODO: Implement below methods which are stubs
+		// Unimplemented
 		void RegisterLinkedList(const void* dsLLAddress, ViewableObjectType elementType, std::vector<void*> elements) {}
 		
-		//! For registering a user-defined/misc type we don't know how to draw
+		//! For registering a user-defined/misc type we don't know how to draw. Unimplemented
 		void RegisterUDT(const void* dsUDTAddress, const std::string& name) {}
 		
-
-		// TODO: Decompose?
 		void DeregisterObject(void* dsAddress);
 		
 
 		/* PRE-CONDITIONS:
 		 *		- Element being added has already been registered
-		 *		- 0 <= position < capacity, TODO
+		 *		- 0 <= position <= size
 		 */
 		void AddElementToArray(void* dsArray, void* dsElement, unsigned position);
 
@@ -140,9 +138,7 @@ namespace Algovis_Viewer
 		 */ 
 		void SwapElementsInArray(void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex);
 
-		unsigned GetSize(void* dsArray);
-		
-		// Call this even if the SINGLE_PRINTABLE data source object isn't sure if it has updated itself
+		// Call this even if the SINGLE_PRINTABLE data source object isn't sure if its value has changed.
 		// The View can figure it out
 		void UpdateSinglePrintable(void* dsSinglePrintableAddress, const std::string& newValue);
 	};
