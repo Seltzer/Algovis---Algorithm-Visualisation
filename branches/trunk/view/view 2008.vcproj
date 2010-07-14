@@ -180,6 +180,10 @@
 			Name="include"
 			>
 			<File
+				RelativePath=".\include\common.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\registry.h"
 				>
 			</File>
@@ -193,6 +197,14 @@
 			</File>
 			<File
 				RelativePath=".\src\registry.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\world.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\world.h"
 				>
 			</File>
 			<Filter
@@ -215,6 +227,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\viewableObjects\vo_singlePrintable.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\viewableObjects\vo_singlePrintable.h"
 					>
 				</File>
@@ -230,11 +246,19 @@
 					RelativePath=".\src\displayer\display.h"
 					>
 				</File>
+				<File
+					RelativePath=".\src\displayer\uiAction.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="docs"
 			>
+			<File
+				RelativePath=".\docs\dev docs.txt"
+				>
+			</File>
 			<File
 				RelativePath=".\docs\view TODO.txt"
 				>

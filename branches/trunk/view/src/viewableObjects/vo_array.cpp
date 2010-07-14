@@ -1,14 +1,17 @@
 #include <sstream>
+#include "boost/foreach.hpp"
 #include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
-#include "boost/foreach.hpp"
-
+#include "SFML/System.hpp"
+#include "utilities.h"
+#include "../../include/registry.h"
 #include "vo_array.h"
 #include "vo_singlePrintable.h"
 
-
-
 using namespace std;
+
+
+
 
 
 namespace Algovis_Viewer
@@ -74,7 +77,7 @@ namespace Algovis_Viewer
 			elements.push_back(element);
 
 		elements[position]->AddObserver(this);
-		//Draw();
+		NotifyObservers();
 		Changed(elements[position]);
 	}
 
@@ -92,75 +95,66 @@ namespace Algovis_Viewer
 		// TODO: UpdateValue is obsolete, and this does not track history for the elements involved.
 		//first->UpdateValue(second->GetValue());
 		//second->UpdateValue(temp);
-
-		//Draw();
+		NotifyObservers();
 	}
 
-
-	void VO_Array::Draw(sf::RenderWindow& renderWindow, sf::Font& font)
+	void VO_Array::PrepareToBeDrawn()
 	{
+		static float xGap = 1, yGap = 5;
+	
+		float x = xPos;
+		float y = yPos;
+
+		// Address stuff
+		std::string addressString(util::ToString<const void*>(dsAddress).append(":"));
+
+		graphicalAddressText = sf::String(addressString.c_str(), Displayer::GetInstance()->GetDefaultFont());
+		graphicalAddressText.SetColor(sf::Color(255, 255, 255));
+		//graphicalAddressText.Move(x, y);
+		graphicalAddressText.SetPosition(x,y);
 		
-		float xGap = 1;
-		float yGap = 50;
 		
-		float y = 50;
+		float offset = graphicalAddressText.GetRect().GetWidth();
+		UL_ASSERT(offset);		// Ensure that the font is valid (an invalid one will result in offset=0)
+		x += offset + xGap; 
 
-		std::vector<std::string> elementsAsStrings;
-
-		for (std::vector<ViewableObject*>::iterator it = elements.begin(); it < elements.end(); it++)
-		{
-			// Assume VO_SinglePrintable
-			VO_SinglePrintable* element = (VO_SinglePrintable*) *it;
-			elementsAsStrings.push_back(element->GetValue());
-		}
-
-		// Print address
-		std::stringstream strm;
-		strm << dsAddress << ":";
-		sf::String address(strm.str().c_str(), font);
-		address.SetColor(sf::Color(255, 255, 255));
-		address.Move(0, y);
-		renderWindow.Draw(address);
-
-		// Print elements
-		float ySize = 0;
-		float x = address.GetRect().Right + xGap;
-
+		// Array elements
+		float maxTextHeight = 0;
+		BOOST_FOREACH(ViewableObject* element, elements)
+			maxTextHeight = std::max(maxTextHeight, element->GetPreferredSize().GetHeight());
+		maxTextHeight += yGap; // should this really be part of maxTextHeight which affects bbox for all elements
 
 		BOOST_FOREACH(ViewableObject* element, elements)
 		{
+			sf::FloatRect preferredSize = element->GetPreferredSize();
+			element->SetBoundingBox(sf::FloatRect(x,y,x + preferredSize.GetWidth(), y + maxTextHeight));
+			element->PrepareToBeDrawn();
+			x += element->GetBoundingBox().GetWidth() + xGap;
+		}
+
+		// TODO set bounding box of array
+	}
+
+	void VO_Array::Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont)
+	{
+		// Print address
+		renderWindow.Draw(graphicalAddressText);
+
+		// Print elements
+		BOOST_FOREACH(ViewableObject* element, elements)
+		{
+			// TODO remove SP hack
 			UL_ASSERT(element->GetType() == SINGLE_PRINTABLE);
 			VO_SinglePrintable* spElement = (VO_SinglePrintable*) element;
 
-			// Draw text
-			sf::String text(spElement->GetValue().c_str(), font);
-			text.SetColor(sf::Color(255, 255, 255));
-			text.Move(x, y);
-			renderWindow.Draw(text);
-
-			// Draw bounding box
-			sf::FloatRect rect = text.GetRect();
-			glColor3f(1, 1, 1);
-			glBegin(GL_LINE_LOOP);
-			glVertex2f(rect.Left, rect.Top);
-			glVertex2f(rect.Right, rect.Top);
-			glVertex2f(rect.Right, rect.Bottom);
-			glVertex2f(rect.Left, rect.Bottom);
-			glEnd();
-
-			x += rect.Right - rect.Left + xGap;
-			ySize = std::max(ySize, rect.Bottom - rect.Top);
+			spElement->Draw(renderWindow, defaultFont);
 		}
-		
-		// Each element now draws itself
-		//y += ySize + yGap;
 	}
 
 
 	void VO_Array::Notify(ViewableObject* subject)
 	{
-		//ZOMG
-		//Draw();
+		NotifyObservers();
 
 		Changed(subject);
 	}

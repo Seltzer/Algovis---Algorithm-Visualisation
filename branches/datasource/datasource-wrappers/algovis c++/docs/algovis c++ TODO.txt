@@ -1,15 +1,38 @@
 Functionality:
-* Finish vector (esp. vector resizing)
+* Finish VectorWrapper - sort out vector resizing, implement any missing ops
+* Finish IntWrapper/FloatWrapper etc. (add missing ops, fix unary increment/decrement ops)
 * Do other STL types and primitives
 * Implement a graphs library
 * Deal with unsigned types
 * Deal with non-type template parameter problem
+* Turn into DLL library - currently isn't high priority since algovis c++ only consists of headers
+* Read C++ specification in order to figure out circumstances when C++ doesn't like us #defining primitives
+as wrappers. And it might help us with #defining "unsigned char" 
+
+Design / Admin / General / Misc:
+* Perhaps go for the less complicated approach by not being tricky... get rid of templated PrimitiveWrapper
+and move code to its subclasses, even if it results in less maintainability and more code repetition
+* Implement a Linux version of Algovis C++ which isn't a Windows DLL
+* Start on algovis Python:
+	http://pypi.python.org/pypi/ProxyTypes could be useful
 
 
 Testing:
 * Write more unit-tests
-* Test algovis c++ against existing code 
-		(we know it's incompatible with some boost libraries as they use non-type template parameters)
+* Test algovis c++ against existing code... by simply including headers from other libraries like
+	boost, SFML etc. in our algovis test project, we are testing compatibility of our wrappers.
+	
+	We know already that some boost libraries don't like IntWrappers since they use integer non-type
+	template parameters
+* Write some 'demos' - currently we only have BubbleSort
+
 
 Bugs:
 * PrimitiveWrapper unary increment/decrement ops
+
+
+
+
+
+
+drawing of wrappers only in current scope???

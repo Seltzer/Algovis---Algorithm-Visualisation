@@ -22,6 +22,8 @@ namespace Algovis_Viewer
 		int time;
 	};
 
+
+
 	// TODO: Used by viewer to keep track of past values for playback - may need something fancier?
 	// TODO: Move this somewhere better
 	// TODO: Only makes sense for primitives?
@@ -31,27 +33,20 @@ namespace Algovis_Viewer
 		// TODO: Value?
 		std::set<ValueID> contributors;
 	};*/
-
-	class VO_SinglePrintable : ViewableObject
+	class VO_SinglePrintable : public ViewableObject
 	{
 
 	private:
 		std::string value;
+		sf::String graphicalText;
+
 		// TODO: Keep track of data structure?
+
 
 		// Keep track of the displayed values which have contributed to the current value
 		// If the value has just been displayed, then this is a single element set with the current
 		// address and time.
 		std::set<ValueID> history;
-
-		void UpdateValue(const std::string& newValue) 
-		{ 
-			//if (value != newValue) // Update should be displayed, with history, even if the same value is assigned!
-			{
-				value = newValue; 
-				NotifyObservers();
-			}
-		}
 
 	public:
 		VO_SinglePrintable(const void* dsAddress, const std::string& value)
@@ -63,7 +58,13 @@ namespace Algovis_Viewer
 
 		virtual ViewableObjectType GetType() { return SINGLE_PRINTABLE; }
 
-		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& font) {}
+		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont);
+
+		virtual sf::FloatRect GetPreferredSize();
+
+		virtual void PrepareToBeDrawn();
+
+		
 
 		std::string GetValue() { return value; }
 
@@ -111,6 +112,17 @@ namespace Algovis_Viewer
 
 			UpdateValue(newValue);
 		}
+
+		
+		void UpdateValue(const std::string& newValue) 
+		{ 
+			//if (value != newValue) // Update should be displayed, with history, even if the same value is assigned!
+			{
+				value = newValue; 
+				NotifyObservers();
+			}
+		}
+
 	};
 
 }

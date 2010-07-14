@@ -16,35 +16,18 @@
 #include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
 #include "utilities.h"
+#include "common.h"
+#include "../src/world.h"
+#include "../src/displayer/uiAction.h"
 
-
-#ifdef IMPORTING
-	#define DECLSPEC __declspec(dllimport)	
-#else
-	#define DECLSPEC __declspec(dllexport)	
-#endif
 
 
 
 namespace Algovis_Viewer
 {
-
-	/* ARBITRARY is a type we don't know how to draw (i.e. most user-defined types
-	 *
-	 * TODO: Add a pointer type
-	 */
-	enum ViewableObjectType { ARRAY, LINKED_LIST, SINGLE_PRINTABLE, ARBITRARY};
-		
-
-	// Forward decs
-	class ViewableObject;
-	class VO_Array;
-	class VO_SinglePrintable;
-
-	//(sf::RenderWindow& renderWindow, sf::Font& font);
-
 	#pragma warning(push)	
 	#pragma warning(disable:4251)	// Annoying warning about exporting private members
+
 
 	/* Registry is a non-copyable singleton
 	 *
@@ -55,46 +38,22 @@ namespace Algovis_Viewer
 	class DECLSPEC Registry
 	{
 
-
 	private:
 
-		// world state
-		// Mappings from data source types to viewable objects
-		std::map<const void*,VO_Array*> registeredArrays;
-		typedef std::map<const void*,VO_Array*> ArrayMap;
-		std::map<const void*,VO_SinglePrintable*> registeredSinglePrintables;
-		typedef std::map<const void*,VO_SinglePrintable*> SPMap;
-	
-
-		// Returns NULL if !IsRegistered(dsAddress)
-		ViewableObject* GetRepresentation(const void* dsAddress);
-		
-		/* Fetches a pointer to the ViewableObject of type T corresponding to dsAddress
-		 *			TODO fix casting
+		/* Currently we only maintain one world to which we make continual changes - worldCount
+		 * reflects the number of worlds which have existed (currently: number of changes to one world).
 		 *
-		 * Throws a bad assertion if !IsRegistered(dsAddress)
-		 *
-		 * Throws a bad assertion if a ViewObject corresponding to dsAddress exists but its actual type
-		 * is different to T; i.e. !IsRegistered(dsAddress, voType) where voType != ViewObject::GetType()
+		 * uiActionCount is the total number of UI actions and worldUIActionMapping maintains a history
+		 * of the number and ordering of UI actions for each world.
 		 */
-		template<class T>
-		T* GetRepresentation(const void* dsAddress)
-		{
-			UL_ASSERT(dsAddress);
-			ViewableObject* viewRepresentation = GetRepresentation(dsAddress);
-			UL_ASSERT(viewRepresentation);
-
-
-			T* viewRepresentationCast = static_cast<T*>(viewRepresentation);
-			UL_ASSERT(viewRepresentationCast);
-
-			return viewRepresentationCast;
-		}
-
-		///// NON-COPYABLE SINGLETON MEMBERS
+		World* currentWorld;
+		unsigned worldCount, uiActionCount;
+		std::map<unsigned, std::vector<UI_Action*> > worldUIActionMapping;
+	
+	
+		// Members related to non-copyable singleton behaviour
 		static Registry* instance;
-		
-		Registry(){}
+		Registry();
 		Registry(const Registry&);
 		Registry& operator=(const Registry&);
 		~Registry();
@@ -104,8 +63,9 @@ namespace Algovis_Viewer
 		static Registry* GetInstance();
 		static void DestroyInstance();
 
-		// This is a hack!!!!!!!!!!!!!11111
-		void DrawEverything(sf::RenderWindow& renderWindow, sf::Font& font);
+		// Unimplemented stub currently used for testing
+		void PerformUserAction(UI_ActionType actionType);
+
 
 		// Returns true if a data source object is registered (and hence has a ViewableObject equivalent)
 		bool IsRegistered(const void* dsAddress) const;
@@ -126,11 +86,6 @@ namespace Algovis_Viewer
 		// TODO: This shouldn't take a value, it should just note the existance of the variable. PrintableAssigned can initialise the value.
 		void RegisterSinglePrintable(const void* dsSinglePrintableAddress, const std::string& value);
 
-		// Unimplemented
-		void RegisterLinkedList(const void* dsLLAddress, ViewableObjectType elementType, std::vector<void*> elements) {}
-		//! For registering a user-defined/misc type we don't know how to draw. Unimplemented
-		void RegisterUDT(const void* dsUDTAddress, const std::string& name) {}
-		
 		// Returns true if the DS object was successfully deregistered and its ViewableObject equivalent deleted
 		// Returns false if the DS object was never registered
 		bool DeregisterObject(const void* dsAddress);

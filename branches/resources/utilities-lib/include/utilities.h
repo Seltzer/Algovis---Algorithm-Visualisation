@@ -33,12 +33,24 @@ int generateRandomNumber(int min, int max);
 // Strings
 std::string indent(short tabs);
 
+
+template<class T>
+std::string ToString(T value)
+{
+	std::stringstream ss;
+	ss << value;
+	return ss.str();
+}
+
+
 std::string intToString(int);
+std::string pointerToString(void*);
 
 std::string formatString(std::string inputString, ...);
 std::string formatString(std::string inputString, va_list varargs);
 	
 // Misc
+// Time in seconds
 void PlatformSleep(float time);
 
 

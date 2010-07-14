@@ -23,14 +23,85 @@ using namespace std;
 //Algovis C++ include
 #include "conversions.h"
 
-
- bool DISPLAY_ENABLED(true);
-
+// doesn't fully work at the moment
+bool DISPLAY_ENABLED(true);
 
 
 int32_t wmain()
 {
-	/*
+	// Populate
+	vector<int> collectionToModify;
+	collectionToModify.reserve(20);
+
+	for (int i = 0; i < 10; i = i + 1)
+	{
+		collectionToModify.push_back(util::generateRandomNumber(0,9));
+		vector<int>::iterator endIt = collectionToModify.end() - 1;
+	}
+
+	// Testing
+	int a = 5;
+	a = a;
+	cout << a << endl;
+	
+	for (int i = 1; i < 9; i = i + 1)
+	{
+		collectionToModify[i] = collectionToModify[i] + collectionToModify[i-1];
+		if (DISPLAY_ENABLED)
+			util::PlatformSleep(0.5);
+	}
+
+
+	prt("Waiting for keypress before sorting:")
+	getchar();
+
+
+	// Sort
+	bool sortOccurred;
+
+	do
+	{
+		sortOccurred = false;
+
+		for (int i = 0; i < 9; i = i + 1)
+		{
+			if (collectionToModify[i] > collectionToModify[i+1])
+			{
+				int temp = collectionToModify[i];
+				collectionToModify[i] = collectionToModify[i+1];
+				collectionToModify[i+1] = collectionToModify[i+1];
+
+				sortOccurred = true;
+				
+				if (DISPLAY_ENABLED)
+					util::PlatformSleep(0.5);
+			}
+		}
+	}
+	while(sortOccurred);
+
+	cout << "Done" << endl;
+	getchar();
+
+	
+
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// old crap
+/*
 	int a(2);
 
 	int* original = new int(3);
@@ -73,10 +144,6 @@ int32_t wmain()
 
 	int element(2);
 
-	
-
-
-
 	vector<int> collection;
 	collection.insert(collection.end(), 1);
 	collection.insert(collection.end(), element);
@@ -96,69 +163,3 @@ int32_t wmain()
 		int a = *it;
 	}
 */
-
-
-	// Populate
-	
-
-
-	
-	vector<int> collectionToModify;
-	collectionToModify.reserve(20);
-
-	for (int i = 0; i < 10; i = i + 1)
-	{
-		collectionToModify.push_back(util::generateRandomNumber(0,9));
-		vector<int>::iterator endIt = collectionToModify.end() - 1;
-	}
-
-	int a = 5;
-
-	a = a;
-	std::cout << a << std::endl;
-	
-	for (int i = 1; i < 9; i = i + 1)
-	{
-		collectionToModify[i] = collectionToModify[i] + collectionToModify[i-1];
-		if (DISPLAY_ENABLED)
-			util::PlatformSleep(0.5);
-	}
-
-	// Sort
-	bool sortOccurred;
-
-	do
-	{
-		sortOccurred = false;
-
-		/*for (int i = 0; i < 9; i = i + 1)
-		{
-			if (collectionToModify[i] > collectionToModify[i+1])
-			{
-				int temp = collectionToModify[i];
-				collectionToModify[i] = collectionToModify[i+1];
-				collectionToModify[i+1] = collectionToModify[i+1];
-
-				sortOccurred = true;
-				
-				if (DISPLAY_ENABLED)
-					util::PlatformSleep(0.5);
-			}
-		}*/
-	}
-	while(sortOccurred);
-
-	cout << "Done" << endl;
-	getchar();
-
-	
-
-
-	return 0;
-}
-
-
-
-
-
-

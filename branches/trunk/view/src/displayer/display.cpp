@@ -1,13 +1,16 @@
 #include "display.h"
 
 #include <map>
-
-
+#include "boost/foreach.hpp"
 #include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
-
 #include "utilities.h"
 #include "../../include/registry.h"
+#include "../viewableObjects/viewableObject.h"
+
+
+
+
 
 
 namespace Algovis_Viewer
@@ -15,17 +18,38 @@ namespace Algovis_Viewer
 
 
 Displayer* Displayer::displayerInstance(NULL);
+sf::Mutex Displayer::creationMutex;
+
 bool Displayer::drawingEnabled(true);
 
 
+Displayer* Displayer::GetInstance()
+{
+	sf::Lock lock(creationMutex);
 
-void Displayer::RenderLoop()
+	if (!Displayer::displayerInstance)
+		Displayer::displayerInstance = new Displayer();
+
+	return Displayer::displayerInstance;
+}
+
+
+
+void Displayer::InitWindow()
 {
 	win = new sf::RenderWindow(sf::VideoMode(800, 600, 32), "Algovis");
 	win->SetActive(true);
 	glViewport(0, 0, win->GetWidth(), win->GetHeight());
 	win->PreserveOpenGLStates(true);
-	font.LoadFromFile("consola.ttf");
+	defaultFont.LoadFromFile("consola.ttf");
+	defaultFontInitialised = true;
+	prt("Default font initialised");
+}
+
+
+void Displayer::RenderLoop()
+{
+	InitWindow();
 
 	while (win->IsOpened() && !closed)
 	{
@@ -35,6 +59,7 @@ void Displayer::RenderLoop()
 			// window resized
 			if (Event.Type == sf::Event::Resized)
 			{
+				prt("window resized");
 				int width = Event.Size.Width;
 				int height = Event.Size.Height;
 				win->SetView(sf::View(sf::FloatRect(0, 0, (float) width, (float) height)));
@@ -43,11 +68,19 @@ void Displayer::RenderLoop()
 
 	        // Window closed
 	        if (Event.Type == sf::Event::Closed)
-	            win->Close();
+			{
+				prt("window closed via x")
+				win->Close();
+			}
+	            
 
 	        // Escape key pressed
 	        if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
-	            win->Close();
+			{
+				prt("window closed via ESC key")
+				win->Close();
+			}
+	            
 	    }
 
 		glMatrixMode(GL_PROJECTION);
@@ -59,10 +92,12 @@ void Displayer::RenderLoop()
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// Talk to the VO_Array instances
-		Registry* reg = Registry::GetInstance();
-		reg->DrawEverything(*win, font);
-
+		{
+			// Draw ViewableObjects
+			sf::Lock lock(objectsMutex);
+			BOOST_FOREACH(ViewableObject* obj, objectsToDraw)
+				obj->Draw(*win, defaultFont);
+		}
 
 		win->Display();
 
@@ -70,17 +105,39 @@ void Displayer::RenderLoop()
 	}
 }
 
-
-/*
-void Draw(const void* dataStructure, const std::vector<std::string>& data)
+void Displayer::RenderThread(void* dispPtr)
 {
-	if (Displayer::DrawingEnabled())
-	{
-		Displayer::GetInstance()->Draw(dataStructure, data);
-	}
+	static_cast<Displayer*>(dispPtr)->RenderLoop();
 }
 
-*/
+
+void Displayer::AddToDrawingList(ViewableObject* newObject)
+{
+	sf::Lock lock(objectsMutex);
+		
+	// TODO remove hack
+	UL_ASSERT(newObject->GetType() == ARRAY);
+
+	newObject->SetPosition(50,50);
+	newObject->PrepareToBeDrawn();
+
+	objectsToDraw.insert(newObject);
+}
+
+void Displayer::RemoveFromDrawingList(ViewableObject* objectToRemove)
+{
+	sf::Lock lock(objectsMutex);
+	objectsToDraw.erase(objectToRemove);
+}
+
+
+sf::Font& Displayer::GetDefaultFont()
+{ 
+	// TODO - get rid of this busy wait which runs until the renderThread has initialised the default font
+	while (!defaultFontInitialised);
+
+	return defaultFont; 
+}
 
 
 

@@ -11,13 +11,14 @@
 namespace Algovis_Viewer
 {
 
-	class VO_Array : ViewableObject, IViewableObjectObserver
+	class VO_Array : public ViewableObject, IViewableObjectObserver
 	{
 
 	private:
 		std::vector<ViewableObject*> elements;
 		ViewableObjectType elementType;
 
+		sf::String graphicalAddressText;
 		void Changed(ViewableObject* subject);
 
 	public:
@@ -27,8 +28,13 @@ namespace Algovis_Viewer
 	
 		virtual ViewableObjectType GetType() { return ARRAY; }
 
-		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& font); 
+		virtual void PrepareToBeDrawn();
+
+		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont); 
 		
+		
+
+
 		unsigned GetSize() { return elements.size(); }
 
 		void AddElement(ViewableObject* element, unsigned position);

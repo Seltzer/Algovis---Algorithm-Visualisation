@@ -24,17 +24,6 @@ std::string indent(short tabs)
 	return ss.str();
 }
 
-
-std::string intToString(int value)
-{
-	std::stringstream ss;
-	ss << value;
-	
-	return ss.str();
-}
-
-
-
 std::string formatString(std::string inputString,...)
 {
 	va_list varargs;
