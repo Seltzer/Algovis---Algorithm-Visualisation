@@ -14,6 +14,29 @@ using namespace std;
 namespace Algovis_Viewer
 {
 	
+	int time = 0; // TODO: Seriously?... Seriously guys.
+
+	void VO_Array::Changed(ViewableObject* subject)
+	{
+		// TODO: use history somehow to do cool things
+		// The element notifying is obviously in this array. We shall assume we have displayed
+		// the value and history here, and will reset the current history to be the value we just displayed
+		// That way future things will have the just-displayed-element in their history, instead of everything
+		// that was used to produce is.
+		VO_SinglePrintable* printable = (VO_SinglePrintable*)(subject); // TODO: This is a serious problem
+		if (printable != 0)
+		{
+			std::cout << "Value: " << printable->GetValue() << " produced from: ";
+			const std::set<ValueID>& history = printable->GetHistory();
+			for (std::set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
+				std::cout << i->address << "(" << i->time << ")" << ", ";
+			std::cout << std::endl;
+			//int time = Algovis_Viewer::Registry::GetInstance()->GetTime();
+			printable->ResetHistory(ValueID(subject->GetDSAddress(), time));
+		}
+		++time;
+	}
+
 	VO_Array::VO_Array
 			(const void* dsAddress, ViewableObjectType elementType, const std::vector<ViewableObject*>& elements)
 				: ViewableObject(dsAddress), elementType(elementType)
@@ -52,6 +75,7 @@ namespace Algovis_Viewer
 
 		elements[position]->AddObserver(this);
 		//Draw();
+		Changed(elements[position]);
 	}
 
 
@@ -65,8 +89,9 @@ namespace Algovis_Viewer
 
 		std::string temp = first->GetValue();
 		
-		first->UpdateValue(second->GetValue());
-		second->UpdateValue(temp);
+		// TODO: UpdateValue is obsolete, and this does not track history for the elements involved.
+		//first->UpdateValue(second->GetValue());
+		//second->UpdateValue(temp);
 
 		//Draw();
 	}
@@ -136,5 +161,7 @@ namespace Algovis_Viewer
 	{
 		//ZOMG
 		//Draw();
+
+		Changed(subject);
 	}
 }

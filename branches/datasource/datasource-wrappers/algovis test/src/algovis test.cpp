@@ -112,8 +112,17 @@ int32_t wmain()
 		vector<int>::iterator endIt = collectionToModify.end() - 1;
 	}
 
+	int a = 5;
 
+	a = a;
+	std::cout << a << std::endl;
 	
+	for (int i = 1; i < 9; i = i + 1)
+	{
+		collectionToModify[i] = collectionToModify[i] + collectionToModify[i-1];
+		if (DISPLAY_ENABLED)
+			util::PlatformSleep(0.5);
+	}
 
 	// Sort
 	bool sortOccurred;
@@ -122,20 +131,20 @@ int32_t wmain()
 	{
 		sortOccurred = false;
 
-		for (int i = 0; i < 9; i = i + 1)
+		/*for (int i = 0; i < 9; i = i + 1)
 		{
 			if (collectionToModify[i] > collectionToModify[i+1])
 			{
 				int temp = collectionToModify[i];
 				collectionToModify[i] = collectionToModify[i+1];
-				collectionToModify[i+1] = temp;
+				collectionToModify[i+1] = collectionToModify[i+1];
 
 				sortOccurred = true;
 				
 				if (DISPLAY_ENABLED)
 					util::PlatformSleep(0.5);
 			}
-		}
+		}*/
 	}
 	while(sortOccurred);
 

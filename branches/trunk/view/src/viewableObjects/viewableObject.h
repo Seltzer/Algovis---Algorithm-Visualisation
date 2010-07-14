@@ -35,15 +35,13 @@ namespace Algovis_Viewer
 		const void* dsAddress;
 		bool suppressed;
 		std::set<IViewableObjectObserver*> observers; 
-
 	
 		ViewableObject(const void* dsAddress) 
 			: dsAddress(dsAddress), suppressed(false) {}
 
 		virtual ~ViewableObject() {}
 
-		void NotifyObservers();
-
+		virtual void NotifyObservers();
 
 	public:
 		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& font) = 0;

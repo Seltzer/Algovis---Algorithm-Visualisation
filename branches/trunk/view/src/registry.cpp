@@ -190,7 +190,7 @@ void Registry::SwapElementsInArray(const void* dsArray, unsigned firstElementInd
 }
 
 
-void Registry::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue)
+/*void Registry::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue)
 {
 	UL_ASSERT(IsRegistered(dsSinglePrintableAddress, SINGLE_PRINTABLE));
 
@@ -198,9 +198,42 @@ void Registry::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const
 	UL_ASSERT(sp);
 
 	sp->UpdateValue(newValue);
+}*/
+
+void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, const std::string& newValue)
+{
+	UL_ASSERT(IsRegistered(dsAssigned, SINGLE_PRINTABLE));
+
+	VO_SinglePrintable* sp = GetRepresentation<VO_SinglePrintable>(dsAssigned);
+	UL_ASSERT(sp);
+
+	if (IsRegistered(dsSource, SINGLE_PRINTABLE))
+	{
+		VO_SinglePrintable* source = GetRepresentation<VO_SinglePrintable>(dsSource);
+		UL_ASSERT(sp);
+		sp->Assigned(source, newValue);
+	}
+	else
+		sp->AssignedUntracked(dsSource, newValue);
 }
 
+// TODO: This is really similar to above
+void Registry::PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue)
+{
+	UL_ASSERT(IsRegistered(dsModified, SINGLE_PRINTABLE));
 
+	VO_SinglePrintable* sp = GetRepresentation<VO_SinglePrintable>(dsModified);
+	UL_ASSERT(sp);
+
+	if (IsRegistered(dsSource, SINGLE_PRINTABLE))
+	{
+		VO_SinglePrintable* source = GetRepresentation<VO_SinglePrintable>(dsSource);
+		UL_ASSERT(sp);
+		sp->Modified(source, newValue);
+	}
+	else
+		sp->ModifiedUntracked(dsSource, newValue);
+}
 
 
 

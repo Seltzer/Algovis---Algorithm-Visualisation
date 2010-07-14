@@ -123,6 +123,7 @@ namespace Algovis_Viewer
 		 */
 		void RegisterArray(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements);
 
+		// TODO: This shouldn't take a value, it should just note the existance of the variable. PrintableAssigned can initialise the value.
 		void RegisterSinglePrintable(const void* dsSinglePrintableAddress, const std::string& value);
 
 		// Unimplemented
@@ -148,7 +149,14 @@ namespace Algovis_Viewer
 
 		// Call this even if the SINGLE_PRINTABLE data source object isn't sure whether its value has changed.
 		// The View can figure it out.
-		void UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue);
+		// Obsolete, replaced by history tracking functions
+		//void UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue);
+
+		// The following functions are all that is needed to trace the history of a primitive
+		// TODO: Passing the string value every time is going to cause major slowdowns, and should
+		// not be needed (can just get all the values when we actually draw)
+		void PrintableAssigned(const void* dsAssigned, const void* dsSource, const std::string& newValue);
+		void PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue);
 	};
 	#pragma warning( pop ) 
 }

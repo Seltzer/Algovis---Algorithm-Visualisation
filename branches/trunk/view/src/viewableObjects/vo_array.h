@@ -18,6 +18,8 @@ namespace Algovis_Viewer
 		std::vector<ViewableObject*> elements;
 		ViewableObjectType elementType;
 
+		void Changed(ViewableObject* subject);
+
 	public:
 		VO_Array(const void* dsAddress, ViewableObjectType elementType, 
 							const std::vector<ViewableObject*>& elements);
@@ -35,7 +37,6 @@ namespace Algovis_Viewer
 
 		// Used as an event-handler for elements being updated
 		virtual void Notify(ViewableObject* subject);
-
 
 	};
 }
