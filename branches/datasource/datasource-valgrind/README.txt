@@ -1,0 +1,1 @@
+Valgrind folders other than algovis have been omitted from the given valgrind. Please get svn valgrind and paste all the folders in.

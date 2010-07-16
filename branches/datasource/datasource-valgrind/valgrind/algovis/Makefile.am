@@ -1,0 +1,41 @@
+include $(top_srcdir)/Makefile.tool.am
+
+EXTRA_DIST = docs/av-manual.xml
+
+#----------------------------------------------------------------------------
+# algovis-<platform>
+#----------------------------------------------------------------------------
+
+noinst_PROGRAMS  = algovis-@VGCONF_ARCH_PRI@-@VGCONF_OS@
+if VGCONF_HAVE_PLATFORM_SEC
+noinst_PROGRAMS += algovis-@VGCONF_ARCH_SEC@-@VGCONF_OS@
+endif
+
+ALGOVIS_SOURCES_COMMON = av_main.c av_vis.cpp
+
+algovis_@VGCONF_ARCH_PRI@_@VGCONF_OS@_SOURCES      = $(ALGOVIS_SOURCES_COMMON)
+algovis_@VGCONF_ARCH_PRI@_@VGCONF_OS@_CPPFLAGS     = \
+	$(AM_CPPFLAGS_@VGCONF_PLATFORM_PRI_CAPS@)
+algovis_@VGCONF_ARCH_PRI@_@VGCONF_OS@_CFLAGS       = \
+	$(AM_CFLAGS_@VGCONF_PLATFORM_PRI_CAPS@)
+algovis_@VGCONF_ARCH_PRI@_@VGCONF_OS@_DEPENDENCIES = \
+	$(TOOL_DEPENDENCIES_@VGCONF_PLATFORM_PRI_CAPS@)
+algovis_@VGCONF_ARCH_PRI@_@VGCONF_OS@_LDADD        = \
+	$(TOOL_LDADD_@VGCONF_PLATFORM_PRI_CAPS@)
+algovis_@VGCONF_ARCH_PRI@_@VGCONF_OS@_LDFLAGS      = \
+	$(TOOL_LDFLAGS_@VGCONF_PLATFORM_PRI_CAPS@)
+if VGCONF_HAVE_PLATFORM_SEC
+algovis_@VGCONF_ARCH_SEC@_@VGCONF_OS@_SOURCES      = $(ALGOVIS_SOURCES_COMMON)
+algovis_@VGCONF_ARCH_SEC@_@VGCONF_OS@_CPPFLAGS     = \
+	$(AM_CPPFLAGS_@VGCONF_PLATFORM_SEC_CAPS@)
+algovis_@VGCONF_ARCH_SEC@_@VGCONF_OS@_CFLAGS       = \
+	$(AM_CFLAGS_@VGCONF_PLATFORM_SEC_CAPS@)
+algovis_@VGCONF_ARCH_SEC@_@VGCONF_OS@_DEPENDENCIES = \
+	$(TOOL_DEPENDENCIES_@VGCONF_PLATFORM_SEC_CAPS@)
+algovis_@VGCONF_ARCH_SEC@_@VGCONF_OS@_LDADD        = \
+	$(TOOL_LDADD_@VGCONF_PLATFORM_SEC_CAPS@)
+algovis_@VGCONF_ARCH_SEC@_@VGCONF_OS@_LDFLAGS      = \
+	$(TOOL_LDFLAGS_@VGCONF_PLATFORM_SEC_CAPS@)
+endif
+
+
