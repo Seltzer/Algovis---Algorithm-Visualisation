@@ -36,6 +36,13 @@ void ViewableObject::SetBoundingBox(sf::FloatRect newBB)
 	PrepareToBeDrawn();
 }
 
+void ViewableObject::SetBoundingBoxColour(float r,float g,float b)
+{
+	boundingBoxColour[0] = r;
+	boundingBoxColour[1] = g;
+	boundingBoxColour[2] = b;
+}
+
 
 void ViewableObject::NotifyObservers()
 {

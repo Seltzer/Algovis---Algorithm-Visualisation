@@ -33,7 +33,7 @@ int32_t wmain()
 	vector<int> collectionToModify;
 	collectionToModify.reserve(20);
 
-	for (int i = 0; i < 10; i = i + 1)
+	for (int i = 0; i < 9; i = i + 1)
 	{
 		collectionToModify.push_back(util::generateRandomNumber(0,9));
 		vector<int>::iterator endIt = collectionToModify.end() - 1;
@@ -51,25 +51,26 @@ int32_t wmain()
 			util::PlatformSleep(0.5);
 	}
 
+	collectionToModify[0] = 50;
 
 	prt("Waiting for keypress before sorting:")
 	getchar();
 
 
-	// Sort
+	// Sort (decreasing order)
 	bool sortOccurred;
 
 	do
 	{
 		sortOccurred = false;
 
-		for (int i = 0; i < 9; i = i + 1)
+		for (int i = 8; i > 0; i = i - 1)
 		{
-			if (collectionToModify[i] > collectionToModify[i+1])
+			if (collectionToModify[i] > collectionToModify[i-1])
 			{
 				int temp = collectionToModify[i];
-				collectionToModify[i] = collectionToModify[i+1];
-				collectionToModify[i+1] = collectionToModify[i+1];
+				collectionToModify[i] = collectionToModify[i-1];
+				collectionToModify[i-1] = temp;
 
 				sortOccurred = true;
 				
@@ -83,7 +84,7 @@ int32_t wmain()
 	cout << "Done" << endl;
 	getchar();
 
-	
+	// Shutdown displayer gracefully???
 
 
 	return 0;

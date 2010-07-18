@@ -29,13 +29,23 @@ namespace Algovis_Viewer
 		VO_SinglePrintable* printable = (VO_SinglePrintable*)(subject); // TODO: This is a serious problem
 		if (printable != 0)
 		{
-			std::cout << "Value: " << printable->GetValue() << " produced from: ";
+			std::cout << "Value " << printable->GetDSAddress() << "(" << time << "): " ;
+			std::cout << printable->GetValue() << " produced from: ";
+
+
 			const std::set<ValueID>& history = printable->GetHistory();
 			for (std::set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
 				std::cout << i->address << "(" << i->time << ")" << ", ";
 			std::cout << std::endl;
 			//int time = Algovis_Viewer::Registry::GetInstance()->GetTime();
 			printable->ResetHistory(ValueID(subject->GetDSAddress(), time));
+			
+			// hack to make printable draw itself with a green outline after being changed. TODO: remove
+			BOOST_FOREACH(ViewableObject* element, elements)
+			{
+				element->SetBoundingBoxColour(1,1,1);
+			}
+			printable->SetBoundingBoxColour(0,1,0);
 		}
 		++time;
 	}

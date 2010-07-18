@@ -106,8 +106,8 @@ void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, con
 	VO_SinglePrintable* newSP = currentWorld->RegisterSinglePrintable(dsSinglePrintableAddress, value);
 	++worldCount;
 
-	// TODO: Remove this hack - for now, arrays draw their child elements, and elements outside arrays 
-	// don't get drawn
+	// For now, arrays draw their child elements, and elements outside arrays don't get drawn
+	// TODO: Remove this hack
 	//Displayer::GetInstance()->AddToDrawingList(newSP);
 }
 
@@ -153,7 +153,7 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 	if (IsRegistered(dsSource, SINGLE_PRINTABLE))
 	{
 		VO_SinglePrintable* source = currentWorld->GetRepresentation<VO_SinglePrintable>(dsSource);
-		UL_ASSERT(sp);
+		UL_ASSERT(source);
 		sp->Assigned(source, newValue);
 	}
 	else

@@ -39,12 +39,18 @@ namespace Algovis_Viewer
 		bool suppressed;
 		float xPos, yPos;
 		sf::FloatRect boundingBox;
+		float boundingBoxColour[3];
 		sf::Font* font;
+
+		
 
 
 
 		ViewableObject(const void* dsAddress) 
-			: dsAddress(dsAddress), suppressed(false) {}
+			: dsAddress(dsAddress), suppressed(false) 
+		{
+			boundingBoxColour[0] = boundingBoxColour[1] = boundingBoxColour[2] = 1;
+		}
 
 		virtual ~ViewableObject() {}
 
@@ -78,6 +84,7 @@ namespace Algovis_Viewer
 		// Post-Condition: (xPos, yPos) = top left of new bounding box
 		virtual void SetBoundingBox(sf::FloatRect);
 		
+		virtual void SetBoundingBoxColour(float,float,float);
 		
 		const void* GetDSAddress() { return dsAddress; }
 		
