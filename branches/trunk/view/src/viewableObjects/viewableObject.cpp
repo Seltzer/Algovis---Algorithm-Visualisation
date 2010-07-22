@@ -7,15 +7,13 @@
 namespace Algovis_Viewer
 {
 	
-	
-
-void ViewableObject::SetPosition(float x, float y)
+ViewableObject::ViewableObject(const void* dsAddress) 
+	: dsAddress(dsAddress), suppressed(false) 
 {
-	xPos = x; yPos = y;
-	boundingBox.Offset(x - boundingBox.Left, y - boundingBox.Top);
-
-	PrepareToBeDrawn();
+	boundingBoxColour[0] = boundingBoxColour[1] = boundingBoxColour[2] = 1;
 }
+
+
 
 sf::FloatRect ViewableObject::GetPreferredSize() 
 { 
@@ -30,8 +28,6 @@ sf::FloatRect ViewableObject::GetBoundingBox()
 void ViewableObject::SetBoundingBox(sf::FloatRect newBB)
 {
 	boundingBox = newBB;
-	xPos = boundingBox.Left;
-	yPos = boundingBox.Top;
 	
 	PrepareToBeDrawn();
 }

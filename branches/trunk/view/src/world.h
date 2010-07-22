@@ -3,8 +3,6 @@
 
 
 
-
-
 #include <vector>
 #include <map>
 #include "SFML/Window.hpp"
@@ -13,8 +11,6 @@
 
 
 /* World class which comprises all Viewable objects and their states at various points in time
- *
- *
  */
 namespace Algovis_Viewer
 {
@@ -31,17 +27,11 @@ namespace Algovis_Viewer
 
 		// Mappings from data source types to viewable objects
 		std::map<const void*,VO_Array*> registeredArrays;
-		typedef std::map<const void*,VO_Array*> ArrayMap;
 		std::map<const void*,VO_SinglePrintable*> registeredSinglePrintables;
-		typedef std::map<const void*,VO_SinglePrintable*> SPMap;
 
 	public:
-		World(unsigned worldCount) : worldCount(worldCount) {}
+		World() : worldCount(worldCount) {}
 		~World();
-
-		// This is a hack!!!!!!!!!!!!!11111
-		void DrawEverything(sf::RenderWindow& renderWindow, sf::Font& font);
-
 
 		// Returns true if a data source object is registered (and hence has a ViewableObject equivalent)
 		bool IsRegistered(const void* dsAddress) const;
@@ -67,7 +57,6 @@ namespace Algovis_Viewer
 			ViewableObject* viewRepresentation = GetRepresentation(dsAddress);
 			UL_ASSERT(viewRepresentation);
 
-
 			T* viewRepresentationCast = static_cast<T*>(viewRepresentation);
 			UL_ASSERT(viewRepresentationCast);
 
@@ -89,7 +78,7 @@ namespace Algovis_Viewer
 
 		// Unimplemented
 		void RegisterLinkedList(const void* dsLLAddress, ViewableObjectType elementType, std::vector<void*> elements) {}
-		//! For registering a user-defined/misc type we don't know how to draw. Unimplemented
+		// For registering a user-defined/misc type we don't know how to draw. Unimplemented
 		void RegisterUDT(const void* dsUDTAddress, const std::string& name) {}
 		
 		// Returns true if the DS object was successfully deregistered and its ViewableObject equivalent deleted
@@ -104,7 +93,10 @@ namespace Algovis_Viewer
 		void AddElementToArray(const void* dsArray, void* dsElement, unsigned position);
 
 		/* Currently this involves keeping the two ViewableObject elements in their same location
-		 * and simply swapping their values. TODO write preconds
+		 * and simply swapping their values. 
+		 *
+		 * Pre-Conditions:
+		 *		- 0 < firstElementIndex < secondElementIndex <= array size
 		 */ 
 		void SwapElementsInArray(const void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex);
 

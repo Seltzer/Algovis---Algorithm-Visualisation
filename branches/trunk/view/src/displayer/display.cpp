@@ -23,6 +23,23 @@ sf::Mutex Displayer::creationMutex;
 bool Displayer::drawingEnabled(true);
 
 
+
+Displayer::Displayer()
+	: defaultFontInitialised(false), refreshRate(60)
+{
+	closed = false;
+	renderThread = new sf::Thread(&RenderThread, this);
+	renderThread->Launch();
+}
+
+
+Displayer::~Displayer()
+{
+	closed = true;
+	delete renderThread;
+}
+
+
 Displayer* Displayer::GetInstance()
 {
 	sf::Lock lock(creationMutex);
@@ -43,7 +60,10 @@ void Displayer::InitWindow()
 	win->PreserveOpenGLStates(true);
 	defaultFont.LoadFromFile("consola.ttf");
 	defaultFontInitialised = true;
-	prt("Default font initialised");
+
+	#ifdef DEBUG_VERBOSE
+		prt("Default font initialised");
+	#endif
 }
 
 
@@ -59,7 +79,9 @@ void Displayer::RenderLoop()
 			// window resized
 			if (Event.Type == sf::Event::Resized)
 			{
-				prt("window resized");
+				#ifdef DEBUG_VERBOSE
+					prt("window resized");
+				#endif
 				int width = Event.Size.Width;
 				int height = Event.Size.Height;
 				win->SetView(sf::View(sf::FloatRect(0, 0, (float) width, (float) height)));
@@ -69,7 +91,9 @@ void Displayer::RenderLoop()
 	        // Window closed
 	        if (Event.Type == sf::Event::Closed)
 			{
-				prt("window closed via x")
+				#ifdef DEBUG_VERBOSE
+					prt("window closed via x")
+				#endif
 				win->Close();
 			}
 	            
@@ -77,7 +101,9 @@ void Displayer::RenderLoop()
 	        // Escape key pressed
 	        if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
 			{
-				prt("window closed via ESC key")
+				#ifdef DEBUG_VERBOSE
+					prt("window closed via ESC key")
+				#endif
 				win->Close();
 			}
 	            
@@ -101,7 +127,7 @@ void Displayer::RenderLoop()
 
 		win->Display();
 
-		sf::Sleep(1.0f / 60);
+		sf::Sleep(1.0f / refreshRate);
 	}
 }
 
@@ -111,6 +137,21 @@ void Displayer::RenderThread(void* dispPtr)
 }
 
 
+
+
+
+sf::Font& Displayer::GetDefaultFont()
+{ 
+	while (!defaultFontInitialised);
+
+	return defaultFont; 
+}
+
+void Displayer::SetRefreshRate(unsigned refreshRate)
+{
+	this->refreshRate = refreshRate;
+}
+
 void Displayer::AddToDrawingList(ViewableObject* newObject)
 {
 	sf::Lock lock(objectsMutex);
@@ -118,7 +159,7 @@ void Displayer::AddToDrawingList(ViewableObject* newObject)
 	// TODO remove hack
 	UL_ASSERT(newObject->GetType() == ARRAY);
 
-	newObject->SetPosition(50,50);
+	newObject->SetBoundingBox(sf::FloatRect(50,50,0,0));
 	newObject->PrepareToBeDrawn();
 
 	objectsToDraw.insert(newObject);
@@ -129,16 +170,5 @@ void Displayer::RemoveFromDrawingList(ViewableObject* objectToRemove)
 	sf::Lock lock(objectsMutex);
 	objectsToDraw.erase(objectToRemove);
 }
-
-
-sf::Font& Displayer::GetDefaultFont()
-{ 
-	// TODO - get rid of this busy wait which runs until the renderThread has initialised the default font
-	while (!defaultFontInitialised);
-
-	return defaultFont; 
-}
-
-
 
 }

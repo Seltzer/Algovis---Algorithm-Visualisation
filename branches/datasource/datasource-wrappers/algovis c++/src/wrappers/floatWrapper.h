@@ -1,9 +1,9 @@
-#ifndef DOUBLE_WRAPPER_H_
-#define DOUBLE_WRAPPER_H_
+#ifndef FLOAT_WRAPPER_H_
+#define FLOAT_WRAPPER_H_
 
 #include <iostream>
 #include <sstream>
-#include "primitiveWrapper.h"
+#include "wrapper.h"
 #include "intWrapper.h"
 
 
@@ -14,16 +14,17 @@ namespace Algovis
 
 	class FloatWrapper : public PrimitiveWrapper<FloatWrapper, float>
 	{
-		public:
-			typedef float WrappedType;
+		
+	public:
+		typedef float WrappedType;
 
-			FloatWrapper() : PrimitiveWrapper() {};
+		FloatWrapper(){};
 
-			FloatWrapper(float value) 
-				: PrimitiveWrapper(value) {}
+		FloatWrapper(float value) 
+			: PrimitiveWrapper(value) {}
 
-			FloatWrapper(IntWrapper intValue)
-				: PrimitiveWrapper((float) intValue.AVGetValue()) {}
+		FloatWrapper(IntWrapper intValue)
+			: PrimitiveWrapper(intValue.AVGetValue()) {}
 
 	};
 

@@ -5,8 +5,6 @@
 #include <iostream>
 #include <iterator>
 
-// TODO temporary
-#include <sstream>
 
 
 
@@ -44,8 +42,11 @@ public:
 	VectorWrapper<T, Alloc>()
 		: value() 
 	{
-		Algovis_Viewer::Registry* reg = Algovis_Viewer::Registry::GetInstance();
-		reg->RegisterArray(this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
+		if (drawingEnabled)
+		{
+			Algovis_Viewer::Registry* reg = Algovis_Viewer::Registry::GetInstance();
+			reg->RegisterArray(this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
+		}
 	};
 
 	explicit VectorWrapper<T, Alloc>(const allocator_type& a)
@@ -60,7 +61,6 @@ public:
 	VectorWrapper<T,Alloc>& operator= (const VectorWrapper<T,Alloc>& rhs)
 	{
 		value = rhs.value;
-		
 		return *this;
 	}
 
@@ -109,38 +109,34 @@ public:
 	inline reference front() { return value.front(); };
 	inline reference back() { return value.back(); };
 
-	// For now, T must be printable
 	inline void push_back (const T& x) 
 	{ 
 		value.push_back(x);
 
-		std::stringstream ss;
-		ss << x;
-		void* xAddress = &value[value.size()-1];
+		if (drawingEnabled)
+		{
+			void* xAddress = &value[value.size()-1];
+			Algovis_Viewer::Registry::GetInstance()->AddElementToArray(this, xAddress, value.size() - 1);
+		}
 
-		Algovis_Viewer::Registry* reg = Algovis_Viewer::Registry::GetInstance();
-		reg->AddElementToArray(this, xAddress, value.size() - 1);
 	}
-	inline void pop_back () { Display(*this); value.pop_back(); };
+	inline void pop_back () { value.pop_back(); };
 
 	inline iterator insert (iterator position, const T& x)
 	{
 		iterator ret = value.insert(position, x);
-		Display(*this);
 		return ret;
 	}	
 
 	inline void insert (iterator position, size_type n, const T& x)
 	{
 		value.insert(position, n, x);
-		Display(*this);
 	}
 
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last)
 	{
 		value.insert<InputIterator>(position, first, last);
-		Display(*this);
 	}
 
 	void swap (VectorWrapper<T,Alloc>& vector) { value.swap(vector.AVGetValue()); }

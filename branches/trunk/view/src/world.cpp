@@ -16,6 +16,9 @@ namespace Algovis_Viewer
 
 World::~World()
 {
+	typedef std::map<const void*,VO_Array*> ArrayMap;
+	typedef std::map<const void*,VO_SinglePrintable*> SPMap;
+
 	// Delete arrays first, as their destruction currently relies on their child elements 
 	// being alive (since they deregister themselves from their elements as observers
 	BOOST_FOREACH(ArrayMap::value_type arrayPair, registeredArrays)
@@ -25,11 +28,6 @@ World::~World()
 		delete spPair.second;
 }
 
-void World::DrawEverything(sf::RenderWindow& renderWindow, sf::Font& font)
-{
-	BOOST_FOREACH(ArrayMap::value_type arrayPair, registeredArrays)
-		arrayPair.second->Draw(renderWindow, font);
-}
 
 
 bool World::IsRegistered(const void* dsAddress) const
@@ -76,14 +74,12 @@ VO_Array* World::RegisterArray
 	vector<ViewableObject*> arrayElements;
 
 	// Iterate over elements, verify that they are all registered and populate arrayElements
-	for (vector<void*>::const_iterator it = elements.begin(); it < elements.end(); it++)
+	BOOST_FOREACH(void* dsElement, elements)
 	{
-		void* dsElementAddress = *it;
-		
 		// TODO: change behaviour when above registration condition is violated (i.e. throw exception)
-		UL_ASSERT(IsRegistered(dsElementAddress));
+		UL_ASSERT(IsRegistered(dsElement));
 					
-		arrayElements.push_back(GetRepresentation(dsElementAddress));
+		arrayElements.push_back(GetRepresentation(dsElement));
 	}
 
 	// Assuming VO_SinglePrintable elements - TODO change this

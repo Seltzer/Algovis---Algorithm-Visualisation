@@ -54,11 +54,9 @@ namespace Algovis_Viewer
 			(const void* dsAddress, ViewableObjectType elementType, const std::vector<ViewableObject*>& elements)
 				: ViewableObject(dsAddress), elementType(elementType)
 	{
-		for (std::vector<ViewableObject*>::const_iterator it = elements.begin(); it < elements.end(); it++)
+		BOOST_FOREACH(ViewableObject* element, elements)
 		{
-			ViewableObject* element = *it;
-
-			this->elements.push_back(element);
+			this->elements.push_back(element);	
 			elements[elements.size() - 1]->AddObserver(this);
 		}
 	}
@@ -68,9 +66,8 @@ namespace Algovis_Viewer
 	{
 		Registry* registry = Registry::GetInstance();
 
-		for (vector<ViewableObject*>::iterator it = elements.begin(); it < elements.end(); it++)
+		BOOST_FOREACH(ViewableObject* element, elements)
 		{
-			ViewableObject* element = *it;
 			element->RemoveObserver(this);
 			registry->DeregisterObject(element);
 		}
@@ -112,8 +109,8 @@ namespace Algovis_Viewer
 	{
 		static float xGap = 1, yGap = 5;
 	
-		float x = xPos;
-		float y = yPos;
+		float x = boundingBox.Left;
+		float y = boundingBox.Top;
 
 		// Address stuff
 		std::string addressString(util::ToString<const void*>(dsAddress).append(":"));

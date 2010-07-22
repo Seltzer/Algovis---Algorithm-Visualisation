@@ -40,12 +40,7 @@ namespace Algovis_Viewer
 		std::string value;
 		sf::String graphicalText;
 
-
-		// Horrible horrible hack - TODO remove
-		float r,g,b;
-		unsigned counter;
-
-
+	
 		// TODO: Keep track of data structure?
 
 

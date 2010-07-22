@@ -25,6 +25,8 @@
 
 namespace Algovis_Viewer
 {
+	#define DEBUG_VERBOSE
+
 	#pragma warning(push)	
 	#pragma warning(disable:4251)	// Annoying warning about exporting private members
 

@@ -35,7 +35,7 @@ std::string indent(short tabs);
 
 
 template<class T>
-std::string ToString(T value)
+std::string ToString(const T& value) 
 {
 	std::stringstream ss;
 	ss << value;

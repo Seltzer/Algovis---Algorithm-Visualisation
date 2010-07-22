@@ -10,19 +10,19 @@
 #include "wrappers/vectorWrapper.h"
 
 #include "operatorOverloads.h"
-
+#include "wrapperWorkarounds.h"
 
 
 #define int Algovis::IntWrapper
 //#define unsigned
-//#define double Algovis::DoubleWrapper
 #define float Algovis::FloatWrapper
+//#define double Algovis::DoubleWrapper
 #define vector Algovis::VectorWrapper
 
-// stub TODO
-void EnableDrawing(bool enabled)
-{
-}
+
+#include "userFunctions.h"
+
+
 
 
 

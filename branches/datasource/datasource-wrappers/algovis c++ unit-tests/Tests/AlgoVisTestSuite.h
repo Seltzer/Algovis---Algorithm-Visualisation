@@ -16,11 +16,10 @@ class AlgoVisTestSuite : public CxxTest::TestSuite
 	public:
 		virtual void setUp() 
 		{ 
-			intValue = new int(3);
-			floatValue = new float(3.00f);
-
 			EnableDrawing(false);
 
+			intValue = new int(3);
+			floatValue = new float(3.00f);
 		}
         
 		virtual void tearDown() 

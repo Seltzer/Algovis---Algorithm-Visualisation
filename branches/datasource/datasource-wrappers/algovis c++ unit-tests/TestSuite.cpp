@@ -14,34 +14,34 @@
 int main() {
  return CxxTest::ErrorPrinter().run();
 }
-#include "d:/Programming/Project4/branches/datasource/datasource-wrappers/algovis c++ unit-tests//Tests/AlgoVisTestSuite.h"
+#include "d:/Project/branches/datasource/datasource-wrappers/algovis c++ unit-tests//Tests/AlgoVisTestSuite.h"
 
 static AlgoVisTestSuite suite_AlgoVisTestSuite;
 
 static CxxTest::List Tests_AlgoVisTestSuite = { 0, 0 };
-CxxTest::StaticSuiteDescription suiteDescription_AlgoVisTestSuite( "d:/Programming/Project4/branches/datasource/datasource-wrappers/algovis c++ unit-tests//Tests/AlgoVisTestSuite.h", 9, "AlgoVisTestSuite", suite_AlgoVisTestSuite, Tests_AlgoVisTestSuite );
+CxxTest::StaticSuiteDescription suiteDescription_AlgoVisTestSuite( "d:/Project/branches/datasource/datasource-wrappers/algovis c++ unit-tests//Tests/AlgoVisTestSuite.h", 9, "AlgoVisTestSuite", suite_AlgoVisTestSuite, Tests_AlgoVisTestSuite );
 
 static class TestDescription_AlgoVisTestSuite_testIntWrapper : public CxxTest::RealTestDescription {
 public:
- TestDescription_AlgoVisTestSuite_testIntWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 32, "testIntWrapper" ) {}
+ TestDescription_AlgoVisTestSuite_testIntWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 31, "testIntWrapper" ) {}
  void runTest() { suite_AlgoVisTestSuite.testIntWrapper(); }
 } testDescription_AlgoVisTestSuite_testIntWrapper;
 
 static class TestDescription_AlgoVisTestSuite_testVectorBasics : public CxxTest::RealTestDescription {
 public:
- TestDescription_AlgoVisTestSuite_testVectorBasics() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 116, "testVectorBasics" ) {}
+ TestDescription_AlgoVisTestSuite_testVectorBasics() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 115, "testVectorBasics" ) {}
  void runTest() { suite_AlgoVisTestSuite.testVectorBasics(); }
 } testDescription_AlgoVisTestSuite_testVectorBasics;
 
 static class TestDescription_AlgoVisTestSuite_testAdvancedVector : public CxxTest::RealTestDescription {
 public:
- TestDescription_AlgoVisTestSuite_testAdvancedVector() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 160, "testAdvancedVector" ) {}
+ TestDescription_AlgoVisTestSuite_testAdvancedVector() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 159, "testAdvancedVector" ) {}
  void runTest() { suite_AlgoVisTestSuite.testAdvancedVector(); }
 } testDescription_AlgoVisTestSuite_testAdvancedVector;
 
 static class TestDescription_AlgoVisTestSuite_testFloatWrapper : public CxxTest::RealTestDescription {
 public:
- TestDescription_AlgoVisTestSuite_testFloatWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 198, "testFloatWrapper" ) {}
+ TestDescription_AlgoVisTestSuite_testFloatWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 197, "testFloatWrapper" ) {}
  void runTest() { suite_AlgoVisTestSuite.testFloatWrapper(); }
 } testDescription_AlgoVisTestSuite_testFloatWrapper;
 

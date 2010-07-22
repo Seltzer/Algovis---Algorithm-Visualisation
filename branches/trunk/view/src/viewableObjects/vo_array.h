@@ -39,6 +39,7 @@ namespace Algovis_Viewer
 
 		void AddElement(ViewableObject* element, unsigned position);
 
+		// Not currently implemented by any DS
 		void SwapElements(unsigned firstElement, unsigned secondElement);
 
 		// Used as an event-handler for elements being updated

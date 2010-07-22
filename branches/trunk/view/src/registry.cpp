@@ -7,8 +7,6 @@
 #include "viewableObjects/vo_array.h"
 #include "viewableObjects/vo_singlePrintable.h"
 
-
-
 using namespace std;
 
 
@@ -17,12 +15,8 @@ using namespace std;
 namespace Algovis_Viewer
 {
 
-
-
 	
 Registry* Registry::instance(NULL);
-
-
 
 
 ///////////////////////// Private methods
@@ -105,6 +99,10 @@ void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, con
 {
 	VO_SinglePrintable* newSP = currentWorld->RegisterSinglePrintable(dsSinglePrintableAddress, value);
 	++worldCount;
+
+	#ifdef DEBUG_VERBOSE
+		prt("registered")
+	#endif
 
 	// For now, arrays draw their child elements, and elements outside arrays don't get drawn
 	// TODO: Remove this hack

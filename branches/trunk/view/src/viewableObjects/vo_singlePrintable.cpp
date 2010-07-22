@@ -17,7 +17,7 @@ void VO_SinglePrintable::PrepareToBeDrawn()
 {
 	graphicalText = sf::String(value.c_str(), Displayer::GetInstance()->GetDefaultFont());
 	graphicalText.SetColor(sf::Color(255,255,255));
-	graphicalText.SetPosition(xPos, yPos);
+	graphicalText.SetPosition(boundingBox.Left, boundingBox.Top);
 }
 
 
