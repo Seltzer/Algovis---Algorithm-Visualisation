@@ -13,6 +13,8 @@ extern bool drawingEnabled;
 void EnableDrawing(bool enabled);
 
 
+void TestMethod();
+
 
 
 

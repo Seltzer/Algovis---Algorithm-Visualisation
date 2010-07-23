@@ -2,6 +2,7 @@
 #define UI_ACTION_H_
 
 
+#include "../action.h"
 
 namespace Algovis_Viewer
 {
@@ -9,28 +10,28 @@ namespace Algovis_Viewer
 	enum UI_ActionType { MoveVO, SuppressVO, ShowVO };
 
 
-	class UI_Action
+	class UI_Action : public Action
 	{
 
 	private:
 		UI_ActionType actionType;
-		unsigned worldCount, uiActionCount;
-
-		// Unused at the moment; do not dereference lest you die!
-		World* world; 
-
 
 	public:
-		/* type: Until we implement action-specific subclasses
-		 * worldCount: Registry::worldCount at time of action creation
-		 * uiActionCount: Registry::uiActionCount for this action
-		 * world: Unused at the moment as we only hold one world instance at a time
-		 */
-		UI_Action(UI_ActionType actionType, unsigned worldCount, unsigned uiActionCount, World* world = NULL)
-			: actionType(actionType), worldCount(worldCount), uiActionCount(uiActionCount), world(world)
+
+		UI_Action(UI_ActionType actionType, World* world)
+			: Action(world)
 		{
 		}
 
+		UI_Action(const UI_Action& other)
+			: Action(other), actionType(other.actionType)
+		{
+		}
+
+		virtual Action* Clone() const
+		{
+			return new UI_Action(static_cast<const UI_Action&>(*this));
+		}
 
 
 	};

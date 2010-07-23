@@ -7,6 +7,9 @@
 #include "viewableObjects/vo_array.h"
 #include "viewableObjects/vo_singlePrintable.h"
 
+//temp - TODO: remove
+#include "displayer/uiAction.h"
+
 using namespace std;
 
 
@@ -22,24 +25,14 @@ Registry* Registry::instance(NULL);
 ///////////////////////// Private methods
 
 Registry::Registry()
-	: worldCount(0), uiActionCount(0)
 { 
-	currentWorld = new World(worldCount);
+	currentWorld = new World();
+	Displayer::GetInstance()->SetWorld(currentWorld);
 }
 
 Registry::~Registry()
 {
 	delete currentWorld;	
-
-	map<unsigned, vector<UI_Action*> >::iterator it;
-	
-	for(it = worldUIActionMapping.begin(); it != worldUIActionMapping.end(); it++)
-	{
-		vector<UI_Action*> uiActions = (*it).second;
-
-		BOOST_FOREACH(UI_Action* action, uiActions)
-			delete action;
-	}
 }
 
 
@@ -47,12 +40,6 @@ Registry::~Registry()
 ///////////////////////// Public dll export methods
 
 
-void Registry::PerformUserAction(UI_ActionType actionType)
-{
-	UI_Action newAction(actionType, worldCount, ++uiActionCount);
-	
-	worldUIActionMapping[worldCount, uiActionCount];
-}
 
 
 Registry* Registry::GetInstance() 
@@ -88,7 +75,6 @@ void Registry::RegisterArray
 		(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
 {
 	VO_Array* newArray = currentWorld->RegisterArray(dsArrayAddress, elementType, elements);
-	++worldCount;	
 
 	Displayer::GetInstance()->AddToDrawingList(newArray);
 }
@@ -98,8 +84,7 @@ void Registry::RegisterArray
 void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, const std::string& value)
 {
 	VO_SinglePrintable* newSP = currentWorld->RegisterSinglePrintable(dsSinglePrintableAddress, value);
-	++worldCount;
-
+	
 	#ifdef DEBUG_VERBOSE
 		prt("registered")
 	#endif
@@ -117,32 +102,30 @@ bool Registry::DeregisterObject(const void* dsAddress)
 
 	Displayer::GetInstance()->RemoveFromDrawingList(voToBeDeleted);
 
-	++worldCount;
-
 	return currentWorld->DeregisterObject(dsAddress);
 }
 
 void Registry::AddElementToArray(const void* dsArray, void* dsElement, unsigned position)
 {
 	currentWorld->AddElementToArray(dsArray, dsElement, position);
-	++worldCount;
 }
 
 void Registry::SwapElementsInArray(const void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex)
 {
 	currentWorld->SwapElementsInArray(dsArray, firstElementIndex, secondElementIndex);
-	++worldCount;
 }
 
 
 /*void Registry::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue)
 {
+	// acquire lock
 	currentWorld->UpdateSinglePrintable(dsSinglePrintableAddress, newValue);
-	++worldCount;
 }*/
 
 void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, const std::string& newValue)
 {
+	currentWorld->AcquireExclusiveLock();
+
 	UL_ASSERT(IsRegistered(dsAssigned, SINGLE_PRINTABLE));
 
 	VO_SinglePrintable* sp = currentWorld->GetRepresentation<VO_SinglePrintable>(dsAssigned);
@@ -156,11 +139,15 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 	}
 	else
 		sp->AssignedUntracked(dsSource, newValue);
+
+	currentWorld->ReleaseExclusiveLock();
 }
 
 // TODO: This is really similar to above
 void Registry::PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue)
 {
+	currentWorld->AcquireExclusiveLock();
+
 	UL_ASSERT(IsRegistered(dsModified, SINGLE_PRINTABLE));
 
 	VO_SinglePrintable* sp = currentWorld->GetRepresentation<VO_SinglePrintable>(dsModified);
@@ -174,6 +161,15 @@ void Registry::PrintableModified(const void* dsModified, const void* dsSource, c
 	}
 	else
 		sp->ModifiedUntracked(dsSource, newValue);
+
+	currentWorld->ReleaseExclusiveLock();
+}
+
+
+void Registry::TestMethod()
+{
+	UI_Action testAction(MoveVO, currentWorld);
+	currentWorld->PerformDSAction((Action*)&testAction);
 }
 
 

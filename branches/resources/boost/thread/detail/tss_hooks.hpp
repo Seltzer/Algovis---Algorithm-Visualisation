@@ -7,7 +7,6 @@
 #define BOOST_TLS_HOOKS_HPP
 
 #include <boost/thread/detail/config.hpp>
-
 #include <boost/config/abi_prefix.hpp>
 
 #if defined(BOOST_HAS_WINTHREADS)

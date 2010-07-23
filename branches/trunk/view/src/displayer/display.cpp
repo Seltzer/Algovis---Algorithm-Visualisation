@@ -1,15 +1,17 @@
 #include "display.h"
 
 #include <map>
-#include "boost/foreach.hpp"
 #include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
+#include "boost/foreach.hpp"
+#include "boost/thread/shared_mutex.hpp"
+#include "boost/thread/condition_variable.hpp"
 #include "utilities.h"
+
 #include "../../include/registry.h"
+#include "../world.h"
 #include "../viewableObjects/viewableObject.h"
-
-
-
+#include "../action.h"
 
 
 
@@ -25,7 +27,8 @@ bool Displayer::drawingEnabled(true);
 
 
 Displayer::Displayer()
-	: defaultFontInitialised(false), refreshRate(60)
+	: worldToBeDisplayed(NULL), actionToBePerformed(NULL), actionPending(false),
+		defaultFontInitialised(false), refreshRate(60), displayerHasExclusiveLock(false)
 {
 	closed = false;
 	renderThread = new sf::Thread(&RenderThread, this);
@@ -43,7 +46,7 @@ Displayer::~Displayer()
 Displayer* Displayer::GetInstance()
 {
 	sf::Lock lock(creationMutex);
-
+	
 	if (!Displayer::displayerInstance)
 		Displayer::displayerInstance = new Displayer();
 
@@ -55,6 +58,7 @@ Displayer* Displayer::GetInstance()
 void Displayer::InitWindow()
 {
 	win = new sf::RenderWindow(sf::VideoMode(800, 600, 32), "Algovis");
+	win->SetPosition(400,500);
 	win->SetActive(true);
 	glViewport(0, 0, win->GetWidth(), win->GetHeight());
 	win->PreserveOpenGLStates(true);
@@ -118,11 +122,51 @@ void Displayer::RenderLoop()
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+
+		if (actionPending)
 		{
-			// Draw ViewableObjects
-			sf::Lock lock(objectsMutex);
+			// There must be a better way to ensure this thread's attempt to reacquire a lock it already has
+			// doesn't kill stuff. Look into boost recursive locks
+			if (!displayerHasExclusiveLock)
+			{
+				worldToBeDisplayed->AcquireExclusiveLock();
+				displayerHasExclusiveLock = true;
+			}
+							
+			
+			// Start performing animation for pending update (a new action)
+
+			// Hacky mock animation which rotates stuff
+			glRotatef(((float) duration / 60) * 360, 0, 0, 1);
+
+			sf::Lock lock2(objectsMutex);
 			BOOST_FOREACH(ViewableObject* obj, objectsToDraw)
 				obj->Draw(*win, defaultFont);
+
+			// Hacky mock animation has finished
+			if (++duration == 60)
+			{
+				delete actionToBePerformed;
+				actionToBePerformed = NULL;
+				actionPending = false;
+				worldToBeDisplayed->ReleaseExclusiveLock();
+				displayerHasExclusiveLock = false;
+				worldToBeDisplayed->CompletedDSAction();
+			}
+
+			
+		}
+		else
+		{
+			worldToBeDisplayed->AcquireReaderLock();
+			
+			// TODO: Make sure this cannot result in deadlock
+			// Draw ViewableObjects
+			sf::Lock lock2(objectsMutex);
+			BOOST_FOREACH(ViewableObject* obj, objectsToDraw)
+				obj->Draw(*win, defaultFont);
+
+			worldToBeDisplayed->ReleaseReaderLock();
 		}
 
 		win->Display();
@@ -152,10 +196,23 @@ void Displayer::SetRefreshRate(unsigned refreshRate)
 	this->refreshRate = refreshRate;
 }
 
+
+void Displayer::SetWorld(World* newWorld)
+{
+	// Clean up old world
+	this->worldToBeDisplayed = newWorld;
+	
+	// Query world for its VOs - TODO: we might want to draw VOs other than arrays
+	BOOST_FOREACH(VO_Array* vo, worldToBeDisplayed->GetRegisteredArrays())
+		AddToDrawingList((ViewableObject*)vo);
+}
+
 void Displayer::AddToDrawingList(ViewableObject* newObject)
 {
 	sf::Lock lock(objectsMutex);
-		
+	
+	UL_ASSERT(worldToBeDisplayed);
+
 	// TODO remove hack
 	UL_ASSERT(newObject->GetType() == ARRAY);
 
@@ -168,7 +225,22 @@ void Displayer::AddToDrawingList(ViewableObject* newObject)
 void Displayer::RemoveFromDrawingList(ViewableObject* objectToRemove)
 {
 	sf::Lock lock(objectsMutex);
+
+	UL_ASSERT(worldToBeDisplayed);
 	objectsToDraw.erase(objectToRemove);
 }
+
+
+void Displayer::PerformAndAnimateActionAsync(Action* newAction)
+{
+	UL_ASSERT(actionToBePerformed == NULL);
+
+	// ignore - for testing purposes
+	duration = 0;
+
+	actionToBePerformed = newAction->Clone();
+	actionPending = true;
+}
+
 
 }

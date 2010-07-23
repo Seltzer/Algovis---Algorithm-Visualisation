@@ -8,6 +8,8 @@
 	#define DECLSPEC __declspec(dllexport)	
 #endif
 
+#define INVALID -1
+
 
 namespace Algovis_Viewer
 {

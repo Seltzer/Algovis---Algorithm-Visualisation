@@ -192,6 +192,14 @@
 			Name="src"
 			>
 			<File
+				RelativePath=".\src\action.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\action.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\main.cpp"
 				>
 			</File>

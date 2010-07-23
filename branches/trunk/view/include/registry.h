@@ -18,7 +18,7 @@
 #include "utilities.h"
 #include "common.h"
 #include "../src/world.h"
-#include "../src/displayer/uiAction.h"
+
 
 
 
@@ -42,16 +42,7 @@ namespace Algovis_Viewer
 
 	private:
 
-		/* Currently we only maintain one world to which we make continual changes - worldCount
-		 * reflects the number of worlds which have existed (currently: number of changes to one world).
-		 *
-		 * uiActionCount is the total number of UI actions and worldUIActionMapping maintains a history
-		 * of the number and ordering of UI actions for each world.
-		 */
 		World* currentWorld;
-		unsigned worldCount, uiActionCount;
-		std::map<unsigned, std::vector<UI_Action*> > worldUIActionMapping;
-	
 	
 		// Members related to non-copyable singleton behaviour
 		static Registry* instance;
@@ -64,10 +55,6 @@ namespace Algovis_Viewer
 		// Singleton methods
 		static Registry* GetInstance();
 		static void DestroyInstance();
-
-		// Unimplemented stub currently used for testing
-		void PerformUserAction(UI_ActionType actionType);
-
 
 		// Returns true if a data source object is registered (and hence has a ViewableObject equivalent)
 		bool IsRegistered(const void* dsAddress) const;
@@ -114,6 +101,9 @@ namespace Algovis_Viewer
 		// not be needed (can just get all the values when we actually draw)
 		void PrintableAssigned(const void* dsAssigned, const void* dsSource, const std::string& newValue);
 		void PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue);
+
+		// Used to test out anything imaginable - declared here so that it can be called by the DLL user
+		void TestMethod();
 	};
 	#pragma warning( pop ) 
 }

@@ -1,6 +1,6 @@
 FUNCTIONALITY:
 * Account for array capacity when drawing arrays
-* History of dataflow
+* Integrate dsAction and write dsAction subclasses
 * Other types of view object types (see ViewableObjectsType defined in common.h for other types)
 * MACROS for pausing/resuming drawing 
 		i.e. user pauses, performs 3 DS actions, resumes and results of all 3 actions appear in one world transition
@@ -15,7 +15,13 @@ FUNCTIONALITY:
   We may want to visually indicate array reads as well, for some algorithms
 		
 		
+		
 DESIGN/ADMIN/CODING:
 * Implement a Linux version of our view which isn't a Windows DLL
 * Perhaps we should start using smart pointers. We have to be very careful when it comes to destroying
 ViewableObjects as the Registry, World and Displayer objects all maintain raw pointers to them
+
+
+BUGS/MISC:
+* Make this start-up and shutdown gracefully with guarantee
+* Figure out what's up with the glut of SP registrations after vector sorting finishes

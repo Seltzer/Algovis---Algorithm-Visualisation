@@ -1,4 +1,5 @@
 #include <sstream>
+#define BOOST_ALL_NO_LIB
 #include "boost/foreach.hpp"
 #include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"

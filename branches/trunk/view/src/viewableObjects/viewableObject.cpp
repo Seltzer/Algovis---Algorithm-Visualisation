@@ -1,3 +1,4 @@
+#define BOOST_ALL_NO_LIB
 #include "boost/foreach.hpp"
 #include "utilities.h"
 #include "viewableObject.h"

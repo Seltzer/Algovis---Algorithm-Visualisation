@@ -1,4 +1,3 @@
-// Standard Library includes
 #include <iostream>
 #include <vector>
 #include <string>
@@ -7,29 +6,20 @@
 //Algovis C++ include
 #include "conversions.h"
 
-using namespace std;
+#include "arrayAlgorithms.h"
 
+using namespace std;
 
 
 REAL_INT wmain()
 {
 	EnableDrawing(true);
 
+
 	// Populate
 	vector<int> collectionToModify;
 	collectionToModify.reserve(20);
-
-
-	//int j = 1 + 2;
-	//int k = j + j + j + j + j + j;
-
-
-	
-	for (int i = 0; i < 9; i = i + 1)
-	{
-		collectionToModify.push_back(util::generateRandomNumber(0,9));
-		vector<int>::iterator endIt = collectionToModify.end() - 1;
-	}
+	PopulateVectorWithRandomInts(collectionToModify);
 
 
 
@@ -44,37 +34,21 @@ REAL_INT wmain()
 		util::PlatformSleep(0.5);
 	}
 
+	// More testing
+	prt("\nWaiting for keypress before performing mock animation:");
+	getchar();
+	TestMethod();
+	
 
+
+	// Sorting
 	prt("Waiting for keypress before sorting:")
 	getchar();
+	Vector_BubbleSortAscending(collectionToModify);
 
-
-	// Sort
-	bool sortOccurred;
-
-	do
-	{
-		sortOccurred = false;
-
-		for (int i = 0; i < 8; i = i + 1)
-		{
-			if (collectionToModify[i] > collectionToModify[i+1])
-			{
-				int temp = collectionToModify[i];
-				collectionToModify[i] = collectionToModify[i+1];
-				collectionToModify[i+1] = temp;
-
-				sortOccurred = true;
-				
-				util::PlatformSleep(0.5);
-			}
-		}
-	}
-	while(sortOccurred);
-
-	cout << "Done" << endl;
+	// Finishing
+	prt("Done")
 	getchar();
-
 	// Shutdown displayer gracefully???
 
 

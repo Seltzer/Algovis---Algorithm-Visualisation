@@ -1,3 +1,4 @@
+#define BOOST_ALL_NO_LIB
 #include "boost/foreach.hpp"
 #include "utilities.h"
 #include "world.h"
@@ -28,6 +29,39 @@ World::~World()
 		delete spPair.second;
 }
 
+
+
+bool World::PerformDSAction(Action* dsAction)
+{
+	UL_ASSERT(dsAction);
+	UL_ASSERT(!voUpdatePending)
+	UL_ASSERT(lastActionPerformed == actionsPerformed.size() - 1);
+	
+	voUpdatePending = true;
+	actionsPerformed.push_back(dsAction);
+	
+
+	Displayer::GetInstance()->PerformAndAnimateActionAsync(dsAction);
+	
+
+	return true;
+}
+
+void World::CompletedDSAction()
+{
+	voUpdatePending = false;
+	++lastActionPerformed;
+	voUpdatePendingCondVar.notify_all();
+}
+
+void World::PerformUIAction(UI_ActionType actionType)
+{
+	// TODO update so that this asks the Displayer to perform/animate the action
+	UI_Action* newAction = new UI_Action(actionType, this);
+	actionsPerformed.push_back(newAction);
+	
+	++lastActionPerformed;
+}
 
 
 bool World::IsRegistered(const void* dsAddress) const
@@ -67,6 +101,8 @@ ViewableObject* World::GetRepresentation(const void* dsAddress)
 VO_Array* World::RegisterArray
 		(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
 {
+	AcquireExclusiveLock();
+
 	// Verify that array hasn't already been registered
 	UL_ASSERT(!IsRegistered(dsArrayAddress));
 
@@ -86,25 +122,50 @@ VO_Array* World::RegisterArray
 	VO_Array* newArray = new VO_Array(dsArrayAddress, elementType, arrayElements);
 	
 	registeredArrays[dsArrayAddress] = newArray;
+
+	ReleaseExclusiveLock();
 	return newArray;
 }
 
+
+vector<VO_Array*> World::GetRegisteredArrays()
+{
+	AcquireReaderLock();
+
+	vector<VO_Array*> returnVector;
+
+
+	map<const void*,VO_Array*>::iterator it;
+	for (it = registeredArrays.begin(); it != registeredArrays.end(); it++)
+	{
+		returnVector.push_back((*it).second);
+	}
+	
+	ReleaseReaderLock();
+	return returnVector;
+}
 
 
 VO_SinglePrintable* World::RegisterSinglePrintable
 			(const void* dsSinglePrintableAddress, const std::string& value)
 {
+	AcquireExclusiveLock();
+
 	// Verify that SINGLE_PRINTABLE hasn't already been registered
 	UL_ASSERT(!IsRegistered(dsSinglePrintableAddress));
 
 	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsSinglePrintableAddress, value);
 	registeredSinglePrintables[dsSinglePrintableAddress] = newSP;
+
+	ReleaseExclusiveLock();
 	return newSP;
 }
 
 
 bool World::DeregisterObject(const void* dsAddress)
 {
+	AcquireExclusiveLock();
+
 	if (registeredArrays.count(dsAddress))
 	{
 		VO_Array* voArray = registeredArrays[dsAddress];
@@ -112,6 +173,7 @@ bool World::DeregisterObject(const void* dsAddress)
 
 		registeredArrays.erase(registeredArrays.find(dsAddress));
 
+		ReleaseExclusiveLock();
 		return true;
 	}
 
@@ -122,9 +184,11 @@ bool World::DeregisterObject(const void* dsAddress)
 
 		registeredSinglePrintables.erase(registeredSinglePrintables.find(dsAddress));
 
+		ReleaseExclusiveLock();
 		return true;
 	}
 
+	ReleaseExclusiveLock();
 	return false;
 }
 
@@ -133,6 +197,8 @@ bool World::DeregisterObject(const void* dsAddress)
 
 void World::AddElementToArray(const void* dsArray, void* dsElement, unsigned position)
 {
+	AcquireExclusiveLock();
+
 	UL_ASSERT(IsRegistered(dsArray,ARRAY));
 	UL_ASSERT(IsRegistered(dsElement,SINGLE_PRINTABLE));
 
@@ -142,32 +208,64 @@ void World::AddElementToArray(const void* dsArray, void* dsElement, unsigned pos
 	VO_SinglePrintable* element = GetRepresentation<VO_SinglePrintable>(dsElement);
 
 	arrayAddress->AddElement((ViewableObject*)element, position);
-	
-	
-
+	ReleaseExclusiveLock();
 }
 
 void World::SwapElementsInArray(const void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex)
 {
+	AcquireExclusiveLock();
+
 	UL_ASSERT(IsRegistered(dsArray, ARRAY));
 
 	VO_Array* arrayAddress = GetRepresentation<VO_Array>(dsArray);
 	UL_ASSERT(arrayAddress);
 
 	arrayAddress->SwapElements(firstElementIndex, secondElementIndex);
+
+	ReleaseExclusiveLock();
 }
 
 
 void World::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue)
 {
+	AcquireExclusiveLock();
+
 	UL_ASSERT(IsRegistered(dsSinglePrintableAddress, SINGLE_PRINTABLE));
 
 	VO_SinglePrintable* sp = GetRepresentation<VO_SinglePrintable>(dsSinglePrintableAddress);
 	UL_ASSERT(sp);
 
 	sp->UpdateValue(newValue);
+
+	ReleaseExclusiveLock();
 }
 
+
+void World::AcquireReaderLock()
+{
+	voAccessMutex.lock_shared();
+
+	while (voUpdatePending)
+	{
+		voUpdatePendingCondVar.wait<boost::shared_mutex>(voAccessMutex);
+	}
+}
+
+void World::ReleaseReaderLock()
+{
+	voAccessMutex.unlock_shared();
+}
+
+void World::AcquireExclusiveLock()
+{
+	voAccessMutex.lock_upgrade();
+	voAccessMutex.unlock_upgrade_and_lock();
+}
+
+void World::ReleaseExclusiveLock()
+{
+	voAccessMutex.unlock();
+}
 
 
 

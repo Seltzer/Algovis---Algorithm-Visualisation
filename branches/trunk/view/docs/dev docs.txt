@@ -2,3 +2,14 @@ Conventions:
 
 DS = Data Source
 VO = Viewable Object
+
+
+Parameter copy semantics:
+	This is a contract defined by some methods to establish ownership rules for parameters. A method
+	declared to use these semantics makes copies of its parameters... therefore the method owns these
+	copies and the caller owns the originals and is free to dispose of them after the method invocation
+	if desired.
+	
+	Obviously in C++, value types are copied and ref/pointer types are shallow copied without choice, but
+	these semantics imply that ref/pointers passed as parameters will also be deep copied.
+		

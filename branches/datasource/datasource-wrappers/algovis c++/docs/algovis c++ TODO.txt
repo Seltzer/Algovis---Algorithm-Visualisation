@@ -10,12 +10,14 @@ Functionality:
 as wrappers. And it might help us with #defining "unsigned char" 
 
 Design / Admin / General / Misc:
-* Perhaps go for the less complicated approach by not being tricky... get rid of templated PrimitiveWrapper
-and move code to its subclasses, even if it results in less maintainability and more code repetition
 * Implement a Linux version of Algovis C++ which isn't a Windows DLL
-* Start on algovis Python:
+* Start on Algovis Python:
 	http://pypi.python.org/pypi/ProxyTypes could be useful
-
+* Explore feasibility of Algovis Java
+	What we require is essentially function hooking which is often used for aspect-oriented programming type 
+	behaviour. Useful search keywords might include: 
+		{hooking hooks aop proxy intercept method calls...}
+	
 
 Testing:
 * Write more unit-tests

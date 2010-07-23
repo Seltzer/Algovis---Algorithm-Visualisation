@@ -7,10 +7,22 @@
 #include <map>
 #include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
+
+// TODO Add these to boost-subset, move to cpp if possible
+#include "boost/thread/shared_mutex.hpp"
+#include "boost/thread/condition_variable.hpp"
+
+
 #include "../include/common.h"
+#include "action.h"
+#include "../src/displayer/uiAction.h"
+
 
 
 /* World class which comprises all Viewable objects and their states at various points in time
+ *
+ * World objects are responsible for their VO instances and control access to them through 
+ * voAccessMutex (not too strict at the moment). 
  */
 namespace Algovis_Viewer
 {
@@ -23,15 +35,51 @@ namespace Algovis_Viewer
 	{
 		
 	private:
-		unsigned worldCount;
+		// All actions performed (both dsActions and uiActions)
+		std::vector<Action*> actionsPerformed;
+		
+		// Indexes into actionsPerformed
+		// lastActionPerformed == actionsPerformed.size() - 1 if the user is at the most recent action
+		// lastActionPerformed < actionsPerformed.size() - 1 if the user is playing back previous actions
+		unsigned lastActionPerformed;
+
+		// Make these private and direct access to them through a method
+		boost::condition_variable_any voUpdatePendingCondVar;
+		bool voUpdatePending;
 
 		// Mappings from data source types to viewable objects
 		std::map<const void*,VO_Array*> registeredArrays;
 		std::map<const void*,VO_SinglePrintable*> registeredSinglePrintables;
+		// Readers-Writer mutex for accessing VOs
+		boost::shared_mutex voAccessMutex;
+
 
 	public:
-		World() : worldCount(worldCount) {}
+		World() : lastActionPerformed(INVALID), voUpdatePending(false) {}
 		~World();
+
+		// Synchronisation for accessing ViewableObjects owned by this World object
+		void AcquireReaderLock();
+		void ReleaseReaderLock();
+		void AcquireExclusiveLock();
+		void ReleaseExclusiveLock();
+
+
+		/* TODO: Change argument to DSAction once David commits his dsAction class
+		 *
+		 * Pre-Condition: User is not currently playing back through actions 
+		 *					(might change this behaviour later on)
+		 */
+		bool PerformDSAction(Action*);
+		
+		// Hacky callback used by the Displayer render thread to inform World that
+		// it has finished animating/performing the Action which the World requested
+		void CompletedDSAction();
+
+
+		// Unimplemented stub currently used for testing
+		void PerformUIAction(UI_ActionType actionType);
+
 
 		// Returns true if a data source object is registered (and hence has a ViewableObject equivalent)
 		bool IsRegistered(const void* dsAddress) const;
@@ -73,6 +121,8 @@ namespace Algovis_Viewer
 		 *		a vector<string>. This is enforced as a runtime constraint in the VO_Array ctor
 		 */
 		VO_Array* RegisterArray(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements);
+		
+		std::vector<VO_Array*> GetRegisteredArrays();
 
 		VO_SinglePrintable* RegisterSinglePrintable(const void* dsSinglePrintableAddress, const std::string& value);
 
