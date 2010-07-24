@@ -8,13 +8,32 @@
 using namespace std;
 
 
-
-void PopulateVectorWithRandomInts(vector<int>& vec)
+/* Populates a vector with 10 integers while instantiating as few IntWrappers as possible.
+ *
+ */
+void PopulateVectorInMinimalFashion(vector<int>& vec)
 {
-	for (int i = 0; i < 9; i = i+1)
+	vec.push_back_test(); util::PlatformSleep(0.5);
+	vec.push_back_test(); util::PlatformSleep(0.5);
+	vec.push_back_test(); util::PlatformSleep(0.5);
+	vec.push_back_test(); util::PlatformSleep(0.5);
+	vec.push_back_test(); util::PlatformSleep(0.5);
+	vec.push_back_test(); util::PlatformSleep(0.5);
+	vec.push_back_test(); util::PlatformSleep(0.5);
+	vec.push_back_test(); util::PlatformSleep(0.5);
+	vec.push_back_test(); util::PlatformSleep(0.5);
+	vec.push_back_test(); util::PlatformSleep(0.5);
+}
+
+
+void PopulateVectorWithRandomInts(vector<int>& vec, int size, REAL_INT lowerBound, REAL_INT upperBound)
+{
+	for (int i = 0; i < size; i++)
 	{
-		vec.push_back(util::generateRandomNumber(0,9));
-		vector<int>::iterator endIt = vec.end() - 1;
+		vec.push_back(util::generateRandomNumber(lowerBound, upperBound));
+		//vector<int>::iterator endIt = vec.end() - 1;
+
+		util::PlatformSleep(0.5);
 	}
 }
 
@@ -27,7 +46,7 @@ void Vector_BubbleSortAscending(vector<int>& vec)
 	{
 		sortOccurred = false;
 
-		for (int i = 0; i < 8; i = i + 1)
+		for (int i = 0; i < 8; i++)
 		{
 			if (vec[i] > vec[i+1])
 			{

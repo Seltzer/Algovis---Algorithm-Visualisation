@@ -6,51 +6,15 @@
 //Algovis C++ include
 #include "conversions.h"
 
-#include "arrayAlgorithms.h"
+#include "demos.h"
 
 using namespace std;
 
 
 REAL_INT wmain()
 {
-	EnableDrawing(true);
-
-
-	// Populate
-	vector<int> collectionToModify;
-	collectionToModify.reserve(20);
-	PopulateVectorWithRandomInts(collectionToModify);
-
-
-
-	// Testing
-	int a = 5;
-	a = a;
-	cout << a << endl;
-	
-	for (int i = 7; i >= 0; i = i - 1)
-	{
-		collectionToModify[i] = collectionToModify[i] + collectionToModify[i+1];
-		util::PlatformSleep(0.5);
-	}
-
-	// More testing
-	prt("\nWaiting for keypress before performing mock animation:");
-	getchar();
-	TestMethod();
-	
-
-
-	// Sorting
-	prt("Waiting for keypress before sorting:")
-	getchar();
-	Vector_BubbleSortAscending(collectionToModify);
-
-	// Finishing
-	prt("Done")
-	getchar();
-	// Shutdown displayer gracefully???
-
+	Demo1();
+	//Demo2();
 
 	return 0;
 }

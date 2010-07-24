@@ -13,6 +13,7 @@
 
 namespace Algovis_Viewer
 {
+	#define DEBUG_VERBOSE
 
 	/* ARBITRARY is a type we don't know how to draw (i.e. most user-defined types.
 	 * See the viewableObjects folder for implementations

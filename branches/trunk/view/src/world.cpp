@@ -1,4 +1,4 @@
-#define BOOST_ALL_NO_LIB
+#include "windows.h"
 #include "boost/foreach.hpp"
 #include "utilities.h"
 #include "world.h"
@@ -13,6 +13,13 @@ using namespace std;
 namespace Algovis_Viewer
 {
 
+
+
+World::World() 
+	: lastActionPerformed(INVALID), voUpdatePending(false), 
+		readerLockThreadOwner(INVALID), exclusiveLockThreadOwner(INVALID)
+{
+}
 
 
 World::~World()
@@ -119,7 +126,7 @@ VO_Array* World::RegisterArray
 	}
 
 	// Assuming VO_SinglePrintable elements - TODO change this
-	VO_Array* newArray = new VO_Array(dsArrayAddress, elementType, arrayElements);
+	VO_Array* newArray = new VO_Array(dsArrayAddress, this, elementType, arrayElements);
 	
 	registeredArrays[dsArrayAddress] = newArray;
 
@@ -154,7 +161,7 @@ VO_SinglePrintable* World::RegisterSinglePrintable
 	// Verify that SINGLE_PRINTABLE hasn't already been registered
 	UL_ASSERT(!IsRegistered(dsSinglePrintableAddress));
 
-	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsSinglePrintableAddress, value);
+	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsSinglePrintableAddress, this, value);
 	registeredSinglePrintables[dsSinglePrintableAddress] = newSP;
 
 	ReleaseExclusiveLock();
@@ -208,6 +215,8 @@ void World::AddElementToArray(const void* dsArray, void* dsElement, unsigned pos
 	VO_SinglePrintable* element = GetRepresentation<VO_SinglePrintable>(dsElement);
 
 	arrayAddress->AddElement((ViewableObject*)element, position);
+	element->SetOwner(arrayAddress);
+
 	ReleaseExclusiveLock();
 }
 
@@ -225,6 +234,36 @@ void World::SwapElementsInArray(const void* dsArray, unsigned firstElementIndex,
 	ReleaseExclusiveLock();
 }
 
+void World::ArrayResized(const void* dsArray, const std::vector<void*>& elements, unsigned newCapacity)
+{
+	AcquireExclusiveLock();
+
+	UL_ASSERT(IsRegistered(dsArray));
+	VO_Array* voArray = GetRepresentation<VO_Array>(dsArray);
+
+	// Clear out old elements
+	voArray->ClearArray(newCapacity);
+
+	// Add new elements
+	unsigned position = 0;
+	BOOST_FOREACH(void* dsElement, elements)
+		AddElementToArray(dsArray, dsElement, position++);
+
+	ReleaseExclusiveLock();
+}
+
+void World::ClearArray(const void* dsArray)
+{
+	AcquireExclusiveLock();
+
+	UL_ASSERT(IsRegistered(dsArray));
+	VO_Array* voArray = GetRepresentation<VO_Array>(dsArray);
+	
+	// Clear out old elements - TODO fix the INVALID argument
+	voArray->ClearArray(INVALID);
+
+	ReleaseExclusiveLock();
+}
 
 void World::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue)
 {
@@ -243,27 +282,50 @@ void World::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const st
 
 void World::AcquireReaderLock()
 {
+	if ( (GetCurrentThreadId() == readerLockThreadOwner) || (GetCurrentThreadId() == exclusiveLockThreadOwner) )
+		return;
+
 	voAccessMutex.lock_shared();
 
 	while (voUpdatePending)
 	{
 		voUpdatePendingCondVar.wait<boost::shared_mutex>(voAccessMutex);
 	}
+
+	//prt("ACQUIRED READER LOCK");
+	readerLockThreadOwner = GetCurrentThreadId();
 }
 
 void World::ReleaseReaderLock()
 {
+	if ( GetCurrentThreadId() != readerLockThreadOwner)
+		return;
+
+	readerLockThreadOwner = INVALID;
+	//prt("RELEASED READER LOCK");
 	voAccessMutex.unlock_shared();
 }
 
 void World::AcquireExclusiveLock()
 {
+	if ( (GetCurrentThreadId() == readerLockThreadOwner) || (GetCurrentThreadId() == exclusiveLockThreadOwner) )
+		return;
+
+	//voAccessMutex.lock();
 	voAccessMutex.lock_upgrade();
 	voAccessMutex.unlock_upgrade_and_lock();
+
+	//prt("ACQUIRED EXCLUSIVE LOCK");
+	exclusiveLockThreadOwner = GetCurrentThreadId();
 }
 
 void World::ReleaseExclusiveLock()
 {
+	if ( GetCurrentThreadId() != exclusiveLockThreadOwner)
+		return;
+
+	exclusiveLockThreadOwner = INVALID;
+	//prt("RELEASED EXCLUSIVE LOCK");
 	voAccessMutex.unlock();
 }
 

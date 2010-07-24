@@ -8,7 +8,7 @@
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD dwReason, LPVOID lpReserved)
 {
-	Algovis_Viewer::Displayer::GetInstance();
+	//Algovis_Viewer::Displayer::GetInstance();
 
     return TRUE;
 

@@ -1,5 +1,5 @@
 Functionality:
-* Finish VectorWrapper - sort out vector resizing, implement any missing ops
+* Finish VectorWrapper - implement any missing ops
 * Finish IntWrapper/FloatWrapper etc. (add missing ops, fix unary increment/decrement ops)
 * Do other STL types and primitives
 * Implement a graphs library

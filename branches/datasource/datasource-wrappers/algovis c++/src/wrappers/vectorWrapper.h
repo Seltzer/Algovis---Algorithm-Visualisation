@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <iterator>
-
+#include <string>
 
 
 
@@ -22,6 +22,17 @@ class VectorWrapper : Wrapper
 
 private:
 	std::vector<T,Alloc> value;
+
+	void ReportVectorResizeToView()
+	{
+		Algovis_Viewer::Registry* registry = Algovis_Viewer::Registry::GetInstance();
+		
+		std::vector<void*> elements;
+		for (std::vector<T>::iterator it = value.begin(); it != value.end(); it++)
+			elements.push_back(&(*it));
+
+		registry->ArrayResized(this, elements, value.capacity());
+	}
 
 public:
 	typedef typename std::vector<T>::reference reference;
@@ -111,16 +122,47 @@ public:
 
 	inline void push_back (const T& x) 
 	{ 
+		size_t oldCapacity = value.capacity();
 		value.push_back(x);
 
 		if (drawingEnabled)
 		{
-			void* xAddress = &value[value.size()-1];
-			Algovis_Viewer::Registry::GetInstance()->AddElementToArray(this, xAddress, value.size() - 1);
+			// Determine whether the vector resized itself
+			if (value.capacity() == oldCapacity)
+			{
+				void* xAddress = &value[value.size()-1];
+				Algovis_Viewer::Registry::GetInstance()->AddElementToArray(this, xAddress, value.size() - 1);
+			}
+			else
+			{
+				ReportVectorResizeToView();
+			}
 		}
-
 	}
 	inline void pop_back () { value.pop_back(); };
+
+	// Testing purposes - TODO: remove
+	inline void push_back_test() 
+	{ 
+		size_t oldCapacity = value.capacity();
+		value.push_back(2);
+
+		if (drawingEnabled)
+		{
+			// Determine whether the vector resized itself
+			if (value.capacity() == oldCapacity)
+			{
+				void* xAddress = &value[value.size()-1];
+				Algovis_Viewer::Registry::GetInstance()->AddElementToArray(this, xAddress, value.size() - 1);
+			}
+			else
+			{
+				ReportVectorResizeToView();
+			}
+		}
+	}
+
+
 
 	inline iterator insert (iterator position, const T& x)
 	{
@@ -140,7 +182,12 @@ public:
 	}
 
 	void swap (VectorWrapper<T,Alloc>& vector) { value.swap(vector.AVGetValue()); }
-	inline void clear() { value.clear(); };
+	
+	inline void clear() 
+	{ 
+		value.clear(); 
+		Algovis_Viewer::Registry::GetInstance()->ClearArray(this);
+	};
 
 
 	// TODO don't know much about allocators

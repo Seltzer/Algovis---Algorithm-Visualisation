@@ -24,4 +24,3 @@ ViewableObjects as the Registry, World and Displayer objects all maintain raw po
 
 BUGS/MISC:
 * Make this start-up and shutdown gracefully with guarantee
-* Figure out what's up with the glut of SP registrations after vector sorting finishes

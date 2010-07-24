@@ -74,6 +74,11 @@ bool Registry::IsRegistered(const void* dsAddress, ViewableObjectType voType) co
 void Registry::RegisterArray
 		(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
 {
+	#ifdef DEBUG_VERBOSE
+		std::cout << "Registered array @ " << dsArrayAddress << std::endl;
+	#endif
+
+
 	VO_Array* newArray = currentWorld->RegisterArray(dsArrayAddress, elementType, elements);
 
 	Displayer::GetInstance()->AddToDrawingList(newArray);
@@ -86,7 +91,7 @@ void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, con
 	VO_SinglePrintable* newSP = currentWorld->RegisterSinglePrintable(dsSinglePrintableAddress, value);
 	
 	#ifdef DEBUG_VERBOSE
-		prt("registered")
+		std::cout << "Registered SP with value " << value << " @ " << dsSinglePrintableAddress	<< std::endl;
 	#endif
 
 	// For now, arrays draw their child elements, and elements outside arrays don't get drawn
@@ -97,12 +102,24 @@ void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, con
 
 bool Registry::DeregisterObject(const void* dsAddress)
 {
+	currentWorld->AcquireExclusiveLock();
+	#ifdef DEBUG_VERBOSE
+		cout << "Deregistering " << dsAddress << endl;
+	#endif
+
 	ViewableObject* voToBeDeleted = currentWorld->GetRepresentation(dsAddress);
-	UL_ASSERT(voToBeDeleted);
-
+	
+	if (!voToBeDeleted)
+	{
+		currentWorld->ReleaseExclusiveLock();
+		return false;
+	}
+		
 	Displayer::GetInstance()->RemoveFromDrawingList(voToBeDeleted);
+	bool result = currentWorld->DeregisterObject(dsAddress);
+	currentWorld->ReleaseExclusiveLock();
 
-	return currentWorld->DeregisterObject(dsAddress);
+	return result;
 }
 
 void Registry::AddElementToArray(const void* dsArray, void* dsElement, unsigned position)
@@ -115,6 +132,18 @@ void Registry::SwapElementsInArray(const void* dsArray, unsigned firstElementInd
 	currentWorld->SwapElementsInArray(dsArray, firstElementIndex, secondElementIndex);
 }
 
+void Registry::ArrayResized(const void* dsArray, const std::vector<void*>& elements, unsigned newCapacity)
+{
+	#ifdef DEBUG_VERBOSE
+		prt("Vector resize registered");
+	#endif
+	currentWorld->ArrayResized(dsArray, elements, newCapacity);
+}
+
+void Registry::ClearArray(const void* dsArray)
+{
+	currentWorld->ClearArray(dsArray);
+}
 
 /*void Registry::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue)
 {
@@ -127,7 +156,6 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 	currentWorld->AcquireExclusiveLock();
 
 	UL_ASSERT(IsRegistered(dsAssigned, SINGLE_PRINTABLE));
-
 	VO_SinglePrintable* sp = currentWorld->GetRepresentation<VO_SinglePrintable>(dsAssigned);
 	UL_ASSERT(sp);
 

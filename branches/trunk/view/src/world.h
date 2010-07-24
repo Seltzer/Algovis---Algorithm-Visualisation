@@ -52,10 +52,11 @@ namespace Algovis_Viewer
 		std::map<const void*,VO_SinglePrintable*> registeredSinglePrintables;
 		// Readers-Writer mutex for accessing VOs
 		boost::shared_mutex voAccessMutex;
+		DWORD readerLockThreadOwner, exclusiveLockThreadOwner;
 
 
 	public:
-		World() : lastActionPerformed(INVALID), voUpdatePending(false) {}
+		World();
 		~World();
 
 		// Synchronisation for accessing ViewableObjects owned by this World object
@@ -105,6 +106,15 @@ namespace Algovis_Viewer
 			ViewableObject* viewRepresentation = GetRepresentation(dsAddress);
 			UL_ASSERT(viewRepresentation);
 
+			if (typeid(T).name() == typeid(VO_Array).name())
+			{
+				UL_ASSERT(viewRepresentation->GetType() == ARRAY);
+			}
+			else if (typeid(T).name() == typeid(VO_SinglePrintable).name())
+			{
+				UL_ASSERT(viewRepresentation->GetType() == SINGLE_PRINTABLE);
+			}
+
 			T* viewRepresentationCast = static_cast<T*>(viewRepresentation);
 			UL_ASSERT(viewRepresentationCast);
 
@@ -149,6 +159,10 @@ namespace Algovis_Viewer
 		 *		- 0 < firstElementIndex < secondElementIndex <= array size
 		 */ 
 		void SwapElementsInArray(const void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex);
+
+		void ArrayResized(const void* dsArray, const std::vector<void*>& elements, unsigned newCapacity);
+
+		void ClearArray(const void* dsArray);
 
 		// Call this even if the SINGLE_PRINTABLE data source object isn't sure whether its value has changed.
 		// The View can figure it out.

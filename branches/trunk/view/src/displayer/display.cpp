@@ -30,6 +30,7 @@ Displayer::Displayer()
 	: worldToBeDisplayed(NULL), actionToBePerformed(NULL), actionPending(false),
 		defaultFontInitialised(false), refreshRate(60), displayerHasExclusiveLock(false)
 {
+	prt("DISPLAYER CTOR");
 	closed = false;
 	renderThread = new sf::Thread(&RenderThread, this);
 	renderThread->Launch();
@@ -46,10 +47,10 @@ Displayer::~Displayer()
 Displayer* Displayer::GetInstance()
 {
 	sf::Lock lock(creationMutex);
-	
+
 	if (!Displayer::displayerInstance)
 		Displayer::displayerInstance = new Displayer();
-
+	
 	return Displayer::displayerInstance;
 }
 
@@ -227,7 +228,8 @@ void Displayer::RemoveFromDrawingList(ViewableObject* objectToRemove)
 	sf::Lock lock(objectsMutex);
 
 	UL_ASSERT(worldToBeDisplayed);
-	objectsToDraw.erase(objectToRemove);
+	if (objectsToDraw.count(objectToRemove))
+		objectsToDraw.erase(objectToRemove);
 }
 
 

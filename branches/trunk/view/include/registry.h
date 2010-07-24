@@ -25,8 +25,6 @@
 
 namespace Algovis_Viewer
 {
-	#define DEBUG_VERBOSE
-
 	#pragma warning(push)	
 	#pragma warning(disable:4251)	// Annoying warning about exporting private members
 
@@ -91,6 +89,13 @@ namespace Algovis_Viewer
 		 */ 
 		void SwapElementsInArray(const void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex);
 
+		/* Should be called when an array dynamically resizes and its elements change locations
+		 *
+		 */
+		void ArrayResized(const void* dsArray, const std::vector<void*>& elements, unsigned newCapacity);
+
+		void ClearArray(const void* dsArray);
+
 		// Call this even if the SINGLE_PRINTABLE data source object isn't sure whether its value has changed.
 		// The View can figure it out.
 		// Obsolete, replaced by history tracking functions
@@ -103,6 +108,7 @@ namespace Algovis_Viewer
 		void PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue);
 
 		// Used to test out anything imaginable - declared here so that it can be called by the DLL user
+		// Currently used to display a mock animation
 		void TestMethod();
 	};
 	#pragma warning( pop ) 

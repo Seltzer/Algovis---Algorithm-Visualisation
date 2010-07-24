@@ -22,8 +22,7 @@ namespace Algovis_Viewer
 		void Changed(ViewableObject* subject);
 
 	public:
-		VO_Array(const void* dsAddress, ViewableObjectType elementType, 
-							const std::vector<ViewableObject*>& elements);
+		VO_Array(const void* dsAddress, World* world, ViewableObjectType elementType, const std::vector<ViewableObject*>& elements);
 		~VO_Array();
 	
 		virtual ViewableObjectType GetType() { return ARRAY; }
@@ -37,13 +36,19 @@ namespace Algovis_Viewer
 
 		unsigned GetSize() { return elements.size(); }
 
-		void AddElement(ViewableObject* element, unsigned position);
+		void AddElement(ViewableObject*, unsigned position);
+		void PushElementToBack(ViewableObject*);
+
+		// Currently assumes that elements have already been cleaned up by Registry::DeregisterObject
+		// TODO: this is bad
+		void ClearArray(unsigned newCapacity);
+
 
 		// Not currently implemented by any DS
 		void SwapElements(unsigned firstElement, unsigned secondElement);
 
 		// Used as an event-handler for elements being updated
-		virtual void Notify(ViewableObject* subject);
+		virtual void Notify(ViewableObject* subject, NOTIFY_EVENT_TYPE);
 
 	};
 }

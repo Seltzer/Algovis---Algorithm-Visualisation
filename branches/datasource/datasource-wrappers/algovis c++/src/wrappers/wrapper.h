@@ -60,6 +60,8 @@ namespace Algovis
 		friend Derived& operator --(Derived& wrapper);
 		friend Derived operator --(Derived& wrapper, int);
 
+		template<class Derived, class PrimitiveType>
+		friend std::ostream& operator<<(std::ostream& output, const PrimitiveWrapper<Derived, PrimitiveType>& wrapper);
 
 		PrimitiveWrapper() 
 		{
@@ -90,10 +92,12 @@ namespace Algovis
 		
 			if (drawingEnabled)
 			{
-				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(this, util::ToString<PrimitiveType>(other.primitive));
+				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(this, util::ToString<PrimitiveType>(primitive));
 				Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(this, &other, GetStringRepresentation());
 			}
 		}
+
+		virtual ~PrimitiveWrapper() {}
 
 		PrimitiveType AVGetValue() const { return primitive; }
 		std::string GetStringRepresentation() const { return util::ToString<PrimitiveType>(primitive); }

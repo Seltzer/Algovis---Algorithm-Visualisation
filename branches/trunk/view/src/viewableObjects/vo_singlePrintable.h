@@ -50,8 +50,9 @@ namespace Algovis_Viewer
 		std::set<ValueID> history;
 
 	public:
-		VO_SinglePrintable(const void* dsAddress, const std::string& value)
-				: ViewableObject(dsAddress), value(value)
+
+		VO_SinglePrintable(const void* dsAddress, World* world, const std::string& value)
+				: ViewableObject(dsAddress,world), value(value)
 		{
 		}
 
@@ -120,7 +121,7 @@ namespace Algovis_Viewer
 			//if (value != newValue) // Update should be displayed, with history, even if the same value is assigned!
 			{
 				value = newValue; 
-				NotifyObservers();
+				NotifyObservers(UPDATED);
 			}
 		}
 

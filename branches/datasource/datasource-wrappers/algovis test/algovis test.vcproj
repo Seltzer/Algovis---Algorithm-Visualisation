@@ -182,6 +182,10 @@
 				RelativePath=".\src\arrayAlgorithms.h"
 				>
 			</File>
+			<File
+				RelativePath=".\src\demos.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

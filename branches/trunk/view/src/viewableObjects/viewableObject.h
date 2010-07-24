@@ -17,12 +17,16 @@
  */
 namespace Algovis_Viewer
 {
-	
+	class World;
+
+
+	enum NOTIFY_EVENT_TYPE { BEING_DESTROYED, UPDATED};
+
 	// Interface for an observer of all changes to a ViewableObject
 	class IViewableObjectObserver
 	{
 	public:
-		virtual void Notify(ViewableObject* subject) = 0;
+		virtual void Notify(ViewableObject* subject, NOTIFY_EVENT_TYPE) = 0;
 	};
 
 
@@ -33,22 +37,27 @@ namespace Algovis_Viewer
 	protected:
 		const void* dsAddress;
 		
+		World* world;
 		std::set<IViewableObjectObserver*> observers; 
-		
+		ViewableObject* owner;
+
+
 		sf::FloatRect boundingBox;
 		float boundingBoxColour[3];
 		sf::Font* font;
 		bool suppressed;
 
 		
-		ViewableObject(const void* dsAddress); 
+		ViewableObject(const void* dsAddress, World* world); 
 
-		virtual ~ViewableObject() {}
-
-		virtual void NotifyObservers();
+		virtual void NotifyObservers(NOTIFY_EVENT_TYPE);
 
 	public:
+		virtual ~ViewableObject();
+
 		virtual ViewableObjectType GetType() = 0;
+
+		virtual void SetOwner(ViewableObject*);
 
 		// Called after bounding box is set
 		virtual void PrepareToBeDrawn() {}
