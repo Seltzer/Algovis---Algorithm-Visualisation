@@ -16,6 +16,7 @@
 #include "../include/common.h"
 #include "action.h"
 #include "../src/displayer/uiAction.h"
+#include "dsAction.h"
 
 
 
@@ -71,7 +72,7 @@ namespace Algovis_Viewer
 		 * Pre-Condition: User is not currently playing back through actions 
 		 *					(might change this behaviour later on)
 		 */
-		bool PerformDSAction(Action*);
+		bool PerformDSAction(DS_Action* action);
 		
 		// Hacky callback used by the Displayer render thread to inform World that
 		// it has finished animating/performing the Action which the World requested

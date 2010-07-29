@@ -200,6 +200,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\dsaction.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\dsaction.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\main.cpp"
 				>
 			</File>

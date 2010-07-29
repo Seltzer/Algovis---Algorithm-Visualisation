@@ -9,22 +9,7 @@
 namespace Algovis_Viewer
 {
 
-	struct ValueID
-	{
-		ValueID(const void* address, int time) : address(address), time(time) {}
-		bool operator<(const ValueID& rhs) const
-		{
-			if (time == rhs.time)
-				return address < rhs.address;
-			return time < rhs.time;
-		}
-		const void* address;
-		int time;
-	};
-
-
-
-	// TODO: Used by viewer to keep track of past values for playback - may need something fancier?
+	// Used by viewer to keep track of past values for playback - may need something fancier?
 	// TODO: Move this somewhere better
 	// TODO: Only makes sense for primitives?
 	/*class DisplayedValue
@@ -33,6 +18,7 @@ namespace Algovis_Viewer
 		// TODO: Value?
 		std::set<ValueID> contributors;
 	};*/
+
 	class VO_SinglePrintable : public ViewableObject
 	{
 
@@ -80,11 +66,11 @@ namespace Algovis_Viewer
 			history.insert(drawnValue);
 		}
 
-		void Assigned(VO_SinglePrintable* source, const std::string& newValue)
+		void Assigned(std::set<ValueID> history, const std::string& newValue)
 		{
 			// This printable now has the same history as the one it was assigned from
 			// This is true because history only includes items that have been displayed
-			history = source->GetHistory();
+			this->history = history;
 
 			UpdateValue(newValue);
 		}

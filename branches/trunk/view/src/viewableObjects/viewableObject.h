@@ -59,6 +59,8 @@ namespace Algovis_Viewer
 
 		virtual void SetOwner(ViewableObject*);
 
+		virtual ViewableObject* GetOwner() { return owner; }
+
 		// Called after bounding box is set
 		virtual void PrepareToBeDrawn() {}
 

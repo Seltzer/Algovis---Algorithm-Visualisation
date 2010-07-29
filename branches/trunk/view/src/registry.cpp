@@ -163,7 +163,12 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 	{
 		VO_SinglePrintable* source = currentWorld->GetRepresentation<VO_SinglePrintable>(dsSource);
 		UL_ASSERT(source);
-		sp->Assigned(source, newValue);
+
+		DS_Assigned action(currentWorld, sp, source->GetHistory(), newValue);
+		if (sp->GetOwner() != NULL) // TODO: Better way of determining if we care about action
+			currentWorld->PerformDSAction(&action);
+		else
+			action.Complete(); // Just do it without flair and drama
 	}
 	else
 		sp->AssignedUntracked(dsSource, newValue);
@@ -197,7 +202,7 @@ void Registry::PrintableModified(const void* dsModified, const void* dsSource, c
 void Registry::TestMethod()
 {
 	UI_Action testAction(MoveVO, currentWorld);
-	currentWorld->PerformDSAction((Action*)&testAction);
+	//currentWorld->PerformDSAction((Action*)&testAction); // TODO: onvert test to DS_Ation
 }
 
 

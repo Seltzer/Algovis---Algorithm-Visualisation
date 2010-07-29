@@ -31,6 +31,10 @@ namespace Algovis_Viewer
 		// Uses parameter copy semantics (see devdocs)
 		void AddSubAction(Action& subAction);
 
+		// Move the animation (if any) forward to the specified point (0->1 scale)
+		virtual void Perform(float progress) {}
+		// Perform the side effect (don't just animate)
+		virtual void Complete() {}
 
 		// virtual bool Undo() = 0;
 		// virtual bool Do() = 0;

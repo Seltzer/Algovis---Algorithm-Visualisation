@@ -147,11 +147,12 @@ void Displayer::RenderLoop()
 			// Hacky mock animation has finished
 			if (++duration == 60)
 			{
+				actionToBePerformed->Complete();
 				delete actionToBePerformed;
 				actionToBePerformed = NULL;
 				actionPending = false;
+				//displayerHasExclusiveLock = false;
 				worldToBeDisplayed->ReleaseExclusiveLock();
-				displayerHasExclusiveLock = false;
 				worldToBeDisplayed->CompletedDSAction();
 			}
 
@@ -236,6 +237,7 @@ void Displayer::RemoveFromDrawingList(ViewableObject* objectToRemove)
 void Displayer::PerformAndAnimateActionAsync(Action* newAction)
 {
 	UL_ASSERT(actionToBePerformed == NULL);
+	UL_ASSERT(!actionPending);
 
 	// ignore - for testing purposes
 	duration = 0;

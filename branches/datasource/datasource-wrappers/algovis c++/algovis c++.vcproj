@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="&quot;utilities-lib.lib&quot; &quot;$(SolutionDir)\Debug\view 2008.lib&quot;"
+				AdditionalDependencies="&quot;utilities-lib.lib&quot; &quot;view.lib&quot;"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Debug&quot;"
 			/>
 			<Tool

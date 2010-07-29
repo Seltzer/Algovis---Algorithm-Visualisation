@@ -36,6 +36,7 @@ void VO_Array::Changed(ViewableObject* subject)
 			std::cout << "Value " << printable->GetDSAddress() << "(" << time << "): " ;
 			std::cout << printable->GetValue() << " produced from: ";
 
+			// TODO: History should be reset if the thing is drawn. This assumes things in arrays are drawn.
 			const std::set<ValueID>& history = printable->GetHistory();
 			for (std::set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
 				std::cout << i->address << "(" << i->time << ")" << ", ";

@@ -38,10 +38,17 @@ World::~World()
 
 
 
-bool World::PerformDSAction(Action* dsAction)
+bool World::PerformDSAction(DS_Action* dsAction)
 {
+	prt("REGISTER")
+
 	UL_ASSERT(dsAction);
+	
+	while(voUpdatePending);
+
+
 	UL_ASSERT(!voUpdatePending)
+	
 	UL_ASSERT(lastActionPerformed == actionsPerformed.size() - 1);
 	
 	voUpdatePending = true;
@@ -56,6 +63,9 @@ bool World::PerformDSAction(Action* dsAction)
 
 void World::CompletedDSAction()
 {
+	prt("COMPLETE")
+	
+
 	voUpdatePending = false;
 	++lastActionPerformed;
 	voUpdatePendingCondVar.notify_all();
