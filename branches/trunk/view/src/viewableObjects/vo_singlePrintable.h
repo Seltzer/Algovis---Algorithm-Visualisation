@@ -24,7 +24,7 @@ namespace Algovis_Viewer
 
 	private:
 		std::string value;
-		sf::String graphicalText;
+		sf::String* graphicalText;
 
 	
 		// TODO: Keep track of data structure?
@@ -38,7 +38,7 @@ namespace Algovis_Viewer
 	public:
 
 		VO_SinglePrintable(const void* dsAddress, World* world, const std::string& value)
-				: ViewableObject(dsAddress,world), value(value)
+				: ViewableObject(dsAddress,world), value(value), graphicalText(NULL)
 		{
 		}
 

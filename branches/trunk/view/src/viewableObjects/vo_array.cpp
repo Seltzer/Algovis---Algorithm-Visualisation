@@ -58,7 +58,7 @@ void VO_Array::Changed(ViewableObject* subject)
 
 VO_Array::VO_Array(const void* dsAddress, World* world, 
 						ViewableObjectType elementType, const std::vector<ViewableObject*>& elements)
-		: ViewableObject(dsAddress, world), elementType(elementType)
+		: ViewableObject(dsAddress, world), elementType(elementType), graphicalAddressText(NULL)
 {
 	BOOST_FOREACH(ViewableObject* element, elements)
 	{
@@ -132,13 +132,14 @@ void VO_Array::PrepareToBeDrawn()
 	// Address stuff
 	std::string addressString(util::ToString<const void*>(dsAddress).append(":"));
 
-	graphicalAddressText = sf::String(addressString.c_str(), Displayer::GetInstance()->GetDefaultFont());
-	graphicalAddressText.SetColor(sf::Color(255, 255, 255));
+	delete graphicalAddressText;
+	graphicalAddressText = new sf::String(addressString.c_str(), Displayer::GetInstance()->GetDefaultFont());
+	graphicalAddressText->SetColor(sf::Color(255, 255, 255));
 	//graphicalAddressText.Move(x, y);
-	graphicalAddressText.SetPosition(x,y);
+	graphicalAddressText->SetPosition(x,y);
 	
 	
-	float offset = graphicalAddressText.GetRect().GetWidth();
+	float offset = graphicalAddressText->GetRect().GetWidth();
 	UL_ASSERT(offset);		// Ensure that the font is valid (an invalid one will result in offset=0)
 	x += offset + xGap; 
 
@@ -162,7 +163,7 @@ void VO_Array::PrepareToBeDrawn()
 void VO_Array::Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont)
 {
 	// Print address
-	renderWindow.Draw(graphicalAddressText);
+	renderWindow.Draw(*graphicalAddressText);
 
 	// Print elements
 	BOOST_FOREACH(ViewableObject* element, elements)

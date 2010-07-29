@@ -15,16 +15,17 @@ sf::FloatRect VO_SinglePrintable::GetPreferredSize()
 
 void VO_SinglePrintable::PrepareToBeDrawn()
 {
-	graphicalText = sf::String(value.c_str(), Displayer::GetInstance()->GetDefaultFont());
-	graphicalText.SetColor(sf::Color(255,255,255));
-	graphicalText.SetPosition(boundingBox.Left, boundingBox.Top);
+	delete graphicalText;
+	graphicalText = new sf::String(value.c_str(), Displayer::GetInstance()->GetDefaultFont());
+	graphicalText->SetColor(sf::Color(255,255,255));
+	graphicalText->SetPosition(boundingBox.Left, boundingBox.Top);
 }
 
 
 void VO_SinglePrintable::Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont)
 {
 	// Draw text
-	renderWindow.Draw(graphicalText);
+	renderWindow.Draw(*graphicalText);
 
 	// Draw bounding box
 	glColor3f(boundingBoxColour[0],boundingBoxColour[1],boundingBoxColour[2]);

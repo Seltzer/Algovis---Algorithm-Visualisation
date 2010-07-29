@@ -18,7 +18,7 @@ namespace Algovis_Viewer
 		std::vector<ViewableObject*> elements;
 		ViewableObjectType elementType;
 
-		sf::String graphicalAddressText;
+		sf::String* graphicalAddressText;
 		void Changed(ViewableObject* subject);
 
 	public:
