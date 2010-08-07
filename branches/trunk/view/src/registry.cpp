@@ -7,9 +7,6 @@
 #include "viewableObjects/vo_array.h"
 #include "viewableObjects/vo_singlePrintable.h"
 
-//temp - TODO: remove
-#include "displayer/uiAction.h"
-
 using namespace std;
 
 
@@ -26,6 +23,10 @@ Registry* Registry::instance(NULL);
 
 Registry::Registry()
 { 
+	#if (DEBUG_GENERAL_LEVEL >= 2)
+		prt("REGISTRY CTOR");
+	#endif
+
 	currentWorld = new World();
 	Displayer::GetInstance()->SetWorld(currentWorld);
 }
@@ -74,7 +75,7 @@ bool Registry::IsRegistered(const void* dsAddress, ViewableObjectType voType) co
 void Registry::RegisterArray
 		(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
 {
-	#ifdef DEBUG_VERBOSE
+	#if (DEBUG_REGISTRATION_LEVEL >= 2)
 		std::cout << "Registered array @ " << dsArrayAddress << std::endl;
 	#endif
 
@@ -85,12 +86,11 @@ void Registry::RegisterArray
 }
 
 
-
 void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, const std::string& value)
 {
 	VO_SinglePrintable* newSP = currentWorld->RegisterSinglePrintable(dsSinglePrintableAddress, value);
 	
-	#ifdef DEBUG_VERBOSE
+	#if (DEBUG_REGISTRATION_LEVEL >= 3)
 		std::cout << "Registered SP with value " << value << " @ " << dsSinglePrintableAddress	<< std::endl;
 	#endif
 
@@ -102,8 +102,8 @@ void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, con
 
 bool Registry::DeregisterObject(const void* dsAddress)
 {
-	currentWorld->AcquireExclusiveLock();
-	#ifdef DEBUG_VERBOSE
+	currentWorld->AcquireWriterLock();
+	#if (DEBUG_REGISTRATION_LEVEL >= 1)
 		cout << "Deregistering " << dsAddress << endl;
 	#endif
 
@@ -111,13 +111,13 @@ bool Registry::DeregisterObject(const void* dsAddress)
 	
 	if (!voToBeDeleted)
 	{
-		currentWorld->ReleaseExclusiveLock();
+		currentWorld->ReleaseWriterLock();
 		return false;
 	}
 		
 	Displayer::GetInstance()->RemoveFromDrawingList(voToBeDeleted);
 	bool result = currentWorld->DeregisterObject(dsAddress);
-	currentWorld->ReleaseExclusiveLock();
+	currentWorld->ReleaseWriterLock();
 
 	return result;
 }
@@ -134,7 +134,7 @@ void Registry::SwapElementsInArray(const void* dsArray, unsigned firstElementInd
 
 void Registry::ArrayResized(const void* dsArray, const std::vector<void*>& elements, unsigned newCapacity)
 {
-	#ifdef DEBUG_VERBOSE
+	#ifdef DEBUG_ARRAY_CHANGES
 		prt("Vector resize registered");
 	#endif
 	currentWorld->ArrayResized(dsArray, elements, newCapacity);
@@ -153,7 +153,7 @@ void Registry::ClearArray(const void* dsArray)
 
 void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, const std::string& newValue)
 {
-	currentWorld->AcquireExclusiveLock();
+	currentWorld->AcquireWriterLock();
 
 	UL_ASSERT(IsRegistered(dsAssigned, SINGLE_PRINTABLE));
 	VO_SinglePrintable* sp = currentWorld->GetRepresentation<VO_SinglePrintable>(dsAssigned);
@@ -166,20 +166,21 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 
 		DS_Assigned action(currentWorld, sp, source->GetHistory(), newValue);
 		if (sp->GetOwner() != NULL) // TODO: Better way of determining if we care about action
-			currentWorld->PerformDSAction(&action);
+			//currentWorld->PerformDSAction(&action);
+			action.Complete();
 		else
 			action.Complete(); // Just do it without flair and drama
 	}
 	else
 		sp->AssignedUntracked(dsSource, newValue);
 
-	currentWorld->ReleaseExclusiveLock();
+	currentWorld->ReleaseWriterLock();
 }
 
 // TODO: This is really similar to above
 void Registry::PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue)
 {
-	currentWorld->AcquireExclusiveLock();
+	currentWorld->AcquireWriterLock();
 
 	UL_ASSERT(IsRegistered(dsModified, SINGLE_PRINTABLE));
 
@@ -195,14 +196,15 @@ void Registry::PrintableModified(const void* dsModified, const void* dsSource, c
 	else
 		sp->ModifiedUntracked(dsSource, newValue);
 
-	currentWorld->ReleaseExclusiveLock();
+	currentWorld->ReleaseWriterLock();
 }
 
 
 void Registry::TestMethod()
 {
-	UI_Action testAction(MoveVO, currentWorld);
-	//currentWorld->PerformDSAction((Action*)&testAction); // TODO: onvert test to DS_Ation
+	// TODO: Finish working on DS_TestAction
+	DS_TestAction testAction(currentWorld);
+	currentWorld->PerformDSAction(&testAction); 
 }
 
 

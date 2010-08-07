@@ -23,7 +23,10 @@
 /* World class which comprises all Viewable objects and their states at various points in time
  *
  * World objects are responsible for their VO instances and control access to them through 
- * voAccessMutex (not too strict at the moment). 
+ * Acquire/Release ReaderLock/WriterLock methods.
+ *
+ * For an in depth explanation of the synchronisation involved in performing a dsAction (and its
+ * animation) see the view devdocs.
  */
 namespace Algovis_Viewer
 {
@@ -36,7 +39,17 @@ namespace Algovis_Viewer
 	{
 		
 	private:
-		// All actions performed (both dsActions and uiActions)
+		// Mappings from data source types to viewable objects
+		std::map<const void*,VO_Array*> registeredArrays;
+		std::map<const void*,VO_SinglePrintable*> registeredSinglePrintables;
+				
+		// Reader-Writer lock for accessing VOs above
+		boost::shared_mutex voAccessMutex;
+		// This is used to deal with recursive writer lock acquisitions
+		DWORD writerLockOwner;
+			
+	
+		// All actions (both dsActions and uiActions) performed in the past plus the current action
 		std::vector<Action*> actionsPerformed;
 		
 		// Indexes into actionsPerformed
@@ -44,32 +57,30 @@ namespace Algovis_Viewer
 		// lastActionPerformed < actionsPerformed.size() - 1 if the user is playing back previous actions
 		unsigned lastActionPerformed;
 
-		// Make these private and direct access to them through a method
-		boost::condition_variable_any voUpdatePendingCondVar;
-		bool voUpdatePending;
-
-		// Mappings from data source types to viewable objects
-		std::map<const void*,VO_Array*> registeredArrays;
-		std::map<const void*,VO_SinglePrintable*> registeredSinglePrintables;
-		// Readers-Writer mutex for accessing VOs
-		boost::shared_mutex voAccessMutex;
-		DWORD readerLockThreadOwner, exclusiveLockThreadOwner;
-
+		// Condition variable to be used for pending actions
+		boost::condition_variable_any voActionPendingCondVar;
+		bool voActionPending;
 
 	public:
 		World();
 		~World();
 
-		// Synchronisation for accessing ViewableObjects owned by this World object
+		// Synchronisation for accessing ViewableObjects owned by this World object. Note:
+		//		- This synchronisation is purely declarative. Technically, any entity which has
+		//			references to VOs can do whatever it wants to it. But this is the threadsafe
+		//			way to do it.
+		//		- Recursive lock acquisitions will not cause blocking
+		//		- Reader locks can only be acquired when there isn't a pending action;
+		//				i.e. if there's a pending action, the thread must wait until the Displayer has 
+		//					finished displaying the animation for the action and performing it
+		//		- For an in depth explanation of the synchronisation involved with dsActions, see devdocs
 		void AcquireReaderLock();
 		void ReleaseReaderLock();
-		void AcquireExclusiveLock();
-		void ReleaseExclusiveLock();
+		void AcquireWriterLock();
+		void ReleaseWriterLock();
 
 
-		/* TODO: Change argument to DSAction once David commits his dsAction class
-		 *
-		 * Pre-Condition: User is not currently playing back through actions 
+		/*Pre-Condition: User is not currently playing back through actions 
 		 *					(might change this behaviour later on)
 		 */
 		bool PerformDSAction(DS_Action* action);

@@ -10,14 +10,12 @@ void Demo1()
 
 	// Populate
 	vector<int> collectionToModify;
-	//collectionToModify.reserve(20);
 	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
 
 
 	// Testing
 	int a = 5;
 	a = a;
-	cout << a << endl;
 	
 	for (int i = 7; i >= 0; --i)
 	{
@@ -25,9 +23,12 @@ void Demo1()
 		util::PlatformSleep(0.5);
 	}
 
-	// Mock animation
+	// Perform mock animation multiple times to test that condition variable is working properly
 	prt("Performing mock animation:");
 	TestMethod();
+	TestMethod();
+	TestMethod();
+	
 
 	// Sorting
 	prt("Sorting:")

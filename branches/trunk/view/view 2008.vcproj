@@ -184,6 +184,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\debugging.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\registry.h"
 				>
 			</File>
@@ -273,10 +277,6 @@
 			>
 			<File
 				RelativePath=".\docs\dev docs.txt"
-				>
-			</File>
-			<File
-				RelativePath=".\docs\view TODO.txt"
 				>
 			</File>
 		</Filter>

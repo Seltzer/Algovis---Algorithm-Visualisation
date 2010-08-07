@@ -115,7 +115,7 @@ namespace Algovis
 	}
 
 
-	/*
+	
 	// At the moment, the only printable wrapper types are primitive wrappers
 	// why the hell is this leading to ambiguity when cout'ing non-wrappers
 	// that don't offer an AVGetValue() method???
@@ -124,14 +124,15 @@ namespace Algovis
 	{
 		output << wrapper.AVGetValue();
 		return output;
-	}*/
+	}
 
+	/*
 	template<class PrintableWrapperType, class WrappedType>
 	std::ostream& operator<<(std::ostream& output, const PrimitiveWrapper<PrintableWrapperType, WrappedType>& wrapper)
 	{
 		output << wrapper.AVGetValue();
 		return output;
-	}
+	}*/
 	
 
 

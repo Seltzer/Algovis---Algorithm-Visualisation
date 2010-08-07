@@ -32,7 +32,7 @@ void VO_Array::Changed(ViewableObject* subject)
 	UL_ASSERT(printable);
 	if (printable != 0)
 	{
-		#ifdef DEBUG_VERBOSE
+		#ifdef DEBUG_SP_CHANGES
 			std::cout << "Value " << printable->GetDSAddress() << "(" << time << "): " ;
 			std::cout << printable->GetValue() << " produced from: ";
 
@@ -43,7 +43,6 @@ void VO_Array::Changed(ViewableObject* subject)
 			std::cout << std::endl;
 
 		#endif
-
 
 		//int time = Algovis_Viewer::Registry::GetInstance()->GetTime();
 		printable->ResetHistory(ValueID(subject->GetDSAddress(), time));

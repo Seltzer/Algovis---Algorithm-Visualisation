@@ -16,8 +16,7 @@ namespace Algovis_Viewer
 
 
 World::World() 
-	: lastActionPerformed(INVALID), voUpdatePending(false), 
-		readerLockThreadOwner(INVALID), exclusiveLockThreadOwner(INVALID)
+	: lastActionPerformed(INVALID), voActionPending(false), writerLockOwner(INVALID)
 {
 }
 
@@ -37,38 +36,35 @@ World::~World()
 }
 
 
-
+// TODO: Verify that synchronisation is done properly
 bool World::PerformDSAction(DS_Action* dsAction)
 {
-	prt("REGISTER")
-
 	UL_ASSERT(dsAction);
 	
-	while(voUpdatePending);
+	// Wait for the current action to finish
+	boost::unique_lock<boost::shared_mutex> lock(voAccessMutex);
 
-
-	UL_ASSERT(!voUpdatePending)
+	while(voActionPending)
+		voActionPendingCondVar.wait<boost::shared_mutex>(voAccessMutex);
 	
+	// TODO: Handle this properly once we can go back through history
 	UL_ASSERT(lastActionPerformed == actionsPerformed.size() - 1);
 	
-	voUpdatePending = true;
+	voActionPending = true;
 	actionsPerformed.push_back(dsAction);
-	
 
+	// Ask Displayer to perform dsAction
 	Displayer::GetInstance()->PerformAndAnimateActionAsync(dsAction);
 	
-
 	return true;
 }
 
 void World::CompletedDSAction()
 {
-	prt("COMPLETE")
-	
-
-	voUpdatePending = false;
 	++lastActionPerformed;
-	voUpdatePendingCondVar.notify_all();
+
+	voActionPending = false;
+	voActionPendingCondVar.notify_all();
 }
 
 void World::PerformUIAction(UI_ActionType actionType)
@@ -118,7 +114,7 @@ ViewableObject* World::GetRepresentation(const void* dsAddress)
 VO_Array* World::RegisterArray
 		(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
 {
-	AcquireExclusiveLock();
+	AcquireWriterLock();
 
 	// Verify that array hasn't already been registered
 	UL_ASSERT(!IsRegistered(dsArrayAddress));
@@ -140,7 +136,7 @@ VO_Array* World::RegisterArray
 	
 	registeredArrays[dsArrayAddress] = newArray;
 
-	ReleaseExclusiveLock();
+	ReleaseWriterLock();
 	return newArray;
 }
 
@@ -166,7 +162,7 @@ vector<VO_Array*> World::GetRegisteredArrays()
 VO_SinglePrintable* World::RegisterSinglePrintable
 			(const void* dsSinglePrintableAddress, const std::string& value)
 {
-	AcquireExclusiveLock();
+	AcquireWriterLock();
 
 	// Verify that SINGLE_PRINTABLE hasn't already been registered
 	UL_ASSERT(!IsRegistered(dsSinglePrintableAddress));
@@ -174,14 +170,14 @@ VO_SinglePrintable* World::RegisterSinglePrintable
 	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsSinglePrintableAddress, this, value);
 	registeredSinglePrintables[dsSinglePrintableAddress] = newSP;
 
-	ReleaseExclusiveLock();
+	ReleaseWriterLock();
 	return newSP;
 }
 
 
 bool World::DeregisterObject(const void* dsAddress)
 {
-	AcquireExclusiveLock();
+	AcquireWriterLock();
 
 	if (registeredArrays.count(dsAddress))
 	{
@@ -190,7 +186,7 @@ bool World::DeregisterObject(const void* dsAddress)
 
 		registeredArrays.erase(registeredArrays.find(dsAddress));
 
-		ReleaseExclusiveLock();
+		ReleaseWriterLock();
 		return true;
 	}
 
@@ -201,11 +197,11 @@ bool World::DeregisterObject(const void* dsAddress)
 
 		registeredSinglePrintables.erase(registeredSinglePrintables.find(dsAddress));
 
-		ReleaseExclusiveLock();
+		ReleaseWriterLock();
 		return true;
 	}
 
-	ReleaseExclusiveLock();
+	ReleaseWriterLock();
 	return false;
 }
 
@@ -214,7 +210,7 @@ bool World::DeregisterObject(const void* dsAddress)
 
 void World::AddElementToArray(const void* dsArray, void* dsElement, unsigned position)
 {
-	AcquireExclusiveLock();
+	AcquireWriterLock();
 
 	UL_ASSERT(IsRegistered(dsArray,ARRAY));
 	UL_ASSERT(IsRegistered(dsElement,SINGLE_PRINTABLE));
@@ -227,12 +223,12 @@ void World::AddElementToArray(const void* dsArray, void* dsElement, unsigned pos
 	arrayAddress->AddElement((ViewableObject*)element, position);
 	element->SetOwner(arrayAddress);
 
-	ReleaseExclusiveLock();
+	ReleaseWriterLock();
 }
 
 void World::SwapElementsInArray(const void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex)
 {
-	AcquireExclusiveLock();
+	AcquireWriterLock();
 
 	UL_ASSERT(IsRegistered(dsArray, ARRAY));
 
@@ -241,12 +237,12 @@ void World::SwapElementsInArray(const void* dsArray, unsigned firstElementIndex,
 
 	arrayAddress->SwapElements(firstElementIndex, secondElementIndex);
 
-	ReleaseExclusiveLock();
+	ReleaseWriterLock();
 }
 
 void World::ArrayResized(const void* dsArray, const std::vector<void*>& elements, unsigned newCapacity)
 {
-	AcquireExclusiveLock();
+	AcquireWriterLock();
 
 	UL_ASSERT(IsRegistered(dsArray));
 	VO_Array* voArray = GetRepresentation<VO_Array>(dsArray);
@@ -259,12 +255,12 @@ void World::ArrayResized(const void* dsArray, const std::vector<void*>& elements
 	BOOST_FOREACH(void* dsElement, elements)
 		AddElementToArray(dsArray, dsElement, position++);
 
-	ReleaseExclusiveLock();
+	ReleaseWriterLock();
 }
 
 void World::ClearArray(const void* dsArray)
 {
-	AcquireExclusiveLock();
+	AcquireWriterLock();
 
 	UL_ASSERT(IsRegistered(dsArray));
 	VO_Array* voArray = GetRepresentation<VO_Array>(dsArray);
@@ -272,12 +268,12 @@ void World::ClearArray(const void* dsArray)
 	// Clear out old elements - TODO fix the INVALID argument
 	voArray->ClearArray(INVALID);
 
-	ReleaseExclusiveLock();
+	ReleaseWriterLock();
 }
 
 void World::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue)
 {
-	AcquireExclusiveLock();
+	AcquireWriterLock();
 
 	UL_ASSERT(IsRegistered(dsSinglePrintableAddress, SINGLE_PRINTABLE));
 
@@ -286,57 +282,83 @@ void World::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const st
 
 	sp->UpdateValue(newValue);
 
-	ReleaseExclusiveLock();
+	ReleaseWriterLock();
 }
 
 
 void World::AcquireReaderLock()
 {
-	if ( (GetCurrentThreadId() == readerLockThreadOwner) || (GetCurrentThreadId() == exclusiveLockThreadOwner) )
-		return;
+	#if(DEBUG_THREADING_LEVEL >= 3)
+		prt("PRE-ACQUISITION OF READER LOCK");
+	#endif
 
+	// There's no need to guard against recursive reader lock acquisition (shared_mutex allows it without blcoking)
+	// But we need to guard against a thread with a writer lock trying to acquire a reader lock
+	if (GetCurrentThreadId() == writerLockOwner)
+	{
+		#if(DEBUG_THREADING_LEVEL >= 3)
+			prt("\tTHREAD ALREADY HAS WRITER LOCK");
+		#endif
+		return;
+	}
+		
 	voAccessMutex.lock_shared();
 
-	while (voUpdatePending)
-	{
-		voUpdatePendingCondVar.wait<boost::shared_mutex>(voAccessMutex);
-	}
+	while (voActionPending)
+		voActionPendingCondVar.wait<boost::shared_mutex>(voAccessMutex);
 
-	//prt("ACQUIRED READER LOCK");
-	readerLockThreadOwner = GetCurrentThreadId();
+
+	#if(DEBUG_THREADING_LEVEL >= 2)
+		prt("POST-ACQUISITION OF READER LOCK");
+	#endif
 }
 
 void World::ReleaseReaderLock()
 {
-	if ( GetCurrentThreadId() != readerLockThreadOwner)
-		return;
+	#if(DEBUG_THREADING_LEVEL >= 3)
+		prt("PRE-RELEASING READER LOCK");
+	#endif
 
-	readerLockThreadOwner = INVALID;
-	//prt("RELEASED READER LOCK");
 	voAccessMutex.unlock_shared();
+
+	#if(DEBUG_THREADING_LEVEL >= 2)
+		prt("POST-RELEASING READER LOCK");
+	#endif
 }
 
-void World::AcquireExclusiveLock()
+void World::AcquireWriterLock()
 {
-	if ( (GetCurrentThreadId() == readerLockThreadOwner) || (GetCurrentThreadId() == exclusiveLockThreadOwner) )
+	if (GetCurrentThreadId() == writerLockOwner)
 		return;
 
-	//voAccessMutex.lock();
+	#if(DEBUG_THREADING_LEVEL >= 3)
+		prt("PRE-ACQUISITION OF WRITER LOCK");
+	#endif
+
+	// Acquire upgrade lock, then upgrade it rather going straight for the writer lock
 	voAccessMutex.lock_upgrade();
 	voAccessMutex.unlock_upgrade_and_lock();
 
-	//prt("ACQUIRED EXCLUSIVE LOCK");
-	exclusiveLockThreadOwner = GetCurrentThreadId();
+	#if(DEBUG_THREADING_LEVEL >= 2)
+		prt("POST-ACQUISITION OF WRITER LOCK");
+	#endif
+
+	
+	writerLockOwner = GetCurrentThreadId();
 }
 
-void World::ReleaseExclusiveLock()
+void World::ReleaseWriterLock()
 {
-	if ( GetCurrentThreadId() != exclusiveLockThreadOwner)
-		return;
+	#if(DEBUG_THREADING_LEVEL >= 3)
+		prt("PRE-RELEASING WRITER LOCK");	
+	#endif
 
-	exclusiveLockThreadOwner = INVALID;
-	//prt("RELEASED EXCLUSIVE LOCK");
+	writerLockOwner = NULL;
 	voAccessMutex.unlock();
+
+	#if(DEBUG_THREADING_LEVEL >= 2)
+		prt("POST-RELEASING WRITER LOCK");	
+	#endif
 }
 
 

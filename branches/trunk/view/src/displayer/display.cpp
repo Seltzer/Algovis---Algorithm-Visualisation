@@ -19,18 +19,19 @@ namespace Algovis_Viewer
 {
 
 
+///////////////////////// Construction / Destruction / Singleton Stuff
 Displayer* Displayer::displayerInstance(NULL);
 sf::Mutex Displayer::creationMutex;
-
-bool Displayer::drawingEnabled(true);
-
 
 
 Displayer::Displayer()
 	: worldToBeDisplayed(NULL), actionToBePerformed(NULL), actionPending(false),
-		defaultFontInitialised(false), refreshRate(60), displayerHasExclusiveLock(false)
+		defaultFontInitialised(false), refreshRate(60)//, displayerHasExclusiveLock(false)
 {
-	prt("DISPLAYER CTOR");
+	#if (DEBUG_GENERAL_LEVEL >= 2)
+		prt("DISPLAYER CTOR");
+	#endif
+
 	closed = false;
 	renderThread = new sf::Thread(&RenderThread, this);
 	renderThread->Launch();
@@ -66,16 +67,23 @@ void Displayer::InitWindow()
 	defaultFont.LoadFromFile("consola.ttf");
 	defaultFontInitialised = true;
 
-	#ifdef DEBUG_VERBOSE
+	#if (DEBUG_GENERAL_LEVEL >= 1)
 		prt("Default font initialised");
 	#endif
 }
 
 
+
+///////////////////////// Other stuff
+
+bool Displayer::drawingEnabled(true);
+
 void Displayer::RenderLoop()
 {
-	InitWindow();
+	static bool minimised = false;
 
+	InitWindow();
+	
 	while (win->IsOpened() && !closed)
 	{
 		sf::Event Event;
@@ -84,19 +92,25 @@ void Displayer::RenderLoop()
 			// window resized
 			if (Event.Type == sf::Event::Resized)
 			{
-				#ifdef DEBUG_VERBOSE
+				#if (DEBUG_GENERAL_LEVEL >= 1)
 					prt("window resized");
 				#endif
 				int width = Event.Size.Width;
 				int height = Event.Size.Height;
 				win->SetView(sf::View(sf::FloatRect(0, 0, (float) width, (float) height)));
+
 				glViewport(0, 0, width, height);
+				
+				if (!width && !height)
+					minimised = true;
+				else
+					minimised = false;
 			}
 
 	        // Window closed
 	        if (Event.Type == sf::Event::Closed)
 			{
-				#ifdef DEBUG_VERBOSE
+				#if (DEBUG_GENERAL_LEVEL >= 1)
 					prt("window closed via x")
 				#endif
 				win->Close();
@@ -106,13 +120,16 @@ void Displayer::RenderLoop()
 	        // Escape key pressed
 	        if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
 			{
-				#ifdef DEBUG_VERBOSE
+				#if (DEBUG_GENERAL_LEVEL >= 1)
 					prt("window closed via ESC key")
 				#endif
 				win->Close();
 			}
 	            
 	    }
+
+		if (minimised)
+			continue;
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -123,25 +140,17 @@ void Displayer::RenderLoop()
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+	
 
 		if (actionPending)
 		{
-			// There must be a better way to ensure this thread's attempt to reacquire a lock it already has
-			// doesn't kill stuff. Look into boost recursive locks
-			if (!displayerHasExclusiveLock)
-			{
-				worldToBeDisplayed->AcquireExclusiveLock();
-				displayerHasExclusiveLock = true;
-			}
-							
-			
-			// Start performing animation for pending update (a new action)
-
+			worldToBeDisplayed->AcquireWriterLock();
+						
 			// Hacky mock animation which rotates stuff
 			glRotatef(((float) duration / 60) * 360, 0, 0, 1);
 
-			sf::Lock lock2(objectsMutex);
-			BOOST_FOREACH(ViewableObject* obj, objectsToDraw)
+			sf::Lock drawingLock(viewablesMutex);
+			BOOST_FOREACH(ViewableObject* obj, viewablesToDraw)
 				obj->Draw(*win, defaultFont);
 
 			// Hacky mock animation has finished
@@ -151,28 +160,25 @@ void Displayer::RenderLoop()
 				delete actionToBePerformed;
 				actionToBePerformed = NULL;
 				actionPending = false;
-				//displayerHasExclusiveLock = false;
-				worldToBeDisplayed->ReleaseExclusiveLock();
+				
+				worldToBeDisplayed->ReleaseWriterLock();
 				worldToBeDisplayed->CompletedDSAction();
 			}
-
-			
 		}
 		else
 		{
+			// TODO: Make sure acquisition of VO reader lock and viewables mutex cannot result in deadlock
 			worldToBeDisplayed->AcquireReaderLock();
-			
-			// TODO: Make sure this cannot result in deadlock
+			sf::Lock viewablesLock(viewablesMutex);
+
 			// Draw ViewableObjects
-			sf::Lock lock2(objectsMutex);
-			BOOST_FOREACH(ViewableObject* obj, objectsToDraw)
+			BOOST_FOREACH(ViewableObject* obj, viewablesToDraw)
 				obj->Draw(*win, defaultFont);
 
 			worldToBeDisplayed->ReleaseReaderLock();
 		}
 
 		win->Display();
-
 		sf::Sleep(1.0f / refreshRate);
 	}
 }
@@ -209,37 +215,37 @@ void Displayer::SetWorld(World* newWorld)
 		AddToDrawingList((ViewableObject*)vo);
 }
 
-void Displayer::AddToDrawingList(ViewableObject* newObject)
+void Displayer::AddToDrawingList(ViewableObject* newViewable)
 {
-	sf::Lock lock(objectsMutex);
+	sf::Lock viewablesLock(viewablesMutex);
 	
 	UL_ASSERT(worldToBeDisplayed);
 
 	// TODO remove hack
-	UL_ASSERT(newObject->GetType() == ARRAY);
+	UL_ASSERT(newViewable->GetType() == ARRAY);
 
-	newObject->SetBoundingBox(sf::FloatRect(50,50,0,0));
-	newObject->PrepareToBeDrawn();
+	newViewable->SetBoundingBox(sf::FloatRect(50,50,0,0));
+	newViewable->PrepareToBeDrawn();
 
-	objectsToDraw.insert(newObject);
+	viewablesToDraw.insert(newViewable);
 }
 
-void Displayer::RemoveFromDrawingList(ViewableObject* objectToRemove)
+void Displayer::RemoveFromDrawingList(ViewableObject* viewableToRemove)
 {
-	sf::Lock lock(objectsMutex);
+	sf::Lock viewablesLock(viewablesMutex);
 
 	UL_ASSERT(worldToBeDisplayed);
-	if (objectsToDraw.count(objectToRemove))
-		objectsToDraw.erase(objectToRemove);
+	if (viewablesToDraw.count(viewableToRemove))
+		viewablesToDraw.erase(viewableToRemove);
 }
 
 
 void Displayer::PerformAndAnimateActionAsync(Action* newAction)
 {
-	UL_ASSERT(actionToBePerformed == NULL);
-	UL_ASSERT(!actionPending);
+	while(actionPending);
 
-	// ignore - for testing purposes
+
+	// ignore - this is a hack
 	duration = 0;
 
 	actionToBePerformed = newAction->Clone();

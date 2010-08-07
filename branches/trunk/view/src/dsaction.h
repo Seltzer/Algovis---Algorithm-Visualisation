@@ -64,6 +64,16 @@ namespace Algovis_Viewer
 
 		virtual void Complete();
 	};
+
+
+	class DS_TestAction : public DS_Action
+	{
+	public:
+		DS_TestAction(World* world) : DS_Action(world) {}
+
+		virtual Action* Clone() const;
+		virtual void Complete();
+	};
 }
 
 #endif //DS_ACTION_H

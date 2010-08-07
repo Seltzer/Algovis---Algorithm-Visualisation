@@ -157,6 +157,18 @@
 				RelativePath=".\Tests\AlgoVisTestSuite.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Tests\FloatWrapperTests.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Tests\IntWrapperTests.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Tests\VectorWrapperTests.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="docs"

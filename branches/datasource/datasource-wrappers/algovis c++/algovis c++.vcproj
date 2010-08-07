@@ -201,10 +201,6 @@
 		<Filter
 			Name="docs"
 			>
-			<File
-				RelativePath=".\docs\algovis c++ TODO.txt"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

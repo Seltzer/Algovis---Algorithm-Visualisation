@@ -1,0 +1,60 @@
+***** CRITICAL *****
+
+* Implement some DSAction subclasses and incorporate animation into them
+* Work on UI:
+	 - Add a Panel class with optional scrollbars along right and bottom edges
+	 - Have a bottom panel with pause/resume/undo and possibly textual descriptions of actions
+	 - Allow VOs to be dragged/suppressed
+	 - Zoom??? Low priority
+	 - Some sort of control panel with list of VOs??? Low priority
+* Fix the hackery of VO_Array so that it supports elements other than VO_SinglePrintables
+* Finish primitive wrappers and VectorWrapper
+  
+  
+***** HIGH PRIORITY *****
+
+* Work on history feature
+* Write wrappers for STL stacks and maps
+* Do some quick research into a popular C++ graph library
+* Write some more demos, test the compatibility of our wrappers against more libraries
+		Hopefully we can figure out if there are any other cases when #defining primitives fails
+* Implement drawing for pointer types and custom user types
+
+
+***** MEDIUM PRIORITY *****
+
+* Write VO_LinkedList and some sort of VO for a map type data structure
+* Provide more user functions to userFunctions.h:
+		- Control whether program debug breaks or pauses after every action (and pause duration)
+		- VO naming (so that VOs aren't just memory addresses
+		- Combining actions
+* Consider string algorithms
+* Compile a demo which uses Algovis in another compiler 
+		(to show how easy it is to use Algovis by simply including headers and copying a couple of libs/dlls)
+
+
+***** LOW PRIORITY *****
+
+* Port to Linux
+* Develop Algovis Python - http://pypi.python.org/pypi/ProxyTypes could be useful
+* Explore feasibility of Algovis Java
+	What we require is essentially function hooking which is often used for aspect-oriented programming type 
+	behaviour. Useful search keywords might include: 
+		{hooking hooks aop proxy intercept method calls...}
+
+
+
+***** GENERAL CODE TODO *****
+
+* Possibly start using smart pointers if things get nasty
+* Turn algovis c++ into a DLL
+
+
+***** BUGS *****
+
+
+**** THOUGHTS ****
+* Is text associated with VOs considered part of the VO bounding box
+* How to deal with "unsigned char"
+
+

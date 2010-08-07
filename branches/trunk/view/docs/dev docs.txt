@@ -13,3 +13,39 @@ Parameter copy semantics:
 	Obviously in C++, value types are copied and ref/pointer types are shallow copied without choice, but
 	these semantics imply that ref/pointers passed as parameters will also be deep copied.
 		
+		
+		
+				
+Synchronisation/threading details for performing an action:
+	- World::PerformDSAction() acquires a write lock on the VOs and ensures that there isn't already 
+				a pending action, sets World::voActionPending to true, and calls 
+				Displayer::PerformAndAnimateActionAsync() which sets Displayer::actionPending to true.
+	- Displayer render thread later notices that the Displayer::actionPending flag is checked and begins
+				the animation. Displayer::RenderLoop acquires a write lock on the VOs for each frame but
+				that technically isn't necessary since nothing can acquire any lock on the VOs while
+				there's an update pending anyway (see note below)
+	- When animation finishes, Displayer invokes World::CompleteDSAction which is a callback method. This
+				results in World::voActionPendingCondVar.notify_all() to let any waiting threads know that 
+				the action has finished (chances are that another thread is waiting on this inside
+				World::PerformDSAction())
+				
+A key point to note is that nothing can acquire even a read lock on the VOs while there is an action pending.
+So from the point of PerformDSAction() being called to the animation happening to the Displayer actually 
+applying the action and calling back the World, nothing can acquire a read lock.
+
+We may change this in the future if, for example, we have multiple views which require more frequent read
+access and can't afford to wait for an animation to finish.
+				
+		
+		
+		
+		
+Results from testing shared_mutex behaviour using a single thread:
+	acquire reader many times = fine, doesn't block
+	acquire writer many times = blocks
+	
+	acquire reader & release reader many times = fine
+	acquire writer & release writer many times  = untested
+	acquire reader & acquire writer = blocks on 2
+	acquire exclusive & acquire reader = bad, blocks on 2
+	
