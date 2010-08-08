@@ -89,6 +89,7 @@ void VO_Array::AddElement(ViewableObject* element, unsigned position)
 		elements.push_back(element);
 
 	elements[position]->AddObserver(this);
+	elements[position]->SetDrawingAgent(this);
 	NotifyObservers(UPDATED);
 	Changed(elements[position]);
 }
@@ -167,14 +168,12 @@ void VO_Array::Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont)
 	// Print elements
 	BOOST_FOREACH(ViewableObject* element, elements)
 	{
-		// for testing purposes
-		element->GetBoundingBox();
-
 		// TODO remove SP hack
 		UL_ASSERT(element->GetType() == SINGLE_PRINTABLE);
 		VO_SinglePrintable* spElement = (VO_SinglePrintable*) element;
 
-		spElement->Draw(renderWindow, defaultFont);
+		if (spElement->GetDrawingAgent() == this)
+			spElement->Draw(renderWindow, defaultFont);
 	}
 }
 

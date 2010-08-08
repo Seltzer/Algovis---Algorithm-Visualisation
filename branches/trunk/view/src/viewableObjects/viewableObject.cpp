@@ -9,7 +9,8 @@ namespace Algovis_Viewer
 {
 	
 ViewableObject::ViewableObject(const void* dsAddress, World* world) 
-	: dsAddress(dsAddress), world(world), suppressed(false) 
+	: dsAddress(dsAddress), world(world), parent(NULL), previousDrawingAgent(NULL), currentDrawingAgent(NULL),
+		suppressed(false) 
 {
 	boundingBoxColour[0] = boundingBoxColour[1] = boundingBoxColour[2] = 1;
 }
@@ -19,26 +20,35 @@ ViewableObject::~ViewableObject()
 	NotifyObservers(BEING_DESTROYED);
 }
 
-void ViewableObject::SetOwner(ViewableObject* owner)
+void ViewableObject::SetParent(ViewableObject* parent)
 {
-	this->owner = owner;
+	this->parent = parent;
 }
 
 
-sf::FloatRect ViewableObject::GetPreferredSize() 
-{ 
-	return boundingBox; 
-}
-
-sf::FloatRect ViewableObject::GetBoundingBox()
+// TODO Think about synchronisation for these
+void ViewableObject::SetDrawingAgent(const void* newDrawingAgent)
 {
-	return boundingBox;
+	previousDrawingAgent = currentDrawingAgent;
+	currentDrawingAgent = newDrawingAgent;
 }
+
+void ViewableObject::RestorePreviousDrawingAgent()
+{
+	currentDrawingAgent = previousDrawingAgent;
+}
+
+const void* ViewableObject::GetDrawingAgent()
+{
+	return currentDrawingAgent;
+}
+
+
+
 
 void ViewableObject::SetBoundingBox(sf::FloatRect newBB)
 {
-	boundingBox = newBB;
-	
+	Component::SetBoundingBox(newBB);
 	PrepareToBeDrawn();
 }
 

@@ -153,8 +153,6 @@ void Registry::ClearArray(const void* dsArray)
 
 void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, const std::string& newValue)
 {
-	currentWorld->AcquireWriterLock();
-
 	UL_ASSERT(IsRegistered(dsAssigned, SINGLE_PRINTABLE));
 	VO_SinglePrintable* sp = currentWorld->GetRepresentation<VO_SinglePrintable>(dsAssigned);
 	UL_ASSERT(sp);
@@ -165,16 +163,29 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 		UL_ASSERT(source);
 
 		DS_Assigned action(currentWorld, sp, source->GetHistory(), newValue);
-		if (sp->GetOwner() != NULL) // TODO: Better way of determining if we care about action
+		 // TODO: Better way of determining if we care about action
+		if (sp->GetParent() != NULL)
+		{
 			//currentWorld->PerformDSAction(&action);
 			action.Complete();
+
+		}
 		else
+		{
+			currentWorld->AcquireWriterLock();
 			action.Complete(); // Just do it without flair and drama
+			currentWorld->ReleaseWriterLock();
+		}
 	}
 	else
+	{
+		currentWorld->AcquireWriterLock();
 		sp->AssignedUntracked(dsSource, newValue);
+		currentWorld->ReleaseWriterLock();
+	}
+		
 
-	currentWorld->ReleaseWriterLock();
+	
 }
 
 // TODO: This is really similar to above

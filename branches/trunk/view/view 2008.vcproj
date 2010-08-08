@@ -259,6 +259,14 @@
 				Name="displayer"
 				>
 				<File
+					RelativePath=".\src\displayer\components.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\displayer\components.h"
+					>
+				</File>
+				<File
 					RelativePath=".\src\displayer\display.cpp"
 					>
 				</File>

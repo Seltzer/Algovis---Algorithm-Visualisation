@@ -221,7 +221,7 @@ void World::AddElementToArray(const void* dsArray, void* dsElement, unsigned pos
 	VO_SinglePrintable* element = GetRepresentation<VO_SinglePrintable>(dsElement);
 
 	arrayAddress->AddElement((ViewableObject*)element, position);
-	element->SetOwner(arrayAddress);
+	element->SetParent(arrayAddress);
 
 	ReleaseWriterLock();
 }

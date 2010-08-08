@@ -26,13 +26,15 @@ sf::Mutex Displayer::creationMutex;
 
 Displayer::Displayer()
 	: worldToBeDisplayed(NULL), actionToBePerformed(NULL), actionPending(false),
-		defaultFontInitialised(false), refreshRate(60)//, displayerHasExclusiveLock(false)
+		defaultFontInitialised(false), refreshRate(60)
 {
 	#if (DEBUG_GENERAL_LEVEL >= 2)
 		prt("DISPLAYER CTOR");
 	#endif
 
 	closed = false;
+
+	SetupPanels();
 	renderThread = new sf::Thread(&RenderThread, this);
 	renderThread->Launch();
 }
@@ -42,6 +44,7 @@ Displayer::~Displayer()
 {
 	closed = true;
 	delete renderThread;
+	delete worldPanel;
 }
 
 
@@ -55,6 +58,13 @@ Displayer* Displayer::GetInstance()
 	return Displayer::displayerInstance;
 }
 
+void Displayer::SetupPanels()
+{
+	float bgColour[3] = {0,0,0};
+	float borderColour[3] = {1,0,0};
+	
+	worldPanel = new Panel(sf::FloatRect(1,1,799,599), bgColour, borderColour);
+}
 
 
 void Displayer::InitWindow()
@@ -83,7 +93,7 @@ void Displayer::RenderLoop()
 	static bool minimised = false;
 
 	InitWindow();
-	
+		
 	while (win->IsOpened() && !closed)
 	{
 		sf::Event Event;
@@ -140,47 +150,67 @@ void Displayer::RenderLoop()
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// Draw panels
+		DrawWorldPanel();
+
+		
 	
-
-		if (actionPending)
-		{
-			worldToBeDisplayed->AcquireWriterLock();
-						
-			// Hacky mock animation which rotates stuff
-			glRotatef(((float) duration / 60) * 360, 0, 0, 1);
-
-			sf::Lock drawingLock(viewablesMutex);
-			BOOST_FOREACH(ViewableObject* obj, viewablesToDraw)
-				obj->Draw(*win, defaultFont);
-
-			// Hacky mock animation has finished
-			if (++duration == 60)
-			{
-				actionToBePerformed->Complete();
-				delete actionToBePerformed;
-				actionToBePerformed = NULL;
-				actionPending = false;
-				
-				worldToBeDisplayed->ReleaseWriterLock();
-				worldToBeDisplayed->CompletedDSAction();
-			}
-		}
-		else
-		{
-			// TODO: Make sure acquisition of VO reader lock and viewables mutex cannot result in deadlock
-			worldToBeDisplayed->AcquireReaderLock();
-			sf::Lock viewablesLock(viewablesMutex);
-
-			// Draw ViewableObjects
-			BOOST_FOREACH(ViewableObject* obj, viewablesToDraw)
-				obj->Draw(*win, defaultFont);
-
-			worldToBeDisplayed->ReleaseReaderLock();
-		}
-
+		// Display and sleep
 		win->Display();
 		sf::Sleep(1.0f / refreshRate);
 	}
+}
+
+
+void Displayer::DrawWorldPanel()
+{
+	worldPanel->Draw(*win, defaultFont);
+
+	// Translate by world panel location and draw VO contents
+	glTranslatef(worldPanel->GetBoundingBox().Left, worldPanel->GetBoundingBox().Top,0);
+
+	if (actionPending)
+	{
+		worldToBeDisplayed->AcquireWriterLock();
+					
+		// Hacky mock animation which rotates stuff
+		glRotatef(((float) duration / 60) * 360, 0, 0, 1);
+
+		sf::Lock drawingLock(viewablesMutex);
+		BOOST_FOREACH(ViewableObject* obj, viewablesToDraw)
+		{
+			if (obj->GetDrawingAgent() == this)
+				obj->Draw(*win, defaultFont);
+		}
+			
+
+		// Hacky mock animation has finished
+		if (++duration == 60)
+		{
+			actionToBePerformed->Complete();
+			delete actionToBePerformed;
+			actionToBePerformed = NULL;
+			actionPending = false;
+			
+			worldToBeDisplayed->ReleaseWriterLock();
+			worldToBeDisplayed->CompletedDSAction();
+		}
+	}
+	else
+	{
+		// TODO: Make sure acquisition of VO reader lock and viewables mutex cannot result in deadlock
+		worldToBeDisplayed->AcquireReaderLock();
+		sf::Lock viewablesLock(viewablesMutex);
+
+		// Draw ViewableObjects
+		BOOST_FOREACH(ViewableObject* obj, viewablesToDraw)
+		{
+			if (obj->GetDrawingAgent() == this)
+				obj->Draw(*win, defaultFont);
+		}
+		worldToBeDisplayed->ReleaseReaderLock();
+	}
+
 }
 
 void Displayer::RenderThread(void* dispPtr)
@@ -226,7 +256,7 @@ void Displayer::AddToDrawingList(ViewableObject* newViewable)
 
 	newViewable->SetBoundingBox(sf::FloatRect(50,50,0,0));
 	newViewable->PrepareToBeDrawn();
-
+	newViewable->SetDrawingAgent(this);
 	viewablesToDraw.insert(newViewable);
 }
 
@@ -236,7 +266,13 @@ void Displayer::RemoveFromDrawingList(ViewableObject* viewableToRemove)
 
 	UL_ASSERT(worldToBeDisplayed);
 	if (viewablesToDraw.count(viewableToRemove))
+	{
+		if (viewableToRemove->GetDrawingAgent() == this)
+			viewableToRemove->RestorePreviousDrawingAgent();
+
 		viewablesToDraw.erase(viewableToRemove);
+	}
+	
 }
 
 

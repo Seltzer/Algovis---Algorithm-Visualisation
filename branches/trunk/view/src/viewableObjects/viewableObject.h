@@ -4,6 +4,7 @@
 #include <set>
 #include "../../include/common.h"
 #include "../displayer/display.h"
+#include "../displayer/components.h"
 
 
 /* ViewableObject and IViewableObjectObserver classes
@@ -30,8 +31,9 @@ namespace Algovis_Viewer
 	};
 
 
+
 	// ViewableObject abstract class
-	class ViewableObject
+	class ViewableObject : public Component
 	{
 
 	protected:
@@ -39,10 +41,11 @@ namespace Algovis_Viewer
 		
 		World* world;
 		std::set<IViewableObjectObserver*> observers; 
-		ViewableObject* owner;
+		
+		// These two aren't necessarily always the same
+		ViewableObject* parent;
+		const void *previousDrawingAgent, *currentDrawingAgent;
 
-
-		sf::FloatRect boundingBox;
 		float boundingBoxColour[3];
 		sf::Font* font;
 		bool suppressed;
@@ -57,30 +60,33 @@ namespace Algovis_Viewer
 
 		virtual ViewableObjectType GetType() = 0;
 
-		virtual void SetOwner(ViewableObject*);
+		// Parent is either a parent ViewableObject or NULL if this VO doesn't have a parent
+		virtual void SetParent(ViewableObject*);
+		virtual ViewableObject* GetParent() { return parent; }
 
-		virtual ViewableObject* GetOwner() { return owner; }
+
+		/* Normally a ViewableObject is drawn by its parent ViewableObject or the Displayer 
+		 * (if it's a top level VO). These methods allow for an entity to come along and 
+		 * take/return/query the drawing responsibility for this VO.
+		 * 
+		 * A dsAction which wants to animate an action involving a number of VOs will typically
+		 * borrow responsibility for drawing them from their parents or the Displayer, and return
+		 * it later when finished.
+		 *
+		 * TODO: this comment will become obsolete once we have panels
+		 */
+		void SetDrawingAgent(const void* newDrawingAgent);
+		// Restores the drawing responsibility to the previous drawing agent
+		void RestorePreviousDrawingAgent();
+		// Check who the current drawing agent is
+		const void* GetDrawingAgent();
+
 
 		// Called after bounding box is set
 		virtual void PrepareToBeDrawn() {}
 
-		/* NB: ViewableObject can choose to ignore the default font passed to it,
-		 *     and instead draw using its own choice of font
-		 *
-		 */
-		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont) = 0;
-	
-		
-			
-		/* Returns preferred size or current bounding box if VO is not capable of 
-		 * calculating its preferred size. 
-		 *
-		 * Note that current bounding box can be different to the preferred size (usually when
-		 * a parent entity sets the bounding box based on parameters external to this VO.
-		 */
-		virtual sf::FloatRect GetPreferredSize();
-		virtual sf::FloatRect GetBoundingBox();
 		virtual void SetBoundingBox(sf::FloatRect);
+		
 		// RGB args are defined [0,1]
 		virtual void SetBoundingBoxColour(float r, float g, float b);
 		
