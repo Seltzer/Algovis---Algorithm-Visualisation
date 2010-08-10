@@ -39,6 +39,9 @@ World::~World()
 // TODO: Verify that synchronisation is done properly
 bool World::PerformDSAction(DS_Action* dsAction)
 {
+	#if (DEBUG_ACTION_LEVEL >= 1)
+		prt("Starting World::PerformDSAction()");
+	#endif
 	UL_ASSERT(dsAction);
 	
 	// Wait for the current action to finish
@@ -51,20 +54,36 @@ bool World::PerformDSAction(DS_Action* dsAction)
 	UL_ASSERT(lastActionPerformed == actionsPerformed.size() - 1);
 	
 	voActionPending = true;
+	#if (DEBUG_ACTION_LEVEL >= 1)
+		prt("\tWorld::voActionPending set to true");
+	#endif
 	actionsPerformed.push_back(dsAction);
 
 	// Ask Displayer to perform dsAction
 	Displayer::GetInstance()->PerformAndAnimateActionAsync(dsAction);
 	
+	#if (DEBUG_ACTION_LEVEL >= 1)
+		prt("Finishing World::PerformDSAction()");
+	#endif
+
 	return true;
 }
 
 void World::CompletedDSAction()
 {
+	#if (DEBUG_ACTION_LEVEL >= 1)
+		prt("Starting World::CompletedDSAction()");
+	#endif
+
 	++lastActionPerformed;
 
 	voActionPending = false;
+	// TODO: Should we only be releasing the write lock here?
 	voActionPendingCondVar.notify_all();
+		
+	#if (DEBUG_ACTION_LEVEL >= 1)
+		prt("Finishing World::CompletedDSAction()");
+	#endif
 }
 
 void World::PerformUIAction(UI_ActionType actionType)
@@ -286,7 +305,7 @@ void World::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const st
 }
 
 
-void World::AcquireReaderLock()
+void World::AcquireReaderLock(bool skipConditionVarCheck)
 {
 	#if(DEBUG_THREADING_LEVEL >= 3)
 		prt("PRE-ACQUISITION OF READER LOCK");
@@ -304,9 +323,12 @@ void World::AcquireReaderLock()
 		
 	voAccessMutex.lock_shared();
 
-	while (voActionPending)
-		voActionPendingCondVar.wait<boost::shared_mutex>(voAccessMutex);
-
+	if (!skipConditionVarCheck)
+	{
+		while (voActionPending)
+			voActionPendingCondVar.wait<boost::shared_mutex>(voAccessMutex);
+	}
+	
 
 	#if(DEBUG_THREADING_LEVEL >= 2)
 		prt("POST-ACQUISITION OF READER LOCK");

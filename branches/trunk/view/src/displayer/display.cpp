@@ -192,6 +192,7 @@ void Displayer::DrawWorldPanel()
 			actionToBePerformed = NULL;
 			actionPending = false;
 			
+			// Consider of order of write lock release and CompletedDSAction()\notify_all()
 			worldToBeDisplayed->ReleaseWriterLock();
 			worldToBeDisplayed->CompletedDSAction();
 		}
@@ -199,7 +200,7 @@ void Displayer::DrawWorldPanel()
 	else
 	{
 		// TODO: Make sure acquisition of VO reader lock and viewables mutex cannot result in deadlock
-		worldToBeDisplayed->AcquireReaderLock();
+		worldToBeDisplayed->AcquireReaderLock(true);
 		sf::Lock viewablesLock(viewablesMutex);
 
 		// Draw ViewableObjects

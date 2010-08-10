@@ -15,6 +15,7 @@ REAL_INT wmain()
 {
 	Demo1();
 	//Demo2();
+	//Demo3();
 
 	return 0;
 }

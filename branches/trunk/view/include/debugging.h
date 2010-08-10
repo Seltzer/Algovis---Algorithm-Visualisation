@@ -11,7 +11,7 @@ namespace Algovis_Viewer
 	 * 1 = Basic general debugging
 	 * 2 = Same as 1, plus Registry/Displayer construction and DllMain invocations
 	 */
-	#define DEBUG_GENERAL_LEVEL 1
+	#define DEBUG_GENERAL_LEVEL 0
 
 
 	/* 0 = Off
@@ -27,6 +27,11 @@ namespace Algovis_Viewer
 	 * 3 = Same as 2 plus notification when VO_SinglePrintables are registered
 	 */
 	#define DEBUG_REGISTRATION_LEVEL 0
+
+	/* 0 = Off
+	 * 1 = Basic action debugging
+	 */
+	#define DEBUG_ACTION_LEVEL 1
 
 	// For changes made to specific VOs (excluding reg/dereg which is covered by DEBUG_REGISTRATION_LEVEL)
 	//#define DEBUG_SP_CHANGES

@@ -55,6 +55,24 @@ void Demo2()
 	getchar();
 }
 
+void Demo3()
+{
+	EnableDrawing(true);
+
+	// Populate
+	vector<int> collectionToModify;
+	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
+
+
+	prt("Performing series of animations");
+	TestMethod();
+	TestMethod();
+	TestMethod();
+	TestMethod();
+	TestMethod();
+	TestMethod();
+}
+
 
 
 

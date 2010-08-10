@@ -1,12 +1,19 @@
 ***** CRITICAL *****
 
 * Implement some DSAction subclasses and incorporate animation into them
+* Change drawing model so that it's hierarchical:
+	- Get the event system working properly
+	- Complement Draw() with DrawValue() and DrawWithoutValue()
+	- Consider whether names/addresses of Viewables are part of their bounding box - 
+			should names/addresses only be shown when the user mouses over the viewable for spatial concerns?
+	- PrepareToBeDrawn should be better defined
 * Work on UI:
 	 - Add a Panel class with optional scrollbars along right and bottom edges
 	 - Have a bottom panel with pause/resume/undo and possibly textual descriptions of actions
-	 - Allow VOs to be dragged/suppressed
+	 - Allow VOs to be dragged/suppressed/moused over
 	 - Zoom??? Low priority
 	 - Some sort of control panel with list of VOs??? Low priority
+* Add animation for DS_Assigned
 * Fix the hackery of VO_Array so that it supports elements other than VO_SinglePrintables
 * Finish primitive wrappers and VectorWrapper
   

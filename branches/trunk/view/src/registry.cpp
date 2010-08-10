@@ -166,10 +166,10 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 		 // TODO: Better way of determining if we care about action
 		if (sp->GetParent() != NULL)
 		{
-			//currentWorld->PerformDSAction(&action);
+			currentWorld->PerformDSAction(&action);
 			currentWorld->AcquireWriterLock();
 			action.Complete();
-			currentWorld->AcquireReaderLock();
+			currentWorld->ReleaseWriterLock();
 
 		}
 		else

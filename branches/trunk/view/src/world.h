@@ -5,18 +5,16 @@
 
 #include <vector>
 #include <map>
+#include "boost/thread/shared_mutex.hpp"
+#include "boost/thread/condition_variable.hpp"
 #include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
 
-// TODO Add these to boost-subset, move to cpp if possible
-#include "boost/thread/shared_mutex.hpp"
-#include "boost/thread/condition_variable.hpp"
-
-
 #include "../include/common.h"
 #include "action.h"
-#include "../src/displayer/uiAction.h"
 #include "dsAction.h"
+#include "../src/displayer/uiAction.h"
+
 
 
 
@@ -69,12 +67,11 @@ namespace Algovis_Viewer
 		//		- This synchronisation is purely declarative. Technically, any entity which has
 		//			references to VOs can do whatever it wants to it. But this is the threadsafe
 		//			way to do it.
-		//		- Recursive lock acquisitions will not cause blocking
-		//		- Reader locks can only be acquired when there isn't a pending action;
-		//				i.e. if there's a pending action, the thread must wait until the Displayer has 
-		//					finished displaying the animation for the action and performing it
+		//		- Recursive lock acquisitions will not cause blocking (except read acquire then write acquire)
+		//		- Reader locks can only be acquired when there isn't a pending action unless
+		//				the skipPendingActionCheck flag is set
 		//		- For an in depth explanation of the synchronisation involved with dsActions, see devdocs
-		void AcquireReaderLock();
+		void AcquireReaderLock(bool skipPendingActionCheck = false);
 		void ReleaseReaderLock();
 		void AcquireWriterLock();
 		void ReleaseWriterLock();
@@ -82,17 +79,19 @@ namespace Algovis_Viewer
 
 		/*Pre-Condition: User is not currently playing back through actions 
 		 *					(might change this behaviour later on)
+		 *
+		 * This should be followed later by a CompletedDSAction() invocation
 		 */
 		bool PerformDSAction(DS_Action* action);
 		
 		// Hacky callback used by the Displayer render thread to inform World that
 		// it has finished animating/performing the Action which the World requested
+		//
+		// TODO: Figure out whether this requires a write lock to work
 		void CompletedDSAction();
-
 
 		// Unimplemented stub currently used for testing
 		void PerformUIAction(UI_ActionType actionType);
-
 
 		// Returns true if a data source object is registered (and hence has a ViewableObject equivalent)
 		bool IsRegistered(const void* dsAddress) const;
@@ -112,27 +111,7 @@ namespace Algovis_Viewer
 		 * is different to T; i.e. !IsRegistered(dsAddress, voType) where voType != ViewObject::GetType()
 		 */
 		template<class T>
-		T* GetRepresentation(const void* dsAddress)
-		{
-			UL_ASSERT(dsAddress);
-			ViewableObject* viewRepresentation = GetRepresentation(dsAddress);
-			UL_ASSERT(viewRepresentation);
-
-			if (typeid(T).name() == typeid(VO_Array).name())
-			{
-				UL_ASSERT(viewRepresentation->GetType() == ARRAY);
-			}
-			else if (typeid(T).name() == typeid(VO_SinglePrintable).name())
-			{
-				UL_ASSERT(viewRepresentation->GetType() == SINGLE_PRINTABLE);
-			}
-
-			T* viewRepresentationCast = static_cast<T*>(viewRepresentation);
-			UL_ASSERT(viewRepresentationCast);
-
-			return viewRepresentationCast;
-		}
-
+		T* GetRepresentation(const void* dsAddress);
 
 		/* PRE-CONDITIONS:
 		 *	- All elements in the array have been registered 
@@ -182,7 +161,11 @@ namespace Algovis_Viewer
 
 	};
 
+	#include "world.inl"
+
 }
+
+
 
 
 #endif

@@ -16,7 +16,7 @@ Parameter copy semantics:
 		
 		
 				
-Synchronisation/threading details for performing an action:
+Synchronisation/threading details for performing an action (OBSOLETE NOW)
 	- World::PerformDSAction() acquires a write lock on the VOs and ensures that there isn't already 
 				a pending action, sets World::voActionPending to true, and calls 
 				Displayer::PerformAndAnimateActionAsync() which sets Displayer::actionPending to true.
@@ -38,6 +38,15 @@ access and can't afford to wait for an animation to finish.
 				
 		
 		
+Intended drawing sequence:
+	1.) Let animation manipulate VOs - this may result in the triggering of events when VOs are resized etc.
+	2.) For all panels:
+			a.) Draw panel
+			b.) Draw panel contents - in the case of World panel, draw all Viewables
+					which aren't involved in a pending animation.
+	3.) Draw next animation frame
+	4.) Draw mouse popups
+
 		
 		
 Results from testing shared_mutex behaviour using a single thread:

@@ -227,6 +227,10 @@
 				RelativePath=".\src\world.h"
 				>
 			</File>
+			<File
+				RelativePath=".\src\world.inl"
+				>
+			</File>
 			<Filter
 				Name="viewableObjects"
 				>
