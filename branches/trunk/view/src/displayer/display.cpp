@@ -174,7 +174,10 @@ void Displayer::DrawWorldPanel()
 		worldToBeDisplayed->AcquireWriterLock();
 					
 		// Hacky mock animation which rotates stuff
-		glRotatef(((float) duration / 60) * 360, 0, 0, 1);
+		//if ((DS_TestAction*)actionToBePerformed != NULL)
+		//	glRotatef(((float) duration / 60) * 360, 0, 0, 1);
+
+		actionToBePerformed->Perform((float)duration / 60);
 
 		sf::Lock drawingLock(viewablesMutex);
 		BOOST_FOREACH(ViewableObject* obj, viewablesToDraw)
@@ -187,7 +190,7 @@ void Displayer::DrawWorldPanel()
 		// Hacky mock animation has finished
 		if (++duration == 60)
 		{
-			actionToBePerformed->Complete();
+			actionToBePerformed->Complete(true);
 			delete actionToBePerformed;
 			actionToBePerformed = NULL;
 			actionPending = false;

@@ -167,15 +167,15 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 		if (sp->GetParent() != NULL)
 		{
 			currentWorld->PerformDSAction(&action);
-			currentWorld->AcquireWriterLock();
-			action.Complete();
-			currentWorld->ReleaseWriterLock();
+			//currentWorld->AcquireWriterLock();
+			//action.Complete();
+			//currentWorld->AcquireReaderLock();
 
 		}
 		else
 		{
 			currentWorld->AcquireWriterLock();
-			action.Complete(); // Just do it without flair and drama
+			action.Complete(false); // Just do it without flair and drama
 			currentWorld->ReleaseWriterLock();
 		}
 	}

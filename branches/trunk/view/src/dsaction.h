@@ -3,6 +3,7 @@
 
 #include "Action.h"
 #include <set>
+#include "SFML/Graphics.hpp"
 
 namespace Algovis_Viewer
 {
@@ -52,17 +53,16 @@ namespace Algovis_Viewer
 		VO_SinglePrintable* subject;
 		std::set<ValueID> history;
 
+		// Animation stuff
+		sf::FloatRect subjectStart;
+
 	public:
 		DS_Assigned(World* world) : DS_Action(world) {}
-		DS_Assigned(World* world, VO_SinglePrintable* subject, std::set<ValueID> history, std::string value)
-			: DS_Action(world), value(value), subject(subject), history(history)
-		{
-			subjects.insert((ViewableObject*)subject); // May need to keep the original printable pointer?
-		}
-
+		DS_Assigned(World* world, VO_SinglePrintable* subject, std::set<ValueID> history, std::string value);
 		virtual Action* Clone() const;
 
-		virtual void Complete();
+		virtual void Perform(float progress);
+		virtual void Complete(bool displayed);
 	};
 
 
@@ -72,7 +72,7 @@ namespace Algovis_Viewer
 		DS_TestAction(World* world) : DS_Action(world) {}
 
 		virtual Action* Clone() const;
-		virtual void Complete();
+		virtual void Complete(bool displayed);
 	};
 }
 

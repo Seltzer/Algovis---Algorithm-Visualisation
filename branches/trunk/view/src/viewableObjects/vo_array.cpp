@@ -17,15 +17,10 @@ using namespace std;
 namespace Algovis_Viewer
 {
 	
-int time = 0; // TODO: Seriously?... Seriously guys.
 
 void VO_Array::Changed(ViewableObject* subject)
 {
-	// TODO: use history somehow to do cool things
-	// The element notifying is obviously in this array. We shall assume we have displayed
-	// the value and history here, and will reset the current history to be the value we just displayed
-	// That way future things will have the just-displayed-element in their history, instead of everything
-	// that was used to produce is.
+	// TODO: Clean up this method, it does very little of interest any more
 	UL_ASSERT(subject->GetType() == SINGLE_PRINTABLE);
 	
 	VO_SinglePrintable* printable = (VO_SinglePrintable*)(subject); // TODO: This is a serious problem
@@ -43,16 +38,12 @@ void VO_Array::Changed(ViewableObject* subject)
 			std::cout << std::endl;
 
 		#endif
-
-		//int time = Algovis_Viewer::Registry::GetInstance()->GetTime();
-		printable->ResetHistory(ValueID(subject->GetDSAddress(), time));
 		
 		// hack to make printable draw itself with a green outline after being changed. TODO: remove
 		BOOST_FOREACH(ViewableObject* element, elements)
 			element->SetBoundingBoxColour(1,1,1);
 		printable->SetBoundingBoxColour(0,1,0);
 	}
-	++time;
 }
 
 VO_Array::VO_Array(const void* dsAddress, World* world, 

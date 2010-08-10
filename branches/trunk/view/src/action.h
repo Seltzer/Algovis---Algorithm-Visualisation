@@ -34,7 +34,7 @@ namespace Algovis_Viewer
 		// Move the animation (if any) forward to the specified point (0->1 scale)
 		virtual void Perform(float progress) {}
 		// Perform the side effect (don't just animate)
-		virtual void Complete() {}
+		virtual void Complete(bool displayed) {}
 
 		// virtual bool Undo() = 0;
 		// virtual bool Do() = 0;
