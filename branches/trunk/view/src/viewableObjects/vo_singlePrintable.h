@@ -3,6 +3,7 @@
 
 
 #include "viewableObject.h"
+#include "../dsAction.h"
 
 
 
@@ -47,10 +48,12 @@ namespace Algovis_Viewer
 		virtual ViewableObjectType GetType() { return SINGLE_PRINTABLE; }
 
 		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont);
+		virtual void DrawValue(sf::FloatRect& desiredBoundingBox, sf::RenderWindow&, sf::Font& defaultFont);
+		virtual void DrawWithoutValue(sf::RenderWindow&, sf::Font& defaultFont);
 
 		virtual sf::FloatRect GetPreferredSize();
 
-		virtual void PrepareToBeDrawn();
+		virtual void SetupLayout();
 
 		
 
@@ -102,14 +105,7 @@ namespace Algovis_Viewer
 		}
 
 		
-		void UpdateValue(const std::string& newValue) 
-		{ 
-			//if (value != newValue) // Update should be displayed, with history, even if the same value is assigned!
-			{
-				value = newValue; 
-				NotifyObservers(UPDATED);
-			}
-		}
+		void UpdateValue(const std::string& newValue);
 
 	};
 

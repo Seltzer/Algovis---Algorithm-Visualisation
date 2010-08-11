@@ -279,6 +279,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\displayer\events.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\displayer\events.h"
+					>
+				</File>
+				<File
 					RelativePath=".\src\displayer\uiAction.h"
 					>
 				</File>

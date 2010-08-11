@@ -2,7 +2,7 @@
 #define ACTION_H
 
 #include <vector>
-
+#include "SFML/Graphics.hpp"
 
 namespace Algovis_Viewer
 {
@@ -31,13 +31,14 @@ namespace Algovis_Viewer
 		// Uses parameter copy semantics (see devdocs)
 		void AddSubAction(Action& subAction);
 
+		// For preparation, such as acquiring drawing responsibility over Viewables etc.
+		virtual void PrepareToPerform() {}
 		// Move the animation (if any) forward to the specified point (0->1 scale)
-		virtual void Perform(float progress) {}
-		// Perform the side effect (don't just animate)
+		virtual void Perform(float progress, sf::RenderWindow& renderWindow, sf::Font& defaultFont) {}
+		// Perform the side effect (don't just animate) and clean up anything done in PrepareToPerform()
 		virtual void Complete(bool displayed) {}
 
 		// virtual bool Undo() = 0;
-		// virtual bool Do() = 0;
 	};
 
 }

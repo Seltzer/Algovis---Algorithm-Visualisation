@@ -1,18 +1,13 @@
 #ifndef WORLD_H_
 #define WORLD_H_
 
-
-
 #include <vector>
 #include <map>
+#include "windows.h"
 #include "boost/thread/shared_mutex.hpp"
 #include "boost/thread/condition_variable.hpp"
-#include "SFML/Window.hpp"
-#include "SFML/Graphics.hpp"
 
 #include "../include/common.h"
-#include "action.h"
-#include "dsAction.h"
 #include "../src/displayer/uiAction.h"
 
 
@@ -31,6 +26,9 @@ namespace Algovis_Viewer
 	class ViewableObject;
 	class VO_Array;
 	class VO_SinglePrintable;
+
+	class Action; 
+	class DS_Action;
 
 
 	class World

@@ -1,9 +1,11 @@
 #ifndef DS_ACTION_H
 #define DS_ACTION_H
 
-#include "Action.h"
 #include <set>
 #include "SFML/Graphics.hpp"
+#include "action.h"
+
+
 
 namespace Algovis_Viewer
 {
@@ -45,6 +47,8 @@ namespace Algovis_Viewer
 		virtual Action* Clone() const;
 	};
 
+
+
 	// Action class for printable being assigned 
 	class DS_Assigned : public DS_Action
 	{
@@ -61,18 +65,23 @@ namespace Algovis_Viewer
 		DS_Assigned(World* world, VO_SinglePrintable* subject, std::set<ValueID> history, std::string value);
 		virtual Action* Clone() const;
 
-		virtual void Perform(float progress);
+		virtual void PrepareToPerform();
+		virtual void Perform(float progress, sf::RenderWindow& renderWindow, sf::Font& defaultFont);
 		virtual void Complete(bool displayed);
 	};
 
 
+
+	// DS_TestAction class for testing
 	class DS_TestAction : public DS_Action
 	{
 	public:
 		DS_TestAction(World* world) : DS_Action(world) {}
 
 		virtual Action* Clone() const;
+		virtual void Perform(float progress, sf::RenderWindow& renderWindow, sf::Font& defaultFont);
 		virtual void Complete(bool displayed);
+
 	};
 }
 

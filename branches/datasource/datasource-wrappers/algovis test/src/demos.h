@@ -23,12 +23,6 @@ void Demo1()
 		util::PlatformSleep(0.5);
 	}
 
-	// Perform mock animation multiple times to test that condition variable is working properly
-	prt("Performing mock animation:");
-	TestMethod();
-	TestMethod();
-	TestMethod();
-	
 
 	// Sorting
 	prt("Sorting:")
@@ -53,24 +47,6 @@ void Demo2()
 
 	prt("Press any key to leave Demo2");
 	getchar();
-}
-
-void Demo3()
-{
-	EnableDrawing(true);
-
-	// Populate
-	vector<int> collectionToModify;
-	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
-
-
-	prt("Performing series of animations");
-	TestMethod();
-	TestMethod();
-	TestMethod();
-	TestMethod();
-	TestMethod();
-	TestMethod();
 }
 
 

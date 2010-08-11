@@ -3,6 +3,7 @@
 
 #include "../include/registry.h"
 #include "world.h"
+#include "displayer/display.h"
 #include "viewableObjects/viewableObject.h"
 #include "viewableObjects/vo_array.h"
 #include "viewableObjects/vo_singlePrintable.h"
@@ -15,7 +16,7 @@ using namespace std;
 namespace Algovis_Viewer
 {
 
-	
+
 Registry* Registry::instance(NULL);
 
 
@@ -163,21 +164,22 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 		UL_ASSERT(source);
 
 		DS_Assigned action(currentWorld, sp, source->GetHistory(), newValue);
-		 // TODO: Better way of determining if we care about action
-		if (sp->GetParent() != NULL)
+		
+		
+		// TODO: Better way of determining if we care about action
+		if (sp->GetParentComponent())
 		{
-			currentWorld->PerformDSAction(&action);
-			//currentWorld->AcquireWriterLock();
-			//action.Complete();
-			//currentWorld->AcquireReaderLock();
-
+			if (typeid(*sp->GetParentComponent()) == typeid(VO_Array))
+			{
+				currentWorld->PerformDSAction(&action);
+				return;
+			}
 		}
-		else
-		{
-			currentWorld->AcquireWriterLock();
-			action.Complete(false); // Just do it without flair and drama
-			currentWorld->ReleaseWriterLock();
-		}
+		
+		// Printable doesn't have a parent, or parent is not a VO_Array
+		currentWorld->AcquireWriterLock();
+		action.Complete(false); // Just do it without flair and drama
+		currentWorld->ReleaseWriterLock();
 	}
 	else
 	{
@@ -185,9 +187,6 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 		sp->AssignedUntracked(dsSource, newValue);
 		currentWorld->ReleaseWriterLock();
 	}
-		
-
-	
 }
 
 // TODO: This is really similar to above
@@ -212,13 +211,6 @@ void Registry::PrintableModified(const void* dsModified, const void* dsSource, c
 	currentWorld->ReleaseWriterLock();
 }
 
-
-void Registry::TestMethod()
-{
-	// TODO: Finish working on DS_TestAction
-	DS_TestAction testAction(currentWorld);
-	currentWorld->PerformDSAction(&testAction); 
-}
 
 
 

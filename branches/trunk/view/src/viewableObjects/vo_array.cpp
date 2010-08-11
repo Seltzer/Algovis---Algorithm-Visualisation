@@ -1,15 +1,13 @@
-#include <sstream>
 #include "boost/foreach.hpp"
-#include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
-#include "SFML/System.hpp"
 #include "utilities.h"
-#include "../../include/registry.h"
+
 #include "vo_array.h"
 #include "vo_singlePrintable.h"
+#include "../../include/registry.h"
+#include "../displayer/display.h"
 
 using namespace std;
-
 
 
 
@@ -40,9 +38,9 @@ void VO_Array::Changed(ViewableObject* subject)
 		#endif
 		
 		// hack to make printable draw itself with a green outline after being changed. TODO: remove
-		BOOST_FOREACH(ViewableObject* element, elements)
-			element->SetBoundingBoxColour(1,1,1);
-		printable->SetBoundingBoxColour(0,1,0);
+		//BOOST_FOREACH(ViewableObject* element, elements)
+		//	element->SetBoundingBoxColour(1,1,1);
+		//printable->SetBoundingBoxColour(0,1,0);
 	}
 }
 
@@ -81,13 +79,24 @@ void VO_Array::AddElement(ViewableObject* element, unsigned position)
 
 	elements[position]->AddObserver(this);
 	elements[position]->SetDrawingAgent(this);
-	NotifyObservers(UPDATED);
+	elements[position]->SetParentComponent(this);
+	
+	
+	ComponentEvent eventToFire(RESIZED | UPDATED_VALUE | CHILD_UPDATED);
+	eventToFire.resize.originalHeight = boundingBox.GetHeight();
+	eventToFire.resize.originalWidth = boundingBox.GetWidth();
+	SetupLayout();
+	eventToFire.resize.newHeight = boundingBox.GetHeight();
+	eventToFire.resize.newWidth = boundingBox.GetWidth();
+
+	NotifyObservers(eventToFire);
 	Changed(elements[position]);
 }
 
 void VO_Array::PushElementToBack(ViewableObject* element)
 {
 	elements.push_back(element);
+	elements[elements.size() - 1]->SetParentComponent(this);
 }
 
 void VO_Array::ClearArray(unsigned newCapacity)
@@ -110,15 +119,17 @@ void VO_Array::SwapElements(unsigned firstElement, unsigned secondElement)
 	// TODO: UpdateValue is obsolete, and this does not track history for the elements involved.
 	//first->UpdateValue(second->GetValue());
 	//second->UpdateValue(temp);
-	NotifyObservers(UPDATED);
+
+	ComponentEvent eventToFire(UPDATED_VALUE | CHILD_UPDATED);
+	NotifyObservers(eventToFire);
 }
 
-void VO_Array::PrepareToBeDrawn()
+void VO_Array::SetupLayout()
 {
 	static float xGap = 1, yGap = 5;
 
-	float x = boundingBox.Left;
-	float y = boundingBox.Top;
+	float x = 0;
+	float y = 0;
 
 	// Address stuff
 	std::string addressString(util::ToString<const void*>(dsAddress).append(":"));
@@ -126,7 +137,6 @@ void VO_Array::PrepareToBeDrawn()
 	delete graphicalAddressText;
 	graphicalAddressText = new sf::String(addressString.c_str(), Displayer::GetInstance()->GetDefaultFont());
 	graphicalAddressText->SetColor(sf::Color(255, 255, 255));
-	//graphicalAddressText.Move(x, y);
 	graphicalAddressText->SetPosition(x,y);
 	
 	
@@ -144,19 +154,25 @@ void VO_Array::PrepareToBeDrawn()
 	{
 		sf::FloatRect preferredSize = element->GetPreferredSize();
 		element->SetBoundingBox(sf::FloatRect(x,y,x + preferredSize.GetWidth(), y + maxTextHeight));
-		element->PrepareToBeDrawn();
+		element->SetupLayout();
 		x += element->GetBoundingBox().GetWidth() + xGap;
 	}
 
-	// TODO set bounding box of array
+	//	boundingBox = sf::FloatRect(boundingBox.Left, boundingBox.Top, 
+	//								boundingBox.Left + x, boundingBox.Top + maxTextHeight); 
 }
 
 void VO_Array::Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont)
 {
 	// Print address
+	sf::Vector2f absPos = GetAbsolutePosition();
+	graphicalAddressText->Move(absPos.x, absPos.y);
 	renderWindow.Draw(*graphicalAddressText);
+	graphicalAddressText->Move(-absPos.x, -absPos.y);
 
 	// Print elements
+	glTranslatef(boundingBox.Left, boundingBox.Top,0);
+
 	BOOST_FOREACH(ViewableObject* element, elements)
 	{
 		// TODO remove SP hack
@@ -166,24 +182,28 @@ void VO_Array::Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont)
 		if (spElement->GetDrawingAgent() == this)
 			spElement->Draw(renderWindow, defaultFont);
 	}
+	glTranslatef(-boundingBox.Left, -boundingBox.Top,0);
 }
 
 
-void VO_Array::Notify(ViewableObject* subject, NOTIFY_EVENT_TYPE eventType)
+void VO_Array::Notify(Component* subject, ComponentEvent& newEvent)
 {
-	if (eventType == UPDATED)
+	UL_ASSERT(subject);
+
+	newEvent.ComplementEventType(CHILD_UPDATED);
+
+	if (newEvent.IsOfType(UPDATED_VALUE))
 	{
-		NotifyObservers(UPDATED);
-		Changed(subject);
+		NotifyObservers(newEvent);
 	}
-	else if (eventType == BEING_DESTROYED)
+	else if (newEvent.IsOfType(BEING_DESTROYED))
 	{
 		for(vector<ViewableObject*>::iterator it = elements.begin(); it < elements.end(); it++)
 		{
 			if ((*it) == subject)
 			{
 				elements.erase(it);
-				NotifyObservers(UPDATED);
+				NotifyObservers(newEvent);
 				return;
 			}
 		}

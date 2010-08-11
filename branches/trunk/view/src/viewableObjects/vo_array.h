@@ -3,15 +3,15 @@
 
 
 #include <vector>
-
 #include "viewableObject.h"
 
 
 
 namespace Algovis_Viewer
 {
+	class ComponentEvent;
 
-	class VO_Array : public ViewableObject, IViewableObjectObserver
+	class VO_Array : public ViewableObject
 	{
 
 	private:
@@ -27,12 +27,10 @@ namespace Algovis_Viewer
 	
 		virtual ViewableObjectType GetType() { return ARRAY; }
 
-		virtual void PrepareToBeDrawn();
+		virtual void SetupLayout();
 
 		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont); 
 		
-		
-
 
 		unsigned GetSize() { return elements.size(); }
 
@@ -43,12 +41,11 @@ namespace Algovis_Viewer
 		// TODO: this is bad
 		void ClearArray(unsigned newCapacity);
 
-
 		// Not currently implemented by any DS
 		void SwapElements(unsigned firstElement, unsigned secondElement);
 
 		// Used as an event-handler for elements being updated
-		virtual void Notify(ViewableObject* subject, NOTIFY_EVENT_TYPE);
+		virtual void Notify(Component* subject, ComponentEvent&);
 
 	};
 }

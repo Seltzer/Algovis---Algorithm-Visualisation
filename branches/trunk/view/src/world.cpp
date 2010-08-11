@@ -1,13 +1,14 @@
-#include "windows.h"
 #include "boost/foreach.hpp"
 #include "utilities.h"
 #include "world.h"
+#include "displayer/display.h"
 #include "viewableObjects/viewableObject.h"
 #include "viewableObjects/vo_array.h"
 #include "viewableObjects/vo_singlePrintable.h"
 
-
 using namespace std;
+
+
 
 
 namespace Algovis_Viewer
@@ -42,6 +43,8 @@ bool World::PerformDSAction(DS_Action* dsAction)
 	#if (DEBUG_ACTION_LEVEL >= 1)
 		prt("Starting World::PerformDSAction()");
 	#endif
+
+
 	UL_ASSERT(dsAction);
 	
 	// Wait for the current action to finish
@@ -54,14 +57,15 @@ bool World::PerformDSAction(DS_Action* dsAction)
 	UL_ASSERT(lastActionPerformed == actionsPerformed.size() - 1);
 	
 	voActionPending = true;
+	actionsPerformed.push_back(dsAction);
 	#if (DEBUG_ACTION_LEVEL >= 1)
 		prt("\tWorld::voActionPending set to true");
 	#endif
-	actionsPerformed.push_back(dsAction);
-
+	
 	// Ask Displayer to perform dsAction
 	Displayer::GetInstance()->PerformAndAnimateActionAsync(dsAction);
 	
+
 	#if (DEBUG_ACTION_LEVEL >= 1)
 		prt("Finishing World::PerformDSAction()");
 	#endif
@@ -78,7 +82,6 @@ void World::CompletedDSAction()
 	++lastActionPerformed;
 
 	voActionPending = false;
-	// TODO: Should we only be releasing the write lock here?
 	voActionPendingCondVar.notify_all();
 		
 	#if (DEBUG_ACTION_LEVEL >= 1)
@@ -234,13 +237,12 @@ void World::AddElementToArray(const void* dsArray, void* dsElement, unsigned pos
 	UL_ASSERT(IsRegistered(dsArray,ARRAY));
 	UL_ASSERT(IsRegistered(dsElement,SINGLE_PRINTABLE));
 
-	VO_Array* arrayAddress = GetRepresentation<VO_Array>(dsArray);
-	UL_ASSERT(position <= arrayAddress->GetSize());
+	VO_Array* voArray = GetRepresentation<VO_Array>(dsArray);
+	UL_ASSERT(position <= voArray->GetSize());
 
 	VO_SinglePrintable* element = GetRepresentation<VO_SinglePrintable>(dsElement);
 
-	arrayAddress->AddElement((ViewableObject*)element, position);
-	element->SetParent(arrayAddress);
+	voArray->AddElement((ViewableObject*)element, position);
 
 	ReleaseWriterLock();
 }
@@ -382,6 +384,8 @@ void World::ReleaseWriterLock()
 		prt("POST-RELEASING WRITER LOCK");	
 	#endif
 }
+
+
 
 
 

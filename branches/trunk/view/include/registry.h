@@ -11,14 +11,9 @@
 #define REGISTRY_H_
 
 
-#include <map>
 #include <vector>
-#include "SFML/Window.hpp"
-#include "SFML/Graphics.hpp"
 #include "utilities.h"
 #include "common.h"
-#include "../src/world.h"
-
 
 
 
@@ -28,13 +23,9 @@ namespace Algovis_Viewer
 	#pragma warning(push)	
 	#pragma warning(disable:4251)	// Annoying warning about exporting private members
 
+	class World;
 
-	/* Registry is a non-copyable singleton
-	 *
-	 *
-	 * TODO: Migrate to using smart pointers for viewable objects when destruction becomes more
-	 *	     complicated due to complex dependencies
-	 */
+	// Registry is a non-copyable singleton
 	class DECLSPEC Registry
 	{
 
@@ -62,7 +53,6 @@ namespace Algovis_Viewer
 	
 		/* PRE-CONDITIONS:
 		 *	- All elements in the array have been registered 
-		 * 			(TODO consider data structures of a recursive nature)
 		 *
 		 * NB: This method currently only works for SINGLE_PRINTABLE elements as it is a first
 		 *		attempt at porting the existing code which represented arrays as a void* plus 
@@ -102,14 +92,11 @@ namespace Algovis_Viewer
 		//void UpdateSinglePrintable(const void* dsSinglePrintableAddress, const std::string& newValue);
 
 		// The following functions are all that is needed to trace the history of a primitive
-		// TODO: Passing the string value every time is going to cause major slowdowns, and should
-		// not be needed (can just get all the values when we actually draw)
 		void PrintableAssigned(const void* dsAssigned, const void* dsSource, const std::string& newValue);
 		void PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue);
 
 		// Used to test out anything imaginable - declared here so that it can be called by the DLL user
-		// Currently used to display a mock animation
-		void TestMethod();
+		void TestMethod() {}
 	};
 	#pragma warning( pop ) 
 }
