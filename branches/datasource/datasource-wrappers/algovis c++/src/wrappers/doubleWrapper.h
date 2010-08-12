@@ -1,12 +1,9 @@
 #ifndef DOUBLE_WRAPPER_H_
 #define DOUBLE_WRAPPER_H_
 
-#include <iostream>
-#include <sstream>
-#include "primitiveWrapper.h"
+#include "wrapper.h"
 #include "intWrapper.h"
-
-
+#include "floatWrapper.h"
 
 
 namespace Algovis
@@ -14,33 +11,27 @@ namespace Algovis
 
 	class DoubleWrapper : public PrimitiveWrapper<DoubleWrapper, double>
 	{
-		//template<class T>
-		//friend DoubleWrapper operator /(const T& a, const DoubleWrapper& b);
 
-		public:
-			typedef double WrappedType;
+	public:
+		typedef double WrappedType;
 
-			DoubleWrapper() : PrimitiveWrapper() {};
+		DoubleWrapper(){}
 
-			DoubleWrapper(double value) 
-				: PrimitiveWrapper(value) {}
+		DoubleWrapper(double value) 
+			: PrimitiveWrapper(value) {}
 
-			// TODO don't use GetValue()
-			DoubleWrapper(IntWrapper intValue)
-				: PrimitiveWrapper(intValue.GetValue()) {}
+		DoubleWrapper(IntWrapper intValue)
+			: PrimitiveWrapper(intValue.AVGetValue()) {}
 
-			inline DoubleWrapper operator/(const DoubleWrapper& a) const { return (wrappedObject / a.wrappedObject); }
+		DoubleWrapper(FloatWrapper floatValue)
+			: PrimitiveWrapper(floatValue.AVGetValue()) {}
 
+		DoubleWrapper& operator=(const DoubleWrapper& other)
+		{
+			PrimitiveWrapper<DoubleWrapper,double>::operator=(other);
+			return *this;
+		}
 	};
-
-	
-	// Arithmetic operators
-	DoubleWrapper operator +(const double& a, const DoubleWrapper& b) { return b.operator +(a); }
-	DoubleWrapper operator -(const double& a, const DoubleWrapper& b) { return b.operator -(a); }
-	DoubleWrapper operator *(const double& a, const DoubleWrapper& b) { return b.operator *(a); }
-	DoubleWrapper operator /(const double& a, const DoubleWrapper& b) { return DoubleWrapper(a) / b; }
-
-
 
 
 }

@@ -27,7 +27,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Building unit-tests"
-				CommandLine="python &quot;$(SolutionDir)\..\..\resources\cxxtest\v3.10.1\cxxtestgen.py&quot; --error-printer -o TestSuite.cpp &quot;$(ProjectDir)\Tests\AlgoVisTestSuite.h&quot;"
+				CommandLine="python &quot;$(SolutionDir)\..\..\resources\cxxtest\v3.10.1\cxxtestgen.py&quot; --error-printer -o &quot;$(ProjectDir)\GeneratedTests\TestSuite.cpp&quot; &quot;$(ProjectDir)\Tests\AlgoVisTestSuite.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -43,7 +43,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;;&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)\algovis c++\src&quot;;&quot;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\&quot;;&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;;&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)\algovis c++\src&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
 				RuntimeLibrary="3"
 			/>
 			<Tool
@@ -92,7 +92,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Building unit-tests"
-				CommandLine="python &quot;$(SolutionDir)\..\..\resources\cxxtest\v3.10.1\cxxtestgen.py&quot; --error-printer -o TestSuite.cpp &quot;$(ProjectDir)\Tests\AlgoVisTestSuite.h&quot;"
+				CommandLine="python &quot;$(SolutionDir)\..\..\resources\cxxtest\v3.10.1\cxxtestgen.py&quot; --error-printer -o &quot;$(ProjectDir)\GeneratedTests\TestSuite.cpp&quot; &quot;$(ProjectDir)\Tests\AlgoVisTestSuite.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -108,7 +108,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;;&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)\algovis c++\src&quot;;&quot;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\&quot;;&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;;&quot;$(SolutionDir)..\..\trunk\view\include&quot;;&quot;$(SolutionDir)\algovis c++\src&quot;;&quot;..\..\..\resources\utilities-lib\include&quot;"
 				RuntimeLibrary="2"
 			/>
 			<Tool
@@ -155,6 +155,14 @@
 			>
 			<File
 				RelativePath=".\Tests\AlgoVisTestSuite.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Tests\charWrapperTests.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Tests\doubleWrapperTests.h"
 				>
 			</File>
 			<File

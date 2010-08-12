@@ -52,4 +52,49 @@ void Demo2()
 
 
 
+// Tests unconversions.h
+void Demo3()
+{
+	EnableDrawing(true);
+
+	// Populate
+	vector<int> collectionToModify;
+	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
+
+
+	// Testing
+	int a = 5;
+	a = a;
+	
+	for (int i = 7; i >= 0; --i)
+	{
+		collectionToModify[i] = collectionToModify[i] + collectionToModify[i+1];
+		util::PlatformSleep(0.5);
+	}
+
+
+	#include "unconversions.h"
+
+
+	vector<int> nonWrapperCollection;
+	nonWrapperCollection.push_back(1);	
+	nonWrapperCollection.push_back(2);	
+	nonWrapperCollection.push_back(3);	
+	nonWrapperCollection.push_back(2);	
+	nonWrapperCollection.push_back(1);	
+
+
+	for (vector<int>::iterator it = nonWrapperCollection.begin(); it < nonWrapperCollection.end(); it++)
+	{
+		prtVar(*it);
+	}
+
+
+
+	prt("Press any key to leave Demo3");
+	getchar();
+}
+
+
+
 #endif

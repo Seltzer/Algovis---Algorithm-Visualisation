@@ -10,12 +10,15 @@
 namespace Algovis
 {
 
-	// All the operators are the same. For the sake of clarity, here is an example of AV_OPERATOR_MACRO(IntWrapper, +):
-	//IntWrapper operator +(const IntWrapper & op1, const IntWrapper & op2) {
-	//		IntWrapper result(op1.AVGetValue() + op2.AVGetValue());
-	//		registry.combined(&result, &op1, &op2);
-	//		return result;
-	//	}
+
+
+// ARITHMETIC OPERATORS	
+// For the sake of clarity, here is an example of AV_OPERATOR_MACRO(IntWrapper, +):
+//IntWrapper operator +(const IntWrapper & op1, const IntWrapper & op2) {
+//		IntWrapper result(op1.AVGetValue() + op2.AVGetValue());
+//		registry.combined(&result, &op1, &op2);
+//		return result;
+//	}
 #define AV_OPERATOR_MACRO(WRAPPER_TYPE, OPERATION) \
 	WRAPPER_TYPE operator OPERATION(const WRAPPER_TYPE & op1, const WRAPPER_TYPE & op2) { \
 		WRAPPER_TYPE result(op1.AVGetValue() OPERATION op2.AVGetValue()); \
@@ -28,6 +31,11 @@ namespace Algovis
 		return result; \
 	}
 
+	AV_OPERATOR_MACRO(CharWrapper, +);
+	AV_OPERATOR_MACRO(CharWrapper, -);
+	AV_OPERATOR_MACRO(CharWrapper, *);
+	AV_OPERATOR_MACRO(CharWrapper, /);
+
 	AV_OPERATOR_MACRO(IntWrapper, +);
 	AV_OPERATOR_MACRO(IntWrapper, -);
 	AV_OPERATOR_MACRO(IntWrapper, *);
@@ -38,9 +46,15 @@ namespace Algovis
 	AV_OPERATOR_MACRO(FloatWrapper, *);
 	AV_OPERATOR_MACRO(FloatWrapper, /);
 
+	
+	AV_OPERATOR_MACRO(DoubleWrapper, +);
+	AV_OPERATOR_MACRO(DoubleWrapper, -);
+	AV_OPERATOR_MACRO(DoubleWrapper, *);
+	AV_OPERATOR_MACRO(DoubleWrapper, /);
+
 #undef AV_OPERATOR_MACRO
 
-
+// Comparison operators
 #define AV_COMPARISON_OPERATOR_MACRO(WRAPPER_TYPE, OPERATION) \
 	bool operator OPERATION(const WRAPPER_TYPE & op1, const WRAPPER_TYPE & op2) \
 	{\
@@ -48,6 +62,12 @@ namespace Algovis
 	}\
 
 
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,<);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,<=);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,>);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,>=);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,==);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,!=);
 	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,<);
 	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,<=);
 	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,>);
@@ -60,6 +80,13 @@ namespace Algovis
 	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,>=);
 	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,==);
 	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,!=);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,<);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,<=);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,>);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,>=);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,==);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,!=);
+
 
 
 #undef AV_COMPARISON_OPERATOR_MACRO
@@ -101,7 +128,10 @@ namespace Algovis
 		return temp;\
 	}
 
+	AV_UNARY_OPS_MACRO(CharWrapper);
 	AV_UNARY_OPS_MACRO(IntWrapper);
+	AV_UNARY_OPS_MACRO(FloatWrapper);
+	AV_UNARY_OPS_MACRO(DoubleWrapper);
 
 
 #undef AV_UNARY_OPS_MACRO
@@ -115,26 +145,20 @@ namespace Algovis
 	}
 
 
-	
-	// At the moment, the only printable wrapper types are primitive wrappers
-	// why the hell is this leading to ambiguity when cout'ing non-wrappers
-	// that don't offer an AVGetValue() method???
-	template <class PrintableWrapperType>
-	std::ostream& operator<<(std::ostream& output, const PrintableWrapperType& wrapper)
-	{
-		output << wrapper.AVGetValue();
-		return output;
-	}
+// ostream::operator << 
+#define AV_OSTREAM_MACRO(WRAPPER_TYPE) \
+	std::ostream& operator<<(std::ostream& output, const WRAPPER_TYPE& wrapper)\
+	{\
+		output << wrapper.AVGetValue();\
+		return output;\
+	}\
 
-	/*
-	template<class PrintableWrapperType, class WrappedType>
-	std::ostream& operator<<(std::ostream& output, const PrimitiveWrapper<PrintableWrapperType, WrappedType>& wrapper)
-	{
-		output << wrapper.AVGetValue();
-		return output;
-	}*/
-	
+	AV_OSTREAM_MACRO(CharWrapper);
+	AV_OSTREAM_MACRO(IntWrapper);
+	AV_OSTREAM_MACRO(FloatWrapper);
+	AV_OSTREAM_MACRO(DoubleWrapper);
 
+#undef AV_OSTREAM_MACRO
 
 
 }

@@ -1,3 +1,7 @@
+#include "wrappers/vectorWrapper.h"
+using namespace Algovis;
+
+
 void testVectorBasics()
 {
 	vector<int> collection;

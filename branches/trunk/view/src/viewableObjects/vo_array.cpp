@@ -14,35 +14,8 @@ using namespace std;
 
 namespace Algovis_Viewer
 {
-	
 
-void VO_Array::Changed(ViewableObject* subject)
-{
-	// TODO: Clean up this method, it does very little of interest any more
-	UL_ASSERT(subject->GetType() == SINGLE_PRINTABLE);
-	
-	VO_SinglePrintable* printable = (VO_SinglePrintable*)(subject); // TODO: This is a serious problem
-	UL_ASSERT(printable);
-	if (printable != 0)
-	{
-		#ifdef DEBUG_SP_CHANGES
-			std::cout << "Value " << printable->GetDSAddress() << "(" << time << "): " ;
-			std::cout << printable->GetValue() << " produced from: ";
 
-			// TODO: History should be reset if the thing is drawn. This assumes things in arrays are drawn.
-			const std::set<ValueID>& history = printable->GetHistory();
-			for (std::set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
-				std::cout << i->address << "(" << i->time << ")" << ", ";
-			std::cout << std::endl;
-
-		#endif
-		
-		// hack to make printable draw itself with a green outline after being changed. TODO: remove
-		//BOOST_FOREACH(ViewableObject* element, elements)
-		//	element->SetBoundingBoxColour(1,1,1);
-		//printable->SetBoundingBoxColour(0,1,0);
-	}
-}
 
 VO_Array::VO_Array(const void* dsAddress, World* world, 
 						ViewableObjectType elementType, const std::vector<ViewableObject*>& elements)
@@ -90,7 +63,6 @@ void VO_Array::AddElement(ViewableObject* element, unsigned position)
 	eventToFire.resize.newWidth = boundingBox.GetWidth();
 
 	NotifyObservers(eventToFire);
-	Changed(elements[position]);
 }
 
 void VO_Array::PushElementToBack(ViewableObject* element)

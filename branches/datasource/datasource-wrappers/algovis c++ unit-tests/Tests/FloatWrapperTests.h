@@ -1,4 +1,8 @@
-void testFloatWrapper()
+#include "wrappers/floatWrapper.h"
+using namespace Algovis;
+
+
+void testFloatWrapper(float* floatValue)
 {
 	// Testing basic comparison operators
 	float a(3);
@@ -64,14 +68,11 @@ void testFloatWrapper()
 	TS_ASSERT_EQUALS(5.00f, 175/h); // finish working on this
 	h = h / h;
 	TS_ASSERT_EQUALS(1.00f, h);
-
-
-
+	
 	// Testing casting
 	void* voidCast = (void*) floatValue;
 	TS_ASSERT_EQUALS(typeid(floatValue).name(),typeid((float*) voidCast).name());
 
 	// Testing dereferencing
 	TS_ASSERT_EQUALS(3.00f, *floatValue);
-
 }

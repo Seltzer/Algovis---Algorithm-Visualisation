@@ -1,32 +1,44 @@
 Currently in progress:
 
-* Working on event-handling
+* Integrating QT - this will almost certainly change how we handle events
 * Fixing the hackery of VO_Array so that it supports elements other than VO_SinglePrintables
+* Finishing dsAssigned before our meeting with Dinneen
+* Using history to analyse dependencies between actions
 
 
 ***** CRITICAL *****
 
-* Implement some DSAction subclasses and incorporate animation into them
-	- Finish dsAssigned before our meeting with Dinneen
-* Work on UI:
-	 - Implement a scrollbar widget
+* Implement some more DSAction subclasses
+
+* Implement action buffer - we can have DEBUG mode with action buffer size = 1 (and displaying tempvars) 
+and a GENERAL mode with a larger action buffer
+* Work on UI (dependent on QT integration)
+	 - Implement a scrollbar widget to be used in the world panel (or outsource to QT maybe???)
 	 - Add a position allocation algorithm to the Container class.
-	 - Add pause/resume/undo and possibly textual descriptions of actions to the bottom panel
-	 - Allow VOs to be dragged/suppressed/moused over
+	 - Allow VOs to be dragged/suppressed/magnified
+	 - Add mouse over expand feature. 
+		- We can display 'thumbnail' views of large VOs by default and display the large versions 
+			when moused over
 		- Consider whether names/addresses of Viewables should only be shown when moused over
-	 - Zoom??? Low priority
+	 - Add pause/resume/undo and possibly textual descriptions of actions to the bottom panel
+			(depends on history feature)
+	 - Magnify feature for VOs??? Low priority
 	 - Some sort of control panel with list of VOs??? Low priority
-* Finish primitive wrappers and VectorWrapper
+	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
+		arrays of arrays. Low priority
   
   
 ***** HIGH PRIORITY *****
 
-* Work on history feature
-* Write wrappers for STL stacks and maps
+* Highlight operands for comparison operators if user desires
+* Finish VectorWrapper
+* Write wrappers for STL stacks + maps, and unsigned types
+* Consider writing a Viewable for matrices
 * Do some quick research into a popular C++ graph library
+* Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
 * Write some more demos, test the compatibility of our wrappers against more libraries
 		Hopefully we can figure out if there are any other cases when #defining primitives fails
-* Implement drawing for pointer types and custom user types
+
 
 
 ***** MEDIUM PRIORITY *****
@@ -59,10 +71,10 @@ Currently in progress:
 
 
 ***** BUGS *****
+* Mysterious slowdowns with the odd DS_Assigned animation
 
 
 **** THOUGHTS ****
-* Is text associated with VOs considered part of the VO bounding box
 * How to deal with "unsigned char"
 
 

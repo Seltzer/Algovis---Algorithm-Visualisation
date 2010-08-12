@@ -40,7 +40,7 @@ namespace Algovis
 
 
 
-
+	// PrimitiveWrapper using curiously recurring template pattern
 	template<class Derived, class PrimitiveType>
 	class PrimitiveWrapper : public Wrapper
 	{
@@ -60,8 +60,8 @@ namespace Algovis
 		friend Derived& operator --(Derived& wrapper);
 		friend Derived operator --(Derived& wrapper, int);
 
-		template<class Derived, class PrimitiveType>
-		friend std::ostream& operator<<(std::ostream& output, const PrimitiveWrapper<Derived, PrimitiveType>& wrapper);
+		//template<class Derived, class PrimitiveType>
+		///friend std::ostream& operator<<(std::ostream& output, const PrimitiveWrapper<Derived, PrimitiveType>& wrapper);
 
 		PrimitiveWrapper() 
 		{
@@ -96,6 +96,20 @@ namespace Algovis
 				Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(this, &other, GetStringRepresentation());
 			}
 		}
+
+		PrimitiveWrapper& operator=(const PrimitiveWrapper& other)
+		{
+			if (this != &other)
+			{
+				primitive = other.primitive;
+
+				if (drawingEnabled)
+					Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(this, &other, GetStringRepresentation());
+			}
+
+			return *this;
+		}
+
 
 		virtual ~PrimitiveWrapper() {}
 

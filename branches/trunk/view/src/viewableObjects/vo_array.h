@@ -19,7 +19,6 @@ namespace Algovis_Viewer
 		ViewableObjectType elementType;
 
 		sf::String* graphicalAddressText;
-		void Changed(ViewableObject* subject);
 
 	public:
 		VO_Array(const void* dsAddress, World* world, ViewableObjectType elementType, const std::vector<ViewableObject*>& elements);

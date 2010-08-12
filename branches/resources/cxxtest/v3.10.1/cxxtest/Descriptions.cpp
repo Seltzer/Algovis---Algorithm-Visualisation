@@ -2,7 +2,7 @@
 #define __cxxtest__Descriptions_cpp__
 
 #include <cxxtest/Descriptions.h>
-
+#include "ValueTraits.h"
 namespace CxxTest
 {
     TestDescription::~TestDescription() {}

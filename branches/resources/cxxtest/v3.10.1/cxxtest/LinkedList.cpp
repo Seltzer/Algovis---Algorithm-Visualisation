@@ -2,6 +2,8 @@
 #define __cxxtest__LinkedList_cpp__
 
 #include <cxxtest/LinkedList.h>
+#include "GlobalFixture.h"
+#include "RealDescriptions.h"
 
 namespace CxxTest
 {
