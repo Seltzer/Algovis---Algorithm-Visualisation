@@ -58,3 +58,22 @@ Results from testing shared_mutex behaviour using a single thread:
 	acquire reader & acquire writer = blocks on 2
 	acquire exclusive & acquire reader = bad, blocks on 2
 	
+	
+		
+	
+	
+	
+	
+Migration Log for QT:
+	http://doc.qt.nokia.com/4.6/install-win.html
+
+	qt-sdk-win-opensource-2010.04.exe
+	Add C:\Program Files\Qt\2010.04\bin to path
+	Run C:\Program Files\Qt\2010.04\qt\configure.exe from Visual Studio command prompt
+	qt-vs-addin-1.1.5.exe
+
+	New view project, change wchar_t native option
+	Append to includes
+	"$(SolutionDir)..\..\resources";"$(SolutionDir)..\..\resources\utilities-lib\include";"$(SolutionDir)..\..\resources\SFML\include"
+			plus qtdir\includes\qt
+	

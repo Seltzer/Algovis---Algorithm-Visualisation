@@ -12,6 +12,7 @@
 
 
 #include <vector>
+#include <Qt/qglobal.h>
 #include "utilities.h"
 #include "common.h"
 

@@ -3,10 +3,10 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="view"
-	ProjectGUID="{C5ABD0EA-42C6-4C50-A70D-6244AE4793F5}"
-	RootNamespace="view2008"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="196613"
+	ProjectGUID="{0F8FA599-5004-4421-A227-E73683D09892}"
+	RootNamespace="view"
+	Keyword="Qt4VSv1.0"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -17,11 +17,10 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
+			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,15 +39,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="4"
+				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;C:\Program Files\Qt\2010.04\qt\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;.\;&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;"
+				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_NO_DEBUG,NDEBUG;QT_CORE_LIB;QT_GUI_LIB;VIEW_LIB"
+				RuntimeLibrary="2"
+				TreatWChar_tAsBuiltInType="true"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -61,15 +56,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="false"
-				IgnoreImportLibrary="false"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories=""
-				IgnoreAllDefaultLibraries="false"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				ResourceOnlyDLL="false"
-				TargetMachine="1"
+				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
+				AdditionalLibraryDirectories="$(QTDIR)\lib"
+				GenerateDebugInformation="false"
+				SubSystem="2"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -94,12 +85,10 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -118,14 +107,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				Optimization="0"
+				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;C:\Program Files\Qt\2010.04\qt\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;.\;&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;"
+				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;VIEW_LIB"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -139,16 +125,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="false"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories=""
-				IgnoreAllDefaultLibraries="false"
+				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
+				AdditionalLibraryDirectories="$(QTDIR)\lib"
 				GenerateDebugInformation="true"
-				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				ResourceOnlyDLL="false"
-				TargetMachine="1"
+				SubSystem="2"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -176,6 +157,14 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="docs"
+			>
+			<File
+				RelativePath=".\docs\dev docs.txt"
+				>
+			</File>
+		</Filter>
 		<Filter
 			Name="include"
 			>
@@ -232,34 +221,6 @@
 				>
 			</File>
 			<Filter
-				Name="viewableObjects"
-				>
-				<File
-					RelativePath=".\src\viewableObjects\viewableObject.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\viewableObjects\viewableObject.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\viewableObjects\vo_array.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\viewableObjects\vo_array.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\viewableObjects\vo_singlePrintable.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\viewableObjects\vo_singlePrintable.h"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="displayer"
 				>
 				<File
@@ -291,16 +252,60 @@
 					>
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="docs"
-			>
-			<File
-				RelativePath=".\docs\dev docs.txt"
+			<Filter
+				Name="viewableObjects"
 				>
-			</File>
+				<File
+					RelativePath=".\src\viewableObjects\viewableObject.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\viewableObjects\viewableObject.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\viewableObjects\vo_array.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\viewableObjects\vo_array.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\viewableObjects\vo_singlePrintable.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\viewableObjects\vo_singlePrintable.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="lupdateOnBuild"
+			Value="0"
+		/>
+		<Global
+			Name="MocDir"
+			Value=".\GeneratedFiles\$(ConfigurationName)"
+		/>
+		<Global
+			Name="MocOptions"
+			Value=""
+		/>
+		<Global
+			Name="QtVersion Win32"
+			Value="qt"
+		/>
+		<Global
+			Name="RccDir"
+			Value=".\GeneratedFiles"
+		/>
+		<Global
+			Name="UicDir"
+			Value=".\GeneratedFiles"
+		/>
 	</Globals>
 </VisualStudioProject>
