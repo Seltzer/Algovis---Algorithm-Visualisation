@@ -14,22 +14,19 @@ namespace Algovis_Viewer
 	class VO_Array : public ViewableObject
 	{
 
-	private:
-		std::vector<ViewableObject*> elements;
-		ViewableObjectType elementType;
-
-		sf::String* graphicalAddressText;
-
 	public:
-		VO_Array(const void* dsAddress, World* world, ViewableObjectType elementType, const std::vector<ViewableObject*>& elements);
+		VO_Array(const void* dsAddress, World* world, ViewableObjectType elementType, 
+					const std::vector<ViewableObject*>& elements, QWidget* parent = NULL);
 		~VO_Array();
 	
-		virtual ViewableObjectType GetType() { return ARRAY; }
+		virtual ViewableObjectType GetType() const { return ARRAY; }
 
 		virtual void SetupLayout();
 
-		virtual void Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont); 
-		
+		// QT Overloads
+		virtual QSize sizeHint();
+		virtual void paintEvent(QPaintEvent*);
+				
 
 		unsigned GetSize() { return elements.size(); }
 
@@ -45,6 +42,13 @@ namespace Algovis_Viewer
 
 		// Used as an event-handler for elements being updated
 		virtual void Notify(Component* subject, ComponentEvent&);
+
+	private:
+		std::vector<ViewableObject*> elements;
+		ViewableObjectType elementType;
+
+		QString addressText;
+		QPoint addressTextPosition;
 
 	};
 }

@@ -1,68 +1,61 @@
 #include "vo_singlePrintable.h"
-#include "../displayer/display.h"
+#include "../displayer/displayer.h"
 #include "../displayer/events.h"
 
+#include <QPainter>
+#include <QString>
+#include "qt/qpainter.h"
+#include "qt/qfont.h"
 
 
 namespace Algovis_Viewer
 {
 
 
-sf::FloatRect VO_SinglePrintable::GetPreferredSize()
+VO_SinglePrintable::VO_SinglePrintable(const void* dsAddress, World* world,
+					const std::string& value, QWidget* parent)
+		: ViewableObject(parent, dsAddress, world), value(value), graphicalText(NULL)
 {
-	sf::String text(value.c_str(), Displayer::GetInstance()->GetDefaultFont());
-	return text.GetRect();
+
 }
 
 
 void VO_SinglePrintable::SetupLayout()
 {
-	delete graphicalText;
-	graphicalText = new sf::String(value.c_str(), Displayer::GetInstance()->GetDefaultFont());
-	graphicalText->SetColor(sf::Color(255,255,255));
-	graphicalText->SetPosition(0,0);
-}
-
-
-void VO_SinglePrintable::Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont)
-{
-	// Draw value component(text)
-	sf::Vector2f absPosition = GetAbsolutePosition();
-	graphicalText->Move(absPosition.x, absPosition.y);
-	renderWindow.Draw(*graphicalText);
-	graphicalText->Move(-absPosition.x, -absPosition.y);
-
-	// Draw non-value component (border)
-	DrawWithoutValue(renderWindow, defaultFont);
-}
-
-void VO_SinglePrintable::DrawValue(sf::FloatRect& desiredBoundingBox, 
-									sf::RenderWindow& renderWindow, sf::Font& defaultFont)
-{
-	sf::Vector2f oldPosition = graphicalText->GetPosition();
-	float xScale = desiredBoundingBox.GetWidth() / graphicalText->GetRect().GetWidth();
-	float yScale = desiredBoundingBox.GetHeight() / graphicalText->GetRect().GetHeight();
+	graphicalText = QString(value.c_str());
 	
-	graphicalText->SetPosition(desiredBoundingBox.Left, desiredBoundingBox.Top);
-	graphicalText->SetScale(xScale, yScale);
-	renderWindow.Draw(*graphicalText);
+	QFontMetrics metrics(font());
+	graphicalTextPosition = QPoint(0,metrics.ascent());
 
-	// Restore position and dimensions
-	graphicalText->SetScale(1/xScale, 1/yScale);
-	graphicalText->SetPosition(oldPosition);
 }
 
-void VO_SinglePrintable::DrawWithoutValue(sf::RenderWindow&, sf::Font& defaultFont)
+QSize VO_SinglePrintable::sizeHint() const
+{
+	QFontMetrics metrics(font());
+	
+	return QSize(metrics.width(graphicalText, graphicalText.length()),metrics.height());
+}
+
+
+void VO_SinglePrintable::paintEvent(QPaintEvent*)
+{
+	QPainter painter(this);
+
+	DrawValue(QRect(graphicalTextPosition, graphicalTextPosition),&painter);
+	DrawWithoutValue(QRect(0,0,width() - 1, height() - 1), &painter);
+}
+
+void VO_SinglePrintable::DrawValue(QRect& desiredBoundingBox, QPainter* painter)
+{
+	painter->setPen(Qt::white);
+	painter->drawText(desiredBoundingBox.topLeft(), graphicalText);
+}
+
+void VO_SinglePrintable::DrawWithoutValue(QRect& desiredBoundingBox, QPainter* painter)
 {
 	// Draw bounding box
-	glColor3f(boundingBoxColour[0],boundingBoxColour[1],boundingBoxColour[2]);
-
-	glBegin(GL_LINE_LOOP);
-	glVertex2f(boundingBox.Left, boundingBox.Top);
-	glVertex2f(boundingBox.Right, boundingBox.Top);
-	glVertex2f(boundingBox.Right, boundingBox.Bottom);
-	glVertex2f(boundingBox.Left, boundingBox.Bottom);
-	glEnd();
+	painter->setPen(boundingBoxColour);
+	painter->drawRect(desiredBoundingBox);
 }
 
 
@@ -72,10 +65,50 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue)
 	{
 		value = newValue;
 	
-		ComponentEvent eventToFire(UPDATED_VALUE);
 		SetupLayout();
-		NotifyObservers(eventToFire);
 	}
+}
+
+
+void VO_SinglePrintable::ResetHistory(ValueID drawnValue)
+{
+	history.clear();
+	history.insert(drawnValue);
+}
+
+void VO_SinglePrintable::Assigned(std::set<ValueID> history, const std::string& newValue)
+{
+	// This printable now has the same history as the one it was assigned from
+	// This is true because history only includes items that have been displayed
+	this->history = history;
+
+	UpdateValue(newValue);
+}
+
+void VO_SinglePrintable::AssignedUntracked(const void* dsAddress, const std::string& newValue)
+{
+	// The only history we have is that the value was untracked, so chuck in an element to represent that
+	history.clear();
+	history.insert(ValueID(dsAddress, -1)); // Time -1 denotes elements that aren't actually tracked (TODO: That sucks)
+
+	UpdateValue(newValue);
+}
+
+void VO_SinglePrintable::Modified(VO_SinglePrintable* source, const std::string& newValue)
+{
+	// This printable now includes the history of the printable that modified it, plus it's own history
+	const std::set<ValueID>& sourceHistory = source->GetHistory();
+	history.insert(sourceHistory.begin(), sourceHistory.end());
+
+	UpdateValue(newValue);
+}
+
+void VO_SinglePrintable::ModifiedUntracked(const void* dsAddress, const std::string& newValue)
+{
+	// The printable retains it's current history, but notes that it has been modified by something that is not tracked.
+	history.insert(ValueID(dsAddress, -1)); // Time -1 denotes elements that aren't actually tracked (TODO: That sucks)
+
+	UpdateValue(newValue);
 }
 
 

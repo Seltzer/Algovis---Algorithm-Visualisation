@@ -1,7 +1,8 @@
 #include "dsaction.h"
-#include "viewAbleObjects/vo_singlePrintable.h"
+#include "viewableObjects/vo_singlePrintable.h"
+#include "viewableObjects/vo_array.h"
 #include "../include/registry.h"
-
+#include "world.h"
 
 
 namespace Algovis_Viewer
@@ -9,7 +10,27 @@ namespace Algovis_Viewer
 
 int time = 0; // TODO: Seriously?... Seriously guys.
 
+
+
 ////////////////////// DS_Action implementation ////////////////////////////
+
+DS_Action::DS_Action(World* world, bool animationSuppressed)
+	: Action(world, animationSuppressed)
+{
+}
+
+
+DS_Action::DS_Action(World* world, std::set<ViewableObject*> subjects, bool animationSuppressed)
+	: Action(world, animationSuppressed), subjects(subjects)
+{
+}
+
+DS_Action::DS_Action(const DS_Action& other)
+	: Action(other), subjects(other.subjects)
+{
+	UL_ASSERT(world);
+}
+
 
 Action* DS_Action::Clone() const
 {
@@ -17,8 +38,14 @@ Action* DS_Action::Clone() const
 }
 
 
+
 ////////////////////// DS_Assigned implementation ////////////////////////////
 
+DS_Assigned::DS_Assigned(World* world) 
+	: DS_Action(world) 
+{
+	UL_ASSERT(world);
+}
 
 DS_Assigned::DS_Assigned(World* world, VO_SinglePrintable* subject, std::set<ValueID> history, std::string value)
 	: DS_Action(world), value(value), subject(subject), history(history)
@@ -26,14 +53,18 @@ DS_Assigned::DS_Assigned(World* world, VO_SinglePrintable* subject, std::set<Val
 	ViewableObject* viewable = (ViewableObject*)subject;
 	subjects.insert(viewable); // May need to keep the original printable pointer?
 
-	
-	// Set subjectStart to have absolute position
-	sf::Vector2f subjectAbsPosition = viewable->GetAbsolutePosition();
-	subjectStart = sf::FloatRect(subjectAbsPosition.x, 
-								 subjectAbsPosition.y,						 
-								 subjectAbsPosition.x + viewable->GetBoundingBox().GetWidth(),
-								 subjectAbsPosition.y + viewable->GetBoundingBox().GetHeight());
+	UL_ASSERT(world);
+
+	// Set subjectStart to have abs position
+	subjectStart = QRect(subject->GetPositionInWorld(), subject->size());
 }
+
+DS_Assigned::DS_Assigned(const DS_Assigned& other)
+	: DS_Action(other), value(other.value), subject(other.subject), history(other.history)
+{
+	UL_ASSERT(world);
+}
+
 
 Action* DS_Assigned::Clone() const
 {
@@ -42,26 +73,29 @@ Action* DS_Assigned::Clone() const
 
 void DS_Assigned::PrepareToPerform()
 {
-	subject->SetDrawingAgent(this);
+	subject->EnableDrawing(false);
 }
 
-void DS_Assigned::Perform(float progress, sf::RenderWindow& renderWindow, sf::Font& defaultFont)
+void DS_Assigned::Perform(float progress, QPainter*)
 {
-	UL_ASSERT(subject->GetDrawingAgent() == this);
+	/* Bulging is commented out until DrawValue can draw to a specified dimension properly
 
-	sf::FloatRect updatedBounds = subjectStart;
+	QRect updatedBounds = subjectStart;
 	int bulge = int(progress * 100);
-	
+
 	updatedBounds.Left -= bulge;
 	updatedBounds.Right += bulge;
 	updatedBounds.Top -= bulge;
-	updatedBounds.Bottom += bulge;
-	subject->SetBoundingBox(updatedBounds);
+	updatedBounds.Bottom += bulge;*/
+	
+	// MIGRATION
+	//subject->SetBoundingBox(updatedBounds);
 
-	// Yes, we could add a Draw overload which draws to a specified dimension instead of doing it this way
-	// But doing it this way tests DrawWithoutValue and DrawValue
-	subject->DrawWithoutValue(renderWindow, defaultFont);
-	subject->DrawValue(updatedBounds,renderWindow, defaultFont);
+
+	//subject->DrawWithoutValue(QRect(
+	//subject->DrawWithoutValue(
+	//subject->DrawWithoutValue(renderWindow, defaultFont);
+	//subject->DrawValue(updatedBounds,renderWindow, defaultFont);
 
 
 	/*for (std::set<ValueID>::iterator i = history.begin(); i != history.end(); i++)
@@ -89,30 +123,141 @@ void DS_Assigned::Complete(bool displayed)
 		subject->ResetHistory(ValueID(subject->GetDSAddress(), time));
 
 		++time;
-		subject->RestorePreviousDrawingAgent();
+			subject->EnableDrawing(true);
 	}
 }
 
 
 
-////////////////////// DS_TestAction implementation ////////////////////////////
-Action* DS_TestAction::Clone() const
+
+////////////////////// DS_Deleted implementation ////////////////////////////
+
+DS_Deleted::DS_Deleted(World* world) 
+	: DS_Action(world) 
 {
-	return new DS_TestAction(*this);
 }
 
-void DS_TestAction::Perform(float progress, sf::RenderWindow& renderWindow, sf::Font& defaultFont)
+DS_Deleted::DS_Deleted(World* world, ViewableObject* subject)
+	: DS_Action(world), subject(subject)
 {
-	// Hacky mock animation which rotates stuff
-	glRotatef(progress * 360, 0, 0, 1);
+	subjects.insert(subject); 
 }
 
-void DS_TestAction::Complete(bool displayed)
+
+DS_Deleted::DS_Deleted(const DS_Deleted& other)
+	: DS_Action(other), subject(other.subject)
 {
+}
+
+
+Action* DS_Deleted::Clone() const
+{
+	return new DS_Deleted(*this);
+}
+
+void DS_Deleted::Complete(bool displayed)
+{
+	delete subject;
+	Registry::GetInstance()->ActionAgentCallback(subject);
+}
+
+
+
+
+//////////////// DS_CreateArray
+DS_CreateArray::DS_CreateArray(World* world, 
+	const void* dsArrayAddress, ViewableObjectType elementType, std::vector<ViewableObject*> elements)
+		: DS_Action(world, true), dsArrayAddress(dsArrayAddress), elementType(elementType), elements(elements)
+{
+}
+
+DS_CreateArray::DS_CreateArray(const DS_CreateArray& other)
+	: DS_Action(other), dsArrayAddress(other.dsArrayAddress), 
+		elementType(other.elementType), elements(other.elements)
+{
+}
+
+Action* DS_CreateArray::Clone() const
+{
+	return new DS_CreateArray(*this);
+}
+
+void DS_CreateArray::Complete(bool displayed)
+{
+	VO_Array* newArray = new VO_Array(dsArrayAddress, world, elementType, elements);
+	newArray->move(50,50);
+		
+	// TODO implement const sizeHint
+	newArray->resize(newArray->sizeHint());
+	newArray->setMinimumSize(newArray->sizeHint());
+	// MIGRATION assume top level
+	newArray->setParent(world);
+	newArray->setVisible(true);
+	//newViewable->SetupLayout();
 	
+	// hrmmm
+	world->setMinimumSize(world->sizeHint());
+	Registry::GetInstance()->ActionAgentCallback(newArray);
 }
 
 
 
+
+
+//////////////// DS_CreateSP
+DS_CreateSP::DS_CreateSP(World* world, const void* dsAddress, const std::string& value)
+		: DS_Action(world, true), dsAddress(dsAddress), value(value)
+{
+}
+
+DS_CreateSP::DS_CreateSP(const DS_CreateSP& other)
+	: DS_Action(other), dsAddress(other.dsAddress), value(other.value)
+{
+}
+
+Action* DS_CreateSP::Clone() const
+{
+	return new DS_CreateSP(*this);
+}
+
+void DS_CreateSP::Complete(bool displayed)
+{
+	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsAddress, world, value);
+	
+	Registry::GetInstance()->ActionAgentCallback(newSP);
+}
+
+
+
+
+
+
+
+
+//////////////// DS_AddElementToArray
+DS_AddElementToArray::DS_AddElementToArray
+		(World* world, VO_Array* voArray, ViewableObject* element, unsigned position)
+			: DS_Action(world, true), voArray(voArray), element(element), position(position)
+{
+}
+
+DS_AddElementToArray::DS_AddElementToArray(const DS_AddElementToArray& other)
+		: DS_Action(other), voArray(other.voArray), element(other.element), position(other.position)
+{
+}
+
+Action* DS_AddElementToArray::Clone() const
+{
+	return new DS_AddElementToArray(*this);
+}
+
+void DS_AddElementToArray::Complete(bool displayed)
+{
+	voArray->AddElement(element, position);
+	voArray->resize(voArray->sizeHint());
+	Registry::GetInstance()->ActionAgentCallback(voArray);
+}
+
+	
 
 }

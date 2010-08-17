@@ -1,7 +1,9 @@
+#include <QPainter>
 #include "boost/foreach.hpp"
 #include "utilities.h"
 #include "world.h"
-#include "displayer/display.h"
+#include "../include/registry.h"
+#include "displayer/displayer.h"
 #include "viewableObjects/viewableObject.h"
 #include "viewableObjects/vo_array.h"
 #include "viewableObjects/vo_singlePrintable.h"
@@ -11,262 +13,77 @@ using namespace std;
 
 
 
+
+
 namespace Algovis_Viewer
 {
 
 
-
-World::World() 
-	: lastActionPerformed(INVALID), voActionPending(false), writerLockOwner(INVALID)
-{
-}
-
-
-World::~World()
-{
-	typedef std::map<const void*,VO_Array*> ArrayMap;
-	typedef std::map<const void*,VO_SinglePrintable*> SPMap;
-
-	// Delete arrays first, as their destruction currently relies on their child elements 
-	// being alive (since they deregister themselves from their elements as observers
-	BOOST_FOREACH(ArrayMap::value_type arrayPair, registeredArrays)
-		delete arrayPair.second;
-
-	BOOST_FOREACH(SPMap::value_type spPair, registeredSinglePrintables)
-		delete spPair.second;
-}
-
-
-// TODO: Verify that synchronisation is done properly
-bool World::PerformDSAction(DS_Action* dsAction)
-{
-	#if (DEBUG_ACTION_LEVEL >= 1)
-		prt("Starting World::PerformDSAction()");
-	#endif
-
-
-	UL_ASSERT(dsAction);
-	
-	// Wait for the current action to finish
-	boost::unique_lock<boost::shared_mutex> lock(voAccessMutex);
-
-	while(voActionPending)
-		voActionPendingCondVar.wait<boost::shared_mutex>(voAccessMutex);
-	
-	// TODO: Handle this properly once we can go back through history
-	UL_ASSERT(lastActionPerformed == actionsPerformed.size() - 1);
-	
-	voActionPending = true;
-	actionsPerformed.push_back(dsAction);
-	#if (DEBUG_ACTION_LEVEL >= 1)
-		prt("\tWorld::voActionPending set to true");
-	#endif
-	
-	// Ask Displayer to perform dsAction
-	Displayer::GetInstance()->PerformAndAnimateActionAsync(dsAction);
 	
 
-	#if (DEBUG_ACTION_LEVEL >= 1)
-		prt("Finishing World::PerformDSAction()");
-	#endif
+World::World(QWidget* parent, QPoint& position, QSize& dimensions, 
+				QColor& bgColour, QColor& borderColour, unsigned refreshRate)
+	: Component(parent, position, dimensions), writerLockOwner(INVALID), bgColour(bgColour), borderColour(borderColour), refreshRate(refreshRate)
+{
+	i = 0;
 
-	return true;
+
+	connect(&myTimer, SIGNAL(timeout()), this, SLOT(update()));
+	myTimer.setInterval(1.00f / refreshRate);
+	myTimer.start();
 }
 
-void World::CompletedDSAction()
+
+void World::repaint()
 {
-	#if (DEBUG_ACTION_LEVEL >= 1)
-		prt("Starting World::CompletedDSAction()");
-	#endif
-
-	++lastActionPerformed;
-
-	voActionPending = false;
-	voActionPendingCondVar.notify_all();
-		
-	#if (DEBUG_ACTION_LEVEL >= 1)
-		prt("Finishing World::CompletedDSAction()");
-	#endif
-}
-
-void World::PerformUIAction(UI_ActionType actionType)
-{
-	// TODO update so that this asks the Displayer to perform/animate the action
-	UI_Action* newAction = new UI_Action(actionType, this);
-	actionsPerformed.push_back(newAction);
+	UL_ASSERT(false);
+	std::cout << "inside repaint() - thread id = " << GetCurrentThreadId() << std::endl;
 	
-	++lastActionPerformed;
-}
-
-
-bool World::IsRegistered(const void* dsAddress) const
-{
-	return ( (registeredArrays.count(dsAddress) == 1) || 
-				(registeredSinglePrintables.count(dsAddress) == 1) );
-}
-
-bool World::IsRegistered(const void* dsAddress, ViewableObjectType voType) const
-{
-	switch(voType)
-	{
-		case ARRAY:
-			return (registeredArrays.count(dsAddress) > 0);
-			break;
-
-		case SINGLE_PRINTABLE:
-			return (registeredSinglePrintables.count(dsAddress) > 0);
-			break;
-	}
-
-	return false;	
-}
-
-ViewableObject* World::GetRepresentation(const void* dsAddress)
-{
-	if (registeredArrays.count(dsAddress))
-		return (ViewableObject*) registeredArrays[dsAddress];
-
-	if (registeredSinglePrintables.count(dsAddress))
-		return (ViewableObject*) registeredSinglePrintables[dsAddress];
-
-	return NULL;
-}
-
-
-VO_Array* World::RegisterArray
-		(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
-{
 	AcquireWriterLock();
-
-	// Verify that array hasn't already been registered
-	UL_ASSERT(!IsRegistered(dsArrayAddress));
-
-	// ViewableObject equivalents of elements
-	vector<ViewableObject*> arrayElements;
-
-	// Iterate over elements, verify that they are all registered and populate arrayElements
-	BOOST_FOREACH(void* dsElement, elements)
-	{
-		// TODO: change behaviour when above registration condition is violated (i.e. throw exception)
-		UL_ASSERT(IsRegistered(dsElement));
-					
-		arrayElements.push_back(GetRepresentation(dsElement));
-	}
-
-	// Assuming VO_SinglePrintable elements - TODO change this
-	VO_Array* newArray = new VO_Array(dsArrayAddress, this, elementType, arrayElements);
-	
-	registeredArrays[dsArrayAddress] = newArray;
-
-	ReleaseWriterLock();
-	return newArray;
-}
-
-
-vector<VO_Array*> World::GetRegisteredArrays()
-{
-	AcquireReaderLock();
-
-	vector<VO_Array*> returnVector;
-
-
-	map<const void*,VO_Array*>::iterator it;
-	for (it = registeredArrays.begin(); it != registeredArrays.end(); it++)
-	{
-		returnVector.push_back((*it).second);
-	}
-	
-	ReleaseReaderLock();
-	return returnVector;
-}
-
-
-VO_SinglePrintable* World::RegisterSinglePrintable
-			(const void* dsSinglePrintableAddress, const std::string& value)
-{
-	AcquireWriterLock();
-
-	// Verify that SINGLE_PRINTABLE hasn't already been registered
-	UL_ASSERT(!IsRegistered(dsSinglePrintableAddress));
-
-	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsSinglePrintableAddress, this, value);
-	registeredSinglePrintables[dsSinglePrintableAddress] = newSP;
-
-	ReleaseWriterLock();
-	return newSP;
-}
-
-
-bool World::DeregisterObject(const void* dsAddress)
-{
-	AcquireWriterLock();
-
-	if (registeredArrays.count(dsAddress))
-	{
-		VO_Array* voArray = registeredArrays[dsAddress];
-		delete voArray;
-
-		registeredArrays.erase(registeredArrays.find(dsAddress));
-
-		ReleaseWriterLock();
-		return true;
-	}
-
-	if (registeredSinglePrintables.count(dsAddress))
-	{
-		VO_SinglePrintable* voSP = registeredSinglePrintables[dsAddress];
-		delete voSP;
-
-		registeredSinglePrintables.erase(registeredSinglePrintables.find(dsAddress));
-
-		ReleaseWriterLock();
-		return true;
-	}
-
-	ReleaseWriterLock();
-	return false;
-}
-
-
-
-
-void World::AddElementToArray(const void* dsArray, void* dsElement, unsigned position)
-{
-	AcquireWriterLock();
-
-	UL_ASSERT(IsRegistered(dsArray,ARRAY));
-	UL_ASSERT(IsRegistered(dsElement,SINGLE_PRINTABLE));
-
-	VO_Array* voArray = GetRepresentation<VO_Array>(dsArray);
-	UL_ASSERT(position <= voArray->GetSize());
-
-	VO_SinglePrintable* element = GetRepresentation<VO_SinglePrintable>(dsElement);
-
-	voArray->AddElement((ViewableObject*)element, position);
-
+	QWidget::repaint();
 	ReleaseWriterLock();
 }
 
-void World::SwapElementsInArray(const void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex)
+void World::update()
 {
+		UL_ASSERT(false);
+	static int updateCount = 0;
+
+	std::cout << "inside update() - thread id = " << GetCurrentThreadId() << std::endl;
+
+	if (++updateCount = 10)
+		UL_ASSERT(false);
+
 	AcquireWriterLock();
-
-	UL_ASSERT(IsRegistered(dsArray, ARRAY));
-
-	VO_Array* arrayAddress = GetRepresentation<VO_Array>(dsArray);
-	UL_ASSERT(arrayAddress);
-
-	arrayAddress->SwapElements(firstElementIndex, secondElementIndex);
-
+	QWidget::update();
 	ReleaseWriterLock();
 }
+
+void World::paintEvent(QPaintEvent*)
+{
+	AcquireWriterLock();
+	QPainter painter(this);
+	painter.setPen(QColor(255,0,0));
+	painter.drawRect(10,10,40 + i/2,40 + i);
+
+	i = (i + 1) % 200;
+}
+
+QSize World::sizeHint() const
+{
+	// hrmmm
+	return QSize(900,900);
+	
+}
+
 
 void World::ArrayResized(const void* dsArray, const std::vector<void*>& elements, unsigned newCapacity)
 {
+	/*
 	AcquireWriterLock();
 
-	UL_ASSERT(IsRegistered(dsArray));
-	VO_Array* voArray = GetRepresentation<VO_Array>(dsArray);
+	UL_ASSERT(Registry::GetInstance()->IsRegistered(dsArray));
+	VO_Array* voArray = Registry::GetInstance()->GetRepresentation<VO_Array>(dsArray);
 
 	// Clear out old elements
 	voArray->ClearArray(newCapacity);
@@ -276,15 +93,15 @@ void World::ArrayResized(const void* dsArray, const std::vector<void*>& elements
 	BOOST_FOREACH(void* dsElement, elements)
 		AddElementToArray(dsArray, dsElement, position++);
 
-	ReleaseWriterLock();
+	ReleaseWriterLock();*/
 }
 
 void World::ClearArray(const void* dsArray)
 {
 	AcquireWriterLock();
 
-	UL_ASSERT(IsRegistered(dsArray));
-	VO_Array* voArray = GetRepresentation<VO_Array>(dsArray);
+	UL_ASSERT(Registry::GetInstance()->IsRegistered(dsArray));
+	VO_Array* voArray = Registry::GetInstance()->GetRepresentation<VO_Array>(dsArray);
 	
 	// Clear out old elements - TODO fix the INVALID argument
 	voArray->ClearArray(INVALID);
@@ -296,9 +113,9 @@ void World::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const st
 {
 	AcquireWriterLock();
 
-	UL_ASSERT(IsRegistered(dsSinglePrintableAddress, SINGLE_PRINTABLE));
+	UL_ASSERT(Registry::GetInstance()->IsRegistered(dsSinglePrintableAddress, SINGLE_PRINTABLE));
 
-	VO_SinglePrintable* sp = GetRepresentation<VO_SinglePrintable>(dsSinglePrintableAddress);
+	VO_SinglePrintable* sp = Registry::GetInstance()->GetRepresentation<VO_SinglePrintable>(dsSinglePrintableAddress);
 	UL_ASSERT(sp);
 
 	sp->UpdateValue(newValue);
@@ -306,6 +123,9 @@ void World::UpdateSinglePrintable(const void* dsSinglePrintableAddress, const st
 	ReleaseWriterLock();
 }
 
+
+
+////////////////// Viewables synchronisation
 
 void World::AcquireReaderLock(bool skipConditionVarCheck)
 {
@@ -323,13 +143,13 @@ void World::AcquireReaderLock(bool skipConditionVarCheck)
 		return;
 	}
 		
+	/*
 	voAccessMutex.lock_shared();
-
 	if (!skipConditionVarCheck)
 	{
 		while (voActionPending)
 			voActionPendingCondVar.wait<boost::shared_mutex>(voAccessMutex);
-	}
+	}*/
 	
 
 	#if(DEBUG_THREADING_LEVEL >= 2)
@@ -355,6 +175,7 @@ void World::AcquireWriterLock()
 	if (GetCurrentThreadId() == writerLockOwner)
 		return;
 
+
 	#if(DEBUG_THREADING_LEVEL >= 3)
 		prt("PRE-ACQUISITION OF WRITER LOCK");
 	#endif
@@ -364,7 +185,7 @@ void World::AcquireWriterLock()
 	voAccessMutex.unlock_upgrade_and_lock();
 
 	#if(DEBUG_THREADING_LEVEL >= 2)
-		prt("POST-ACQUISITION OF WRITER LOCK");
+		std::cout << "POST-ACQUISITION OF WRITER LOCK BY " << GetCurrentThreadId() << std::endl;	
 	#endif
 
 	
@@ -373,6 +194,10 @@ void World::AcquireWriterLock()
 
 void World::ReleaseWriterLock()
 {
+	if (GetCurrentThreadId() != writerLockOwner)
+		return;
+
+
 	#if(DEBUG_THREADING_LEVEL >= 3)
 		prt("PRE-RELEASING WRITER LOCK");	
 	#endif
@@ -384,6 +209,7 @@ void World::ReleaseWriterLock()
 		prt("POST-RELEASING WRITER LOCK");	
 	#endif
 }
+
 
 
 

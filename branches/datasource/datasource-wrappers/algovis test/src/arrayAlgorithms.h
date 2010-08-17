@@ -56,7 +56,7 @@ void Vector_BubbleSortAscending(vector<int>& vec)
 
 				sortOccurred = true;
 				
-				util::PlatformSleep(0.5);
+				util::PlatformSleep(0.2);
 			}
 		}
 	}

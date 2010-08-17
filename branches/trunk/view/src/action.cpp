@@ -9,14 +9,16 @@ namespace Algovis_Viewer
 
 
 
-Action::Action(World* world)
-	: world(world)
+Action::Action(World* world, bool animateAction)
+	: world(world), animateAction(animateAction)
 {
+	UL_ASSERT(world);
 }
 
 Action::Action(const Action& other)
-	: world(other.world), subActions(other.subActions)
+	: world(other.world), subActions(other.subActions), animateAction(other.animateAction)
 {
+	UL_ASSERT(world);
 }
 
 
@@ -33,6 +35,16 @@ void Action::AddSubAction(Action& subAction)
 	subActions.push_back(subActionCopy);
 }
 
+void Action::SuppressAnimation()
+{
+	animateAction = false;
+}
+
+
+bool Action::AnimationSuppressed()
+{
+	return animateAction;
+}
 
 
 

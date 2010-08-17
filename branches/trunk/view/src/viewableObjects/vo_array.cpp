@@ -5,7 +5,11 @@
 #include "vo_array.h"
 #include "vo_singlePrintable.h"
 #include "../../include/registry.h"
-#include "../displayer/display.h"
+#include "../displayer/displayer.h"
+
+//#include <QPainter>
+#include "qt/qpainter.h"
+#include "qt/qfont.h"
 
 using namespace std;
 
@@ -17,16 +21,19 @@ namespace Algovis_Viewer
 
 
 
-VO_Array::VO_Array(const void* dsAddress, World* world, 
-						ViewableObjectType elementType, const std::vector<ViewableObject*>& elements)
-		: ViewableObject(dsAddress, world), elementType(elementType), graphicalAddressText(NULL)
+VO_Array::VO_Array(const void* dsAddress, World* world, ViewableObjectType elementType, 
+					const std::vector<ViewableObject*>& elements, QWidget* parent)
+		: ViewableObject(parent, dsAddress, world), elementType(elementType)
 {
 	BOOST_FOREACH(ViewableObject* element, elements)
 	{
 		this->elements.push_back(element);	
 		elements[elements.size() - 1]->AddObserver(this);
 	}
+
 }
+
+
 
 
 VO_Array::~VO_Array()
@@ -51,24 +58,17 @@ void VO_Array::AddElement(ViewableObject* element, unsigned position)
 		elements.push_back(element);
 
 	elements[position]->AddObserver(this);
-	elements[position]->SetDrawingAgent(this);
-	elements[position]->SetParentComponent(this);
-	
-	
-	ComponentEvent eventToFire(RESIZED | UPDATED_VALUE | CHILD_UPDATED);
-	eventToFire.resize.originalHeight = boundingBox.GetHeight();
-	eventToFire.resize.originalWidth = boundingBox.GetWidth();
-	SetupLayout();
-	eventToFire.resize.newHeight = boundingBox.GetHeight();
-	eventToFire.resize.newWidth = boundingBox.GetWidth();
+	elements[position]->setParent(this);
+	elements[position]->setVisible(true);
 
-	NotifyObservers(eventToFire);
+	// TODO: This is called again in World::event()
+	elements[position]->SetupLayout();
+	elements[position]->sizeHint();
 }
 
 void VO_Array::PushElementToBack(ViewableObject* element)
 {
-	elements.push_back(element);
-	elements[elements.size() - 1]->SetParentComponent(this);
+	AddElement(element, elements.size());
 }
 
 void VO_Array::ClearArray(unsigned newCapacity)
@@ -96,65 +96,51 @@ void VO_Array::SwapElements(unsigned firstElement, unsigned secondElement)
 	NotifyObservers(eventToFire);
 }
 
-void VO_Array::SetupLayout()
+QSize VO_Array::sizeHint()
 {
 	static float xGap = 1, yGap = 5;
 
-	float x = 0;
-	float y = 0;
+	float x = 0, y = 0;
 
 	// Address stuff
-	std::string addressString(util::ToString<const void*>(dsAddress).append(":"));
+	addressText = util::ToString<const void*>(dsAddress).append(":").c_str();
+	QFontMetrics metrics(font());
+	addressTextPosition = QPoint(0,metrics.ascent());
+	x += metrics.width(addressText,addressText.length()) + xGap;
 
-	delete graphicalAddressText;
-	graphicalAddressText = new sf::String(addressString.c_str(), Displayer::GetInstance()->GetDefaultFont());
-	graphicalAddressText->SetColor(sf::Color(255, 255, 255));
-	graphicalAddressText->SetPosition(x,y);
 	
-	
-	float offset = graphicalAddressText->GetRect().GetWidth();
-	UL_ASSERT(offset);		// Ensure that the font is valid (an invalid one will result in offset=0)
-	x += offset + xGap; 
-
 	// Array elements
-	float maxTextHeight = 0;
+	int maxHeight = metrics.height();
+
 	BOOST_FOREACH(ViewableObject* element, elements)
-		maxTextHeight = std::max(maxTextHeight, element->GetPreferredSize().GetHeight());
-	maxTextHeight += yGap; // should this really be part of maxTextHeight which affects bbox for all elements
+		maxHeight = std::max(maxHeight, element->sizeHint().height());
+	
+	maxHeight += yGap;
 
 	BOOST_FOREACH(ViewableObject* element, elements)
 	{
-		sf::FloatRect preferredSize = element->GetPreferredSize();
-		element->SetBoundingBox(sf::FloatRect(x,y,x + preferredSize.GetWidth(), y + maxTextHeight));
-		element->SetupLayout();
-		x += element->GetBoundingBox().GetWidth() + xGap;
+		QSize preferredSize = element->sizeHint();
+		element->setGeometry(x,y,preferredSize.width(), maxHeight);
+		//element->SetupLayout();
+		//x += element->width() + xGap;
+		x += element->width();
 	}
 
-	//	boundingBox = sf::FloatRect(boundingBox.Left, boundingBox.Top, 
-	//								boundingBox.Left + x, boundingBox.Top + maxTextHeight); 
+	return QSize(x,maxHeight);
 }
 
-void VO_Array::Draw(sf::RenderWindow& renderWindow, sf::Font& defaultFont)
+
+void VO_Array::SetupLayout()
 {
-	// Print address
-	sf::Vector2f absPos = GetAbsolutePosition();
-	graphicalAddressText->Move(absPos.x, absPos.y);
-	renderWindow.Draw(*graphicalAddressText);
-	graphicalAddressText->Move(-absPos.x, -absPos.y);
+	
+}
 
-	// Print elements
-	glTranslatef(boundingBox.Left, boundingBox.Top,0);
-
-	BOOST_FOREACH(ViewableObject* element, elements)
-	{
-		// TODO remove SP hack
-		UL_ASSERT(element->GetType() == SINGLE_PRINTABLE);
-		VO_SinglePrintable* spElement = (VO_SinglePrintable*) element;
-
-		if (spElement->GetDrawingAgent() == this)
-			spElement->Draw(renderWindow, defaultFont);
-	}
-	glTranslatef(-boundingBox.Left, -boundingBox.Top,0);
+void VO_Array::paintEvent(QPaintEvent*) 
+{
+	// Print dsAddress
+	QPainter painter(this);
+	painter.setPen(Qt::white);
+	painter.drawText(addressTextPosition, addressText);
 }
 
 

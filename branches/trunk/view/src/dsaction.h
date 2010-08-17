@@ -2,15 +2,22 @@
 #define DS_ACTION_H
 
 #include <set>
-#include "SFML/Graphics.hpp"
+#include <QRect>
+#include "utilities.h"
 #include "action.h"
+#include "../include/common.h"
 
 
 
+
+// Contains ValueID struct and DSAction, DS_AddElementToArray, DS_Assigned, DS_CreateArray, DS_CreateSP
+// and DS_Deleted classes
 namespace Algovis_Viewer
 {
 	class ViewableObject;
 	class VO_SinglePrintable;
+	class VO_Array;
+
 
 	struct ValueID
 	{
@@ -36,8 +43,9 @@ namespace Algovis_Viewer
 		//std::set<ValueID> history;
 
 	public:
-		DS_Action(World* world) : Action(world) {}
-		DS_Action(World* world, std::set<ViewableObject*> subjects) : Action(world), subjects(subjects) {}
+		DS_Action(World*, bool animationSuppressed = false);
+		DS_Action(World* world, std::set<ViewableObject*> subjects, bool animationSuppressed = false);
+		DS_Action(const DS_Action&);
 		/*DS_Action(DS_ActionType type, ViewableObject* subject, std::string value, std::set<ValueID> history)
 			: actionType(type), subject(subject), value(value), history(history)
 		{ }*/
@@ -58,31 +66,92 @@ namespace Algovis_Viewer
 		std::set<ValueID> history;
 
 		// Animation stuff
-		sf::FloatRect subjectStart;
+		QRect subjectStart;
 
 	public:
-		DS_Assigned(World* world) : DS_Action(world) {}
+		DS_Assigned(World* world);
 		DS_Assigned(World* world, VO_SinglePrintable* subject, std::set<ValueID> history, std::string value);
+		DS_Assigned(const DS_Assigned& other);
 		virtual Action* Clone() const;
 
 		virtual void PrepareToPerform();
-		virtual void Perform(float progress, sf::RenderWindow& renderWindow, sf::Font& defaultFont);
+		virtual void Perform(float progress, QPainter*);
 		virtual void Complete(bool displayed);
 	};
 
 
-
-	// DS_TestAction class for testing
-	class DS_TestAction : public DS_Action
+	// Action class for deleting a VO (hacky atm)
+	class DS_Deleted : public DS_Action
 	{
 	public:
-		DS_TestAction(World* world) : DS_Action(world) {}
-
+		DS_Deleted(World*);
+		DS_Deleted(World*, ViewableObject* subject);
+		DS_Deleted(const DS_Deleted&);
 		virtual Action* Clone() const;
-		virtual void Perform(float progress, sf::RenderWindow& renderWindow, sf::Font& defaultFont);
+
+		//virtual void PrepareToPerform();
+		//virtual void Perform(float progress, QPainter*);
 		virtual void Complete(bool displayed);
 
+	private:
+		ViewableObject* subject;
+
 	};
+
+
+
+
+	class DS_CreateArray : public DS_Action
+	{
+	public:
+		DS_CreateArray(World*, const void* dsArrayAddress, ViewableObjectType elementType, 
+				std::vector<ViewableObject*> elements);
+		DS_CreateArray(const DS_CreateArray&);
+		virtual Action* Clone() const;
+
+		virtual void Complete(bool displayed);
+
+	private:
+		const void* dsArrayAddress;
+		ViewableObjectType elementType;
+		std::vector<ViewableObject*> elements;
+	};
+
+
+
+
+	class DS_CreateSP : public DS_Action
+	{
+	public:
+		DS_CreateSP(World*, const void* dsAddress, const std::string& value);
+		DS_CreateSP(const DS_CreateSP&);
+		virtual Action* Clone() const;
+
+		virtual void Complete(bool displayed);
+
+	private:
+		const void* dsAddress;
+		std::string value;
+	};
+
+
+	// TODO implement animation?
+	class DS_AddElementToArray : public DS_Action
+	{
+	public:
+		DS_AddElementToArray(World*, VO_Array* voArray, ViewableObject* element, unsigned position);
+		DS_AddElementToArray(const DS_AddElementToArray&);
+		virtual Action* Clone() const;
+
+		virtual void Complete(bool displayed);
+
+	private:
+		VO_Array* voArray;
+		ViewableObject* element;
+		unsigned position;
+	};
+
+
 }
 
-#endif //DS_ACTION_H
+#endif

@@ -4,9 +4,31 @@
 #include "SFML/Graphics.hpp"
 #include "utilities.h"
 
+#include <QEvent>
+
+
 
 namespace Algovis_Viewer
 {
+
+	
+	class DestroyViewableEvent : public QEvent
+	{
+	public:
+		DestroyViewableEvent(const void* dsAddress)
+			: QEvent((QEvent::Type) 1300), dsAddress(dsAddress)
+		{}
+		
+		const void* dsAddress;
+	private:
+		
+	};
+
+
+
+
+
+
 
 
     enum EventType

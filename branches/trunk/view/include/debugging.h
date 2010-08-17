@@ -18,24 +18,26 @@ namespace Algovis_Viewer
 	 * 1 = Basic threading debugging
 	 * 2 = Same as 1 plus post-locking synchronisation debug
 	 * 3 = Same as 2 plus pre-locking synchronisation debug
+	 * 4 = Implements a strict locking mechanism whereby recursive lock attempts block
 	 */
-	#define DEBUG_THREADING_LEVEL 0
+	#define DEBUG_THREADING_LEVEL 1
 
 	/* 0 = Off
 	 * 1 = Notify when a DS object is deregistered
 	 * 2 = Same as 1 plus notification when VO_Arrays are registered
 	 * 3 = Same as 2 plus notification when VO_SinglePrintables are registered
 	 */
-	#define DEBUG_REGISTRATION_LEVEL 0
+	#define DEBUG_REGISTRATION_LEVEL 3
 
 	/* 0 = Off
 	 * 1 = Basic action debugging
+	 * 2 = Verbose data about Registry::AddActionToBuffer
 	 */
-	#define DEBUG_ACTION_LEVEL 0
+	#define DEBUG_ACTION_LEVEL 2
 
 	// For changes made to specific VOs (excluding reg/dereg which is covered by DEBUG_REGISTRATION_LEVEL)
-	//#define DEBUG_SP_CHANGES
-	//#define DEBUG_ARRAY_CHANGES
+	#define DEBUG_SP_CHANGES
+	#define DEBUG_ARRAY_CHANGES
 }
 
 

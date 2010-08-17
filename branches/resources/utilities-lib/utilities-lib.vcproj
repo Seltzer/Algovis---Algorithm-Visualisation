@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -105,6 +106,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -168,10 +170,18 @@
 				RelativePath=".\src\strings.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\src\threadsafeBuffer.inl"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="include"
 			>
+			<File
+				RelativePath=".\include\dataStructures.h"
+				>
+			</File>
 			<File
 				RelativePath=".\include\enum.h"
 				>
@@ -190,6 +200,10 @@
 			</File>
 			<File
 				RelativePath=".\include\templateMP.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\threadsafeBuffer.h"
 				>
 			</File>
 			<File

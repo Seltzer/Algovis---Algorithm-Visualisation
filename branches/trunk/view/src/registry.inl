@@ -1,7 +1,9 @@
 template<class T>
-T* World::GetRepresentation(const void* dsAddress)
+T* Registry::GetRepresentation(const void* dsAddress)
 {
 	UL_ASSERT(dsAddress);
+	UL_ASSERT(IsRegistered(dsAddress));
+	
 	ViewableObject* viewRepresentation = GetRepresentation(dsAddress);
 	UL_ASSERT(viewRepresentation);
 

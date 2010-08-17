@@ -1,8 +1,6 @@
 #include "windows.h"
-
+#include "utilities.h"
 #include "../include/debugging.h"
-
-
 
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD dwReason, LPVOID lpReserved)

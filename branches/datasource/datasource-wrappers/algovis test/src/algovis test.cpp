@@ -13,9 +13,10 @@ using namespace std;
 
 REAL_INT wmain()
 {
-	Demo1();
+	//Demo1();
 	//Demo2();
 	//Demo3();
+	Demo4();
 
 	return 0;
 }

@@ -1,30 +1,27 @@
 Currently in progress:
 
-* Changing Viewables so that they inherit from the QT widget atom class etc.
-* Fixing the hackery of VO_Array so that it supports elements other than VO_SinglePrintables
 * Finishing dsAssigned before our meeting with Dinneen
 * Using history to analyse dependencies between actions
+* Fixing synchronisation between IsRegistered/GetRegistered and the buffer
+* Creating an ActionBuffer class specific to our purposes.
+* Getting array resizing and dsAssigned animation working again.
+* Speeding up painting
+
 
 
 ***** CRITICAL *****
 
-* Implement some more DSAction subclasses
-* Implement action buffer - we can have DEBUG mode with action buffer size = 1 (and displaying tempvars) 
-and a GENERAL mode with a larger action buffer
 * Work on UI (dependent on QT integration)
-	 - Implement a scrollbar widget to be used in the world panel (or outsource to QT maybe???)
-	 - Add a position allocation algorithm to the Container class.
-	 - Allow VOs to be dragged/suppressed/magnified
+	 - Implement a scrollbar widget on the world panel (most likely involving QScrollArea or QScrollBar)
+	 - Add a primitive position allocation algorithm to the Container class.
+	 - Allow VOs to be suppressed/magnified/diminished
 	 - Add mouse over expand feature. 
 		- We can display 'thumbnail' views of large VOs by default and display the large versions 
 			when moused over
-		- Consider whether names/addresses of Viewables should only be shown when moused over
+		- Show names/addresses of Viewables should only be shown when moused over
+			(this will speed up painting too)
 	 - Add pause/resume/undo and possibly textual descriptions of actions to the bottom panel
 			(depends on history feature)
-	 - Magnify feature for VOs??? Low priority
-	 - Some sort of control panel with list of VOs??? Low priority
-	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
-		arrays of arrays. Low priority
   
   
 ***** HIGH PRIORITY *****
@@ -50,6 +47,11 @@ and a GENERAL mode with a larger action buffer
 * Consider string algorithms
 * Compile a demo which uses Algovis in another compiler 
 		(to show how easy it is to use Algovis by simply including headers and copying a couple of libs/dlls)
+* UI Stuff:
+	 - Magnify feature for VOs??? Low priority
+	 - Some sort of control panel with list of VOs??? Low priority
+	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
+		arrays of arrays. Low priority
 
 
 ***** LOW PRIORITY *****
@@ -62,11 +64,11 @@ and a GENERAL mode with a larger action buffer
 		{hooking hooks aop proxy intercept method calls...}
 
 
-
 ***** GENERAL CODE TODO *****
 
 * Possibly start using smart pointers if things get nasty
 * Turn algovis c++ into a DLL
+* Phase out ComponentObserver
 
 
 ***** BUGS *****

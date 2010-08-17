@@ -39,8 +39,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;C:\Program Files\Qt\2010.04\qt\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;.\;&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;"
-				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_NO_DEBUG,NDEBUG;QT_CORE_LIB;QT_GUI_LIB;VIEW_LIB"
+				AdditionalIncludeDirectories="&quot;.\GeneratedFiles&quot;;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;C:\Program Files\Qt\2010.04\qt\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;.\&quot;;&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;"
+				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_NO_DEBUG,NDEBUG;QT_CORE_LIB;QT_GUI_LIB;VIEW_LIB;QT_OPENGL_LIB"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="true"
 				DebugInformationFormat="0"
@@ -56,7 +56,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib"
+				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="$(QTDIR)\lib"
 				GenerateDebugInformation="false"
@@ -108,8 +108,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;C:\Program Files\Qt\2010.04\qt\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;.\;&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;"
-				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;VIEW_LIB"
+				AdditionalIncludeDirectories="&quot;.\GeneratedFiles&quot;;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;C:\Program Files\Qt\2010.04\qt\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;.\&quot;;&quot;$(SolutionDir)..\..\resources&quot;;&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot;;&quot;$(SolutionDir)..\..\resources\SFML\include&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;"
+				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;VIEW_LIB;QT_OPENGL_LIB"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="true"
 				DebugInformationFormat="3"
@@ -125,7 +125,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib"
+				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtOpenGLd4.lib opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="$(QTDIR)\lib"
 				GenerateDebugInformation="true"
@@ -179,6 +179,28 @@
 			<File
 				RelativePath=".\include\registry.h"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -209,35 +231,87 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\registry.inl"
+				>
+			</File>
+			<File
 				RelativePath=".\src\world.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\src\world.h"
 				>
-			</File>
-			<File
-				RelativePath=".\src\world.inl"
-				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DVIEW_LIB -DQT_OPENGL_LIB -D_WINDLL  -I&quot;.\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;C:\Program Files\Qt\2010.04\qt\include&quot; -I&quot;$(QTDIR)\include\Qt&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;.&quot; -I&quot;$(SolutionDir)..\..\resources&quot; -I&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot; -I&quot;$(SolutionDir)..\..\resources\SFML\include&quot; -I&quot;$(QTDIR)\include\QtOpenGL&quot; &quot;.\src\world.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DVIEW_LIB -DQT_OPENGL_LIB -D_WINDLL  -I&quot;.\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;C:\Program Files\Qt\2010.04\qt\include&quot; -I&quot;$(QTDIR)\include\Qt&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;.&quot; -I&quot;$(SolutionDir)..\..\resources&quot; -I&quot;$(SolutionDir)..\..\resources\utilities-lib\include&quot; -I&quot;$(SolutionDir)..\..\resources\SFML\include&quot; -I&quot;$(QTDIR)\include\QtOpenGL&quot; &quot;.\src\world.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
 			</File>
 			<Filter
 				Name="displayer"
 				>
 				<File
-					RelativePath=".\src\displayer\components.cpp"
+					RelativePath=".\src\displayer\actionAgent.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\displayer\components.h"
+					RelativePath=".\src\displayer\actionAgent.h"
 					>
 				</File>
 				<File
-					RelativePath=".\src\displayer\display.cpp"
+					RelativePath=".\src\displayer\component.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\displayer\display.h"
+					RelativePath=".\src\displayer\component.h"
 					>
+				</File>
+				<File
+					RelativePath=".\src\displayer\displayer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\displayer\displayer.h"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description=""
+							CommandLine=""
+							AdditionalDependencies=""
+							Outputs=""
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description=""
+							CommandLine=""
+							AdditionalDependencies=""
+							Outputs=""
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\src\displayer\events.cpp"
@@ -245,10 +319,6 @@
 				</File>
 				<File
 					RelativePath=".\src\displayer\events.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\displayer\uiAction.h"
 					>
 				</File>
 			</Filter>
@@ -278,6 +348,48 @@
 				<File
 					RelativePath=".\src\viewableObjects\vo_singlePrintable.h"
 					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Generated Files"
+			Filter="moc;h;cpp"
+			UniqueIdentifier="{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}"
+			>
+			<Filter
+				Name="Release"
+				Filter="cpp;moc"
+				SourceControlFiles="false"
+				>
+				<File
+					RelativePath=".\GeneratedFiles\Release\moc_world.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="Debug"
+				Filter="cpp;moc"
+				SourceControlFiles="false"
+				>
+				<File
+					RelativePath=".\GeneratedFiles\Debug\moc_world.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>

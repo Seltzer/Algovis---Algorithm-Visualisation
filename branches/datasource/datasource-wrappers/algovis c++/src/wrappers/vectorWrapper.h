@@ -75,6 +75,12 @@ public:
 		return *this;
 	}
 
+	~VectorWrapper()
+	{
+		if (drawingEnabled)
+			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(this);
+	}
+
 
 
 
