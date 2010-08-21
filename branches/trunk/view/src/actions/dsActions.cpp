@@ -1,11 +1,11 @@
 #include <iostream>
 #include <cmath>
 #include "boost/foreach.hpp"
-#include "dsaction.h"
-#include "viewableObjects/vo_singlePrintable.h"
-#include "viewableObjects/vo_array.h"
-#include "../include/registry.h"
-#include "displayer/world.h"
+#include "dsactions.h"
+#include "../../include/registry.h"
+#include "../displayer/world.h"
+#include "../viewableObjects/vo_singlePrintable.h"
+#include "../viewableObjects/vo_array.h"
 
 using namespace std;
 
@@ -242,7 +242,6 @@ void DS_CreateArray::Complete(bool displayed)
 	
 	// hrmmm
 	//world->setMinimumSize(world->sizeHint());
-	newArray->GetType();
 	Registry::GetInstance()->ActionAgentCallback(newArray);
 }
 

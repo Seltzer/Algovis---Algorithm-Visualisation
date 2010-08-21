@@ -53,7 +53,6 @@ void VO_Array::AddElement(ViewableObject* element, unsigned position)
 	else 
 		elements.push_back(element);
 
-	//elements[position]->AddObserver(this);
 	elements[position]->setParent(this);
 	elements[position]->setVisible(true);
 
@@ -126,7 +125,13 @@ QSize VO_Array::sizeHint()
 
 void VO_Array::SetupLayout()
 {
+	sizeHint();
 	
+}
+
+void VO_Array::SetupLayout2()
+{
+	resize(sizeHint());
 }
 
 void VO_Array::paintEvent(QPaintEvent*) 

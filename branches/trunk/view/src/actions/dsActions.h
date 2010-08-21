@@ -1,11 +1,11 @@
-#ifndef DS_ACTION_H
-#define DS_ACTION_H
+#ifndef DS_ACTIONS_H
+#define DS_ACTIONS_H
 
 #include <set>
 #include <QRect>
 #include "utilities.h"
 #include "action.h"
-#include "../include/common.h"
+#include "../../include/common.h"
 
 
 

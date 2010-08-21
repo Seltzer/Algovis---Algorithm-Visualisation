@@ -8,7 +8,7 @@
 
 #include "displayer.h"
 #include "world.h"
-#include "../action.h"
+#include "../actions/action.h"
 #include "actionAgent.h"
 
 

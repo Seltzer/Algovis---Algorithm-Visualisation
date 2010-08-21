@@ -1,7 +1,10 @@
+#include "utilities.h"
+#include <QObject>
+#include "QtGui/qevent.h"
 #include "viewableObject.h"
 
-#include "QtGui/qevent.h"
-
+// hack
+#include "../displayer/world.h"
 
 namespace Algovis_Viewer
 {
@@ -96,6 +99,38 @@ void ViewableObject::mouseMoveEvent(QMouseEvent* evt)
 		evt->ignore();
 	}
 
+}
+
+void ViewableObject::wheelEvent(QWheelEvent* evt)
+{
+	// TODO hack
+	if (GetType() == ARRAY)
+	{
+		QFont newFont(font());
+		
+		if (evt->delta() > 0)
+			newFont.setPointSize(max((int) font().pointSize() * 1.1, font().pointSize() + 1));
+		else
+			newFont.setPointSize(min((int) font().pointSize() / 1.1, font().pointSize() - 1));
+			
+
+		setFont(newFont);
+
+		for (QObjectList::const_iterator it = children().begin(); it != children().end(); it++)
+		{
+			ViewableObject* child = (ViewableObject*) *it;
+			child->setFont(newFont);
+		}
+
+		SetupLayout2();
+		
+		world->repaint();
+		evt->accept();
+	}
+	else
+	{
+		evt->ignore();
+	}
 }
 
 

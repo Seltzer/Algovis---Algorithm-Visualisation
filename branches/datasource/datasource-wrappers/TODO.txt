@@ -11,11 +11,10 @@ Currently in progress:
 * Work on UI (dependent on QT integration)
 	 - Implement a scrollbar widget on the world panel (most likely involving QScrollArea or QScrollBar)
 	 - Add a primitive position allocation algorithm to the Container class.
-	 - Allow VOs to be suppressed/magnified/diminished
 	 - Add mouse over expand feature. 
 		- We can display 'thumbnail' views of large VOs by default and display the large versions 
 			when moused over
-		- Show names/addresses of Viewables should only be shown when moused over
+		- Names/addresses of Viewables should only be shown when moused over
 			(this will speed up painting too)
 	 - Add pause/resume/undo and possibly textual descriptions of actions to the bottom panel
 			(depends on history feature)

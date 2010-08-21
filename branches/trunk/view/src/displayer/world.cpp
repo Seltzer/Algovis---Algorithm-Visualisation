@@ -26,8 +26,8 @@ World::World(QWidget* parent, QPoint& position, QSize& dimensions,
 
 void World::repaint()
 {
-	UL_ASSERT(false);
-	std::cout << "inside repaint() - thread id = " << GetCurrentThreadId() << std::endl;
+	//UL_ASSERT(false);
+	//std::cout << "inside repaint() - thread id = " << GetCurrentThreadId() << std::endl;
 	
 	QWidget::repaint();
 }

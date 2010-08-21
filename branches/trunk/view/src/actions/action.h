@@ -55,13 +55,4 @@ namespace Algovis_Viewer
 
 
 
-
-
-
-
-
-
-
-
-
 #endif

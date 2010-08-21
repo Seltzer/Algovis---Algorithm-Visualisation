@@ -30,6 +30,9 @@ namespace Algovis_Viewer
 		virtual void resize(int w, int h);
 		virtual void SetupLayout() {}
 
+		//hack
+		virtual void SetupLayout2() {}
+
 		// So that an ActionAgent can take over drawing responsibilities for a Component during an animation
 		void EnableDrawing(bool);
 

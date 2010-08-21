@@ -22,6 +22,7 @@ namespace Algovis_Viewer
 		virtual ViewableObjectType GetType() const { return ARRAY; }
 
 		virtual void SetupLayout();
+		virtual void SetupLayout2();
 
 		// QT Overloads
 		virtual QSize sizeHint();

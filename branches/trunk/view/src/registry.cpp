@@ -8,8 +8,8 @@
 #include "viewableObjects/viewableObject.h"
 #include "viewableObjects/vo_array.h"
 #include "viewableObjects/vo_singlePrintable.h"
-#include "action.h"
-#include "dsAction.h"
+#include "actions/action.h"
+#include "actions/dsActions.h"
 
 using namespace std;
 
@@ -85,6 +85,8 @@ void Registry::AddActionToBuffer(DS_Action* dsAction)
 	
 	UL_ASSERT(dsAction);
 
+
+	// Working on new buffer
 /*
 	#if (DEBUG_ACTION_LEVEL >= 2)
 		prt("\tchecking if buffer is full")

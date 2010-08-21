@@ -207,22 +207,6 @@
 			Name="src"
 			>
 			<File
-				RelativePath=".\src\action.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\action.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\dsaction.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\dsaction.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\main.cpp"
 				>
 			</File>
@@ -361,6 +345,34 @@
 				</File>
 				<File
 					RelativePath=".\src\viewableObjects\vo_singlePrintable.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="actions"
+				>
+				<File
+					RelativePath=".\src\actions\action.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\actions\action.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\actions\actionBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\actions\actionBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\actions\dsActions.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\actions\dsActions.h"
 					>
 				</File>
 			</Filter>
