@@ -1,14 +1,15 @@
+#include "boost/foreach.hpp"
+#include <QObject>
 #include <Qt/qapplication.h>
 #include <Qt/qframe.h>
 #include <Qt/qscrollarea.h>
-#include "boost/foreach.hpp"
+#include <QPushButton>
 #include "utilities.h"
 
 #include "displayer.h"
-#include "../world.h"
+#include "world.h"
 #include "../action.h"
 #include "actionAgent.h"
-#include "events.h"
 
 
 
@@ -94,6 +95,13 @@ void Displayer::QtAppThread()
 	palette.setColor(QPalette::ColorGroup::All, QPalette::ColorRole::Dark, QColor(255,0,0));
 	controlFrame->setPalette(palette);
 
+	skipActionButton = new QPushButton(controlFrame);
+	skipActionButton->move(100,50);
+	skipActionButton->setText("Skip action");
+	QObject::connect(skipActionButton,SIGNAL(clicked()),actionAgent, SLOT(skipAnimation()));
+	
+	
+
 
     appFrame->show();
 	initialised = true;
@@ -129,47 +137,6 @@ void Displayer::PerformAndAnimateActionAsync(const Action* newAction)
 {
 	actionAgent->PerformAndAnimateActionAsync(newAction);
 }
-
-
-
-/*
-void Displayer::Drawworld()
-{
-	if (!actionPending)
-	{
-		world->AcquireReaderLock(true);
-		world->Draw(*win, defaultFont);
-		world->ReleaseReaderLock();
-	}
-	else
-	{
-		world->AcquireWriterLock();
-
-		world->Draw(*win, defaultFont);
-		actionToBePerformed->Perform((float)duration / 60, *win, defaultFont);
-
-		// Animation has finished
-		if (++duration == 60)
-		{
-			actionToBePerformed->Complete(true);
-			delete actionToBePerformed;
-			actionToBePerformed = NULL;
-			actionPending = false;
-
-			// TODO: Consider of order of write lock release and CompletedDSAction()\notify_all()
-			world->ReleaseWriterLock();
-			world->CompletedDSAction();
-		}
-	}
-
-}
-*/
-
-
-
-
-
-
 
 
 

@@ -159,6 +159,10 @@
 			Name="src"
 			>
 			<File
+				RelativePath=".\src\lockManager.inl"
+				>
+			</File>
+			<File
 				RelativePath=".\src\process.cpp"
 				>
 			</File>
@@ -188,6 +192,10 @@
 			</File>
 			<File
 				RelativePath=".\include\exceptions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\lockManager.h"
 				>
 			</File>
 			<File

@@ -21,7 +21,7 @@ namespace Algovis_Viewer
 	{
 		
 	public:
-		Action(World*, bool animateAction = true);
+		Action(World*, bool suppressAnimation = false);
 		Action(const Action&);
 		virtual Action* Clone() const = 0;
 		virtual ~Action();
@@ -47,7 +47,7 @@ namespace Algovis_Viewer
 		World* world;
 		std::vector<Action*> subActions;
 
-		bool animateAction;
+		bool suppressAnimation;
 
 	};
 

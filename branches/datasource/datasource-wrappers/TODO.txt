@@ -1,16 +1,13 @@
 Currently in progress:
 
-* Finishing dsAssigned before our meeting with Dinneen
-* Using history to analyse dependencies between actions
-* Fixing synchronisation between IsRegistered/GetRegistered and the buffer
-* Creating an ActionBuffer class specific to our purposes.
-* Getting array resizing and dsAssigned animation working again.
-* Speeding up painting
 
 
 
 ***** CRITICAL *****
 
+* Use history to analyse dependencies between actions
+* Create an ActionBuffer class specific to our purposes.
+* Improve dsAssigned aesthetically - maybe display temp vars for clarity until we get the buffer working
 * Work on UI (dependent on QT integration)
 	 - Implement a scrollbar widget on the world panel (most likely involving QScrollArea or QScrollBar)
 	 - Add a primitive position allocation algorithm to the Container class.
@@ -29,11 +26,13 @@ Currently in progress:
 * Highlight operands for comparison operators if user desires
 * Finish VectorWrapper
 * Write wrappers for STL stacks + maps, and unsigned types
+* Make everything shutdown cleanly - the QT migration broke it
 * Consider writing a Viewable for matrices
 * Do some quick research into a popular C++ graph library
 * Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
 * Write some more demos, test the compatibility of our wrappers against more libraries
 		Hopefully we can figure out if there are any other cases when #defining primitives fails
+
 
 
 
@@ -48,10 +47,11 @@ Currently in progress:
 * Compile a demo which uses Algovis in another compiler 
 		(to show how easy it is to use Algovis by simply including headers and copying a couple of libs/dlls)
 * UI Stuff:
-	 - Magnify feature for VOs??? Low priority
-	 - Some sort of control panel with list of VOs??? Low priority
+	 - Magnify feature for VOs???
+	 - Some sort of control panel with list of VOs???
 	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
-		arrays of arrays. Low priority
+		arrays of arrays.
+* Speed up and control painting
 
 
 ***** LOW PRIORITY *****
@@ -62,17 +62,19 @@ Currently in progress:
 	What we require is essentially function hooking which is often used for aspect-oriented programming type 
 	behaviour. Useful search keywords might include: 
 		{hooking hooks aop proxy intercept method calls...}
+* Decouple utilities-lib from boost-subset so that I can use it in my other projects
 
 
 ***** GENERAL CODE TODO *****
 
 * Possibly start using smart pointers if things get nasty
 * Turn algovis c++ into a DLL
-* Phase out ComponentObserver
+* Plug DS_Action memory leaks
+
 
 
 ***** BUGS *****
-* Mysterious slowdowns with the odd DS_Assigned animation
+* Ambiguous < op when using vec.size_type
 
 
 **** THOUGHTS ****

@@ -1,8 +1,13 @@
+#include <iostream>
+#include <cmath>
+#include "boost/foreach.hpp"
 #include "dsaction.h"
 #include "viewableObjects/vo_singlePrintable.h"
 #include "viewableObjects/vo_array.h"
 #include "../include/registry.h"
-#include "world.h"
+#include "displayer/world.h"
+
+using namespace std;
 
 
 namespace Algovis_Viewer
@@ -14,14 +19,14 @@ int time = 0; // TODO: Seriously?... Seriously guys.
 
 ////////////////////// DS_Action implementation ////////////////////////////
 
-DS_Action::DS_Action(World* world, bool animationSuppressed)
-	: Action(world, animationSuppressed)
+DS_Action::DS_Action(World* world, bool suppressAnimation)
+	: Action(world, suppressAnimation)
 {
 }
 
 
-DS_Action::DS_Action(World* world, std::set<ViewableObject*> subjects, bool animationSuppressed)
-	: Action(world, animationSuppressed), subjects(subjects)
+DS_Action::DS_Action(World* world, std::set<ViewableObject*> subjects, bool suppressAnimation)
+	: Action(world, suppressAnimation), subjects(subjects)
 {
 }
 
@@ -42,27 +47,24 @@ Action* DS_Action::Clone() const
 ////////////////////// DS_Assigned implementation ////////////////////////////
 
 DS_Assigned::DS_Assigned(World* world) 
-	: DS_Action(world) 
+	: DS_Action(world), sourceDimensions(0,0,0,0), source(NULL)
 {
 	UL_ASSERT(world);
 }
 
-DS_Assigned::DS_Assigned(World* world, VO_SinglePrintable* subject, std::set<ValueID> history, std::string value)
-	: DS_Action(world), value(value), subject(subject), history(history)
+DS_Assigned::DS_Assigned(World* world, VO_SinglePrintable* subject, std::set<ValueID> history, 
+							std::string value, bool tracked)
+	: DS_Action(world), value(value), subject(subject), history(history), tracked(tracked),
+			sourceDimensions(0,0,0,0), source(NULL)
 {
 	ViewableObject* viewable = (ViewableObject*)subject;
 	subjects.insert(viewable); // May need to keep the original printable pointer?
-
-	UL_ASSERT(world);
-
-	// Set subjectStart to have abs position
-	subjectStart = QRect(subject->GetPositionInWorld(), subject->size());
 }
 
 DS_Assigned::DS_Assigned(const DS_Assigned& other)
-	: DS_Action(other), value(other.value), subject(other.subject), history(other.history)
+	: DS_Action(other), value(other.value), subject(other.subject), history(other.history), 
+			sourceDimensions(other.sourceDimensions), source(other.source), sourceIsSibling(other.sourceIsSibling)
 {
-	UL_ASSERT(world);
 }
 
 
@@ -71,13 +73,53 @@ Action* DS_Assigned::Clone() const
 	return new DS_Assigned(*this);
 }
 
-void DS_Assigned::PrepareToPerform()
+void DS_Assigned::SetSource(VO_SinglePrintable* source)
 {
-	subject->EnableDrawing(false);
+	this->source = source;
+	sourceIsSibling = source->parent() == subject->parent();
 }
 
-void DS_Assigned::Perform(float progress, QPainter*)
+
+void DS_Assigned::PrepareToPerform()
 {
+	//subject->EnableDrawing(false);
+
+	// Set subjectStart to have abs position
+	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
+
+	if (source != NULL)
+	{
+		sourceDimensions = QRect(source->GetPositionInWorld(), source->size());
+		
+	//	source->EnableDrawing(false);
+	}
+		
+}
+
+void DS_Assigned::Perform(float progress, QPainter* painter)
+{
+	if (source == NULL)
+		return;
+
+	float x,y;
+	
+	if (sourceIsSibling)
+	{
+		// Assume source and subject have the same y for now
+		x = sourceDimensions.x() + progress * (subjectDimensions.x() - sourceDimensions.x());
+		//y = sourceDimensions.y() - 5 * sin(3.14 * progress) * (subjectStart.y() - sourceDimensions.y());
+		y = sourceDimensions.y() - 30 * sin(3.14 * progress);
+	}
+	else
+	{
+		x = sourceDimensions.x() + progress * (subjectDimensions.x() - sourceDimensions.x());
+		y = sourceDimensions.y() + progress * (subjectDimensions.y() - sourceDimensions.y());
+	}
+
+	source->DrawValue(QRect(QPoint(x,y),QSize(sourceDimensions.width(), sourceDimensions.height())),painter);
+	//source->DrawWithoutValue(sourceDimensions, painter);
+	//subject->DrawWithoutValue(subjectDimensions, painter);
+
 	/* Bulging is commented out until DrawValue can draw to a specified dimension properly
 
 	QRect updatedBounds = subjectStart;
@@ -123,8 +165,11 @@ void DS_Assigned::Complete(bool displayed)
 		subject->ResetHistory(ValueID(subject->GetDSAddress(), time));
 
 		++time;
-			subject->EnableDrawing(true);
+		subject->EnableDrawing(true);
+		if (source != NULL)
+			source->EnableDrawing(true);
 	}
+	Registry::GetInstance()->ActionAgentCallback(NULL);
 }
 
 
@@ -185,18 +230,19 @@ Action* DS_CreateArray::Clone() const
 void DS_CreateArray::Complete(bool displayed)
 {
 	VO_Array* newArray = new VO_Array(dsArrayAddress, world, elementType, elements);
-	newArray->move(50,50);
+	newArray->move(world->GetArrayPosition());
 		
 	// TODO implement const sizeHint
 	newArray->resize(newArray->sizeHint());
-	newArray->setMinimumSize(newArray->sizeHint());
+	//newArray->setMinimumSize(newArray->sizeHint());
 	// MIGRATION assume top level
 	newArray->setParent(world);
 	newArray->setVisible(true);
 	//newViewable->SetupLayout();
 	
 	// hrmmm
-	world->setMinimumSize(world->sizeHint());
+	//world->setMinimumSize(world->sizeHint());
+	newArray->GetType();
 	Registry::GetInstance()->ActionAgentCallback(newArray);
 }
 
@@ -223,7 +269,9 @@ Action* DS_CreateSP::Clone() const
 void DS_CreateSP::Complete(bool displayed)
 {
 	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsAddress, world, value);
-	
+	newSP->GetType();
+
+	//cout << "\tInside DS_CreateSP::Complete - callback for " << dsAddress << "\\" << newSP << endl;
 	Registry::GetInstance()->ActionAgentCallback(newSP);
 }
 
@@ -255,9 +303,43 @@ void DS_AddElementToArray::Complete(bool displayed)
 {
 	voArray->AddElement(element, position);
 	voArray->resize(voArray->sizeHint());
+	element->SetSizeControlledByParentArray(true);
+
+	//cout << "\tInside DS_AddElementToArray::Complete - callback for array " << voArray << endl;
 	Registry::GetInstance()->ActionAgentCallback(voArray);
 }
 
 	
+
+
+
+//////////////// DS_ArrayResize
+DS_ArrayResize::DS_ArrayResize(World* world, VO_Array* voArray, 
+								std::vector<ViewableObject*> elementsToAdd, unsigned newCapacity)
+	: DS_Action(world, true), voArray(voArray), elementsToAdd(elementsToAdd), newCapacity(newCapacity)
+{
+}
+
+DS_ArrayResize::DS_ArrayResize(const DS_ArrayResize& other)
+		: DS_Action(other), voArray(other.voArray), elementsToAdd(other.elementsToAdd), newCapacity(other.newCapacity)
+{
+}
+
+Action* DS_ArrayResize::Clone() const
+{
+	return new DS_ArrayResize(*this);
+}
+
+void DS_ArrayResize::Complete(bool displayed)
+{
+	voArray->ClearArray(newCapacity);
+	
+	unsigned position = 0;
+
+	BOOST_FOREACH(ViewableObject* element, elementsToAdd)
+		voArray->AddElement(element, position++);
+
+	Registry::GetInstance()->ActionAgentCallback(NULL);
+}
 
 }

@@ -18,6 +18,7 @@
 #include "process.h"
 #include "enum.h"
 #include "exceptions.h"
+#include "lockManager.h"
 
 
 

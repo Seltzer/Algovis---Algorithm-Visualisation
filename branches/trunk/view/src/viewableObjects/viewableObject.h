@@ -2,7 +2,7 @@
 #define VIEWABLE_OBJECT_H_
 
 #include <set>
-#include "../displayer/component.h"
+#include "../displayer/components.h"
 #include "../../include/common.h"
 
 
@@ -42,6 +42,9 @@ namespace Algovis_Viewer
 		const void* GetDSAddress() { return dsAddress; }
 		virtual ViewableObjectType GetType() const = 0;
 	
+		// hack hack hack hack TODO
+		void SetSizeControlledByParentArray(bool);
+
 	protected:	
 		ViewableObject(const void* dsAddress, World* world); 
 		ViewableObject(QWidget* parent, const void* dsAddress, World* world); 
@@ -57,6 +60,10 @@ namespace Algovis_Viewer
 		World* world;
 		const void* dsAddress;
 		QColor boundingBoxColour;
+
+		// hack hack hack hack TODO
+		bool sizeControlledByParentArray;
+
 	};
 
 	

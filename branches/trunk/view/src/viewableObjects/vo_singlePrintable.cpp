@@ -1,12 +1,14 @@
 #include "vo_singlePrintable.h"
 #include "../displayer/displayer.h"
-#include "../displayer/events.h"
 
 #include <QPainter>
 #include <QString>
 #include "qt/qpainter.h"
 #include "qt/qfont.h"
 
+
+// part of hack
+#include "vo_array.h"
 
 namespace Algovis_Viewer
 {
@@ -26,7 +28,6 @@ void VO_SinglePrintable::SetupLayout()
 	
 	QFontMetrics metrics(font());
 	graphicalTextPosition = QPoint(0,metrics.ascent());
-
 }
 
 QSize VO_SinglePrintable::sizeHint() const
@@ -39,6 +40,9 @@ QSize VO_SinglePrintable::sizeHint() const
 
 void VO_SinglePrintable::paintEvent(QPaintEvent*)
 {
+	if (!drawingEnabled)
+		return;
+
 	QPainter painter(this);
 
 	DrawValue(QRect(graphicalTextPosition, graphicalTextPosition),&painter);
@@ -65,7 +69,23 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue)
 	{
 		value = newValue;
 	
-		SetupLayout();
+		if (sizeControlledByParentArray)
+		{
+			SetupLayout();
+			VO_Array* parent = (VO_Array*) parentWidget();
+//			parent->SetupLayout();
+			parent->resize(parent->sizeHint());
+		}
+		else
+		{
+			SetupLayout();
+			resize(sizeHint());
+		}
+
+		//if (this->IsTopLevel())
+		//	((ViewableObject*) this->parentWidget())->SetupLayout();
+
+		//SetupLayout();
 	}
 }
 
@@ -81,15 +101,6 @@ void VO_SinglePrintable::Assigned(std::set<ValueID> history, const std::string& 
 	// This printable now has the same history as the one it was assigned from
 	// This is true because history only includes items that have been displayed
 	this->history = history;
-
-	UpdateValue(newValue);
-}
-
-void VO_SinglePrintable::AssignedUntracked(const void* dsAddress, const std::string& newValue)
-{
-	// The only history we have is that the value was untracked, so chuck in an element to represent that
-	history.clear();
-	history.insert(ValueID(dsAddress, -1)); // Time -1 denotes elements that aren't actually tracked (TODO: That sucks)
 
 	UpdateValue(newValue);
 }

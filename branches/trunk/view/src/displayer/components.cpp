@@ -2,13 +2,11 @@
 #include "boost/foreach.hpp"
 #include "utilities.h"
 
-#include "component.h"
+#include "components.h"
 #include "displayer.h"
-#include "../world.h"
+#include "world.h"
 
 using namespace std;
-
-
 
 
 
@@ -51,35 +49,16 @@ void Component::resize(int w, int h)
 }
 
 
-
-void Component::NotifyObservers(ComponentEvent& eventToFire)
-{
-	/*
-	BOOST_FOREACH(ComponentObserver* observer, observers)
-		observer->Notify(this, eventToFire);
-
-	// TODO hack to make sure components are drawn when dirty
-	SetupLayout();*/
-}
-
-void Component::AddObserver(ComponentObserver* newObserver)
-{
-	unsigned oldSize = observers.size();
-	observers.insert(newObserver);
-
-	UL_ASSERT(observers.size() == oldSize + 1);
-}
-
-void Component::RemoveObserver(ComponentObserver* disgruntledObserver)
-{
-	observers.erase(disgruntledObserver);
-}
-
-
 void Component::EnableDrawing(bool drawingEnabled)
 {
 	this->drawingEnabled = drawingEnabled;
 }
+
+
+
+
+
+
 
 
 

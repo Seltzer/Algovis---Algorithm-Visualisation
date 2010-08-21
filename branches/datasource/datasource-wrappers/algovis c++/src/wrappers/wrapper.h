@@ -88,7 +88,7 @@ namespace Algovis
 		PrimitiveWrapper(const PrimitiveWrapper& other)
 		{
 			primitive = other.primitive;
-			//std::cout << "PrimitiveType CC called - registering " << this << " with future value " << other << std::endl;
+			//std::cout << "PrimitiveType CC called" << std::endl;
 		
 			if (drawingEnabled)
 			{
@@ -99,6 +99,7 @@ namespace Algovis
 
 		PrimitiveWrapper& operator=(const PrimitiveWrapper& other)
 		{
+			//std::cout << "PrimitiveType CAO called" << std::endl;
 			if (this != &other)
 			{
 				primitive = other.primitive;

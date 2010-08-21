@@ -44,7 +44,7 @@ namespace Algovis_Viewer
 
 	public:
 		DS_Action(World*, bool animationSuppressed = false);
-		DS_Action(World* world, std::set<ViewableObject*> subjects, bool animationSuppressed = false);
+		DS_Action(World* world, std::set<ViewableObject*> subjects, bool suppressAnimation = false);
 		DS_Action(const DS_Action&);
 		/*DS_Action(DS_ActionType type, ViewableObject* subject, std::string value, std::set<ValueID> history)
 			: actionType(type), subject(subject), value(value), history(history)
@@ -60,23 +60,30 @@ namespace Algovis_Viewer
 	// Action class for printable being assigned 
 	class DS_Assigned : public DS_Action
 	{
-	protected:
-		std::string value;
-		VO_SinglePrintable* subject;
-		std::set<ValueID> history;
-
-		// Animation stuff
-		QRect subjectStart;
-
 	public:
 		DS_Assigned(World* world);
-		DS_Assigned(World* world, VO_SinglePrintable* subject, std::set<ValueID> history, std::string value);
+		DS_Assigned(World* world, VO_SinglePrintable* subject, 
+						std::set<ValueID> history, std::string value, bool tracked);
 		DS_Assigned(const DS_Assigned& other);
 		virtual Action* Clone() const;
+
+		void SetSource(VO_SinglePrintable* source);
 
 		virtual void PrepareToPerform();
 		virtual void Perform(float progress, QPainter*);
 		virtual void Complete(bool displayed);
+
+	protected:
+		std::string value;
+		VO_SinglePrintable* subject;
+		std::set<ValueID> history;
+		bool tracked;
+
+		// Animation stuff
+		QRect subjectDimensions;
+		QRect sourceDimensions;
+		VO_SinglePrintable* source;
+		bool sourceIsSibling;
 	};
 
 
@@ -151,6 +158,22 @@ namespace Algovis_Viewer
 		unsigned position;
 	};
 
+
+		
+	class DS_ArrayResize : public DS_Action
+	{
+	public:
+		DS_ArrayResize(World*, VO_Array* voArray, std::vector<ViewableObject*> elementsToAdd, unsigned newCapacity);
+		DS_ArrayResize(const DS_ArrayResize&);
+		virtual Action* Clone() const;
+
+		virtual void Complete(bool displayed);
+
+	private:
+		VO_Array* voArray;
+		std::vector<ViewableObject*> elementsToAdd;
+		unsigned newCapacity;
+	};
 
 }
 

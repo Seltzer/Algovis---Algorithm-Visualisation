@@ -1,7 +1,7 @@
 #define BOOST_ALL_NO_LIB
 #include "boost/foreach.hpp"
 #include "action.h"
-#include "world.h"
+#include "displayer/world.h"
 
 
 namespace Algovis_Viewer
@@ -9,16 +9,14 @@ namespace Algovis_Viewer
 
 
 
-Action::Action(World* world, bool animateAction)
-	: world(world), animateAction(animateAction)
+Action::Action(World* world, bool suppressAnimation)
+	: world(world), suppressAnimation(suppressAnimation)
 {
-	UL_ASSERT(world);
 }
 
 Action::Action(const Action& other)
-	: world(other.world), subActions(other.subActions), animateAction(other.animateAction)
+	: world(other.world), subActions(other.subActions), suppressAnimation(other.suppressAnimation)
 {
-	UL_ASSERT(world);
 }
 
 
@@ -37,13 +35,13 @@ void Action::AddSubAction(Action& subAction)
 
 void Action::SuppressAnimation()
 {
-	animateAction = false;
+	suppressAnimation = true;
 }
 
 
 bool Action::AnimationSuppressed()
 {
-	return animateAction;
+	return suppressAnimation;
 }
 
 

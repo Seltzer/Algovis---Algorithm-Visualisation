@@ -38,9 +38,8 @@ namespace Algovis_Viewer
 	class DS_Action;
 
 	// Registry is a non-copyable singleton
-	class DECLSPEC Registry
+	class DECLSPEC Registry : public util::LockManager<1>
 	{
-		friend class World;
 
 	public:
 		// Singleton methods
@@ -132,6 +131,9 @@ namespace Algovis_Viewer
 		 */
 		template<class T>
 		T* GetRepresentation(const void* dsAddress);
+
+		void Register(const void* dsAddress, ViewableObject* obj);
+		bool Deregister(const void* dsAddress);
 	};
 	#include "../src/registry.inl"
 

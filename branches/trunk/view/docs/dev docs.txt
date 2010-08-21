@@ -38,7 +38,7 @@ access and can't afford to wait for an animation to finish.
 				
 		
 		
-Intended drawing sequence:
+Intended drawing sequence (OBSOLETE)
 	1.) Let animation manipulate VOs - this may result in the triggering of events when VOs are resized etc.
 	2.) For all panels:
 			a.) Draw panel

@@ -1,15 +1,13 @@
+#include <algorithm>
 #include "boost/foreach.hpp"
-#include "SFML/Graphics.hpp"
+#include "qt/qpainter.h"
+#include "qt/qfont.h"
 #include "utilities.h"
 
 #include "vo_array.h"
 #include "vo_singlePrintable.h"
 #include "../../include/registry.h"
 #include "../displayer/displayer.h"
-
-//#include <QPainter>
-#include "qt/qpainter.h"
-#include "qt/qfont.h"
 
 using namespace std;
 
@@ -26,10 +24,7 @@ VO_Array::VO_Array(const void* dsAddress, World* world, ViewableObjectType eleme
 		: ViewableObject(parent, dsAddress, world), elementType(elementType)
 {
 	BOOST_FOREACH(ViewableObject* element, elements)
-	{
 		this->elements.push_back(element);	
-		elements[elements.size() - 1]->AddObserver(this);
-	}
 
 }
 
@@ -38,13 +33,14 @@ VO_Array::VO_Array(const void* dsAddress, World* world, ViewableObjectType eleme
 
 VO_Array::~VO_Array()
 {
+	/*
 	Registry* registry = Registry::GetInstance();
 
 	BOOST_FOREACH(ViewableObject* element, elements)
 	{
 		element->RemoveObserver(this);
 		registry->DeregisterObject(element);
-	}
+	}*/
 }
 
 
@@ -57,7 +53,7 @@ void VO_Array::AddElement(ViewableObject* element, unsigned position)
 	else 
 		elements.push_back(element);
 
-	elements[position]->AddObserver(this);
+	//elements[position]->AddObserver(this);
 	elements[position]->setParent(this);
 	elements[position]->setVisible(true);
 
@@ -92,8 +88,6 @@ void VO_Array::SwapElements(unsigned firstElement, unsigned secondElement)
 	//first->UpdateValue(second->GetValue());
 	//second->UpdateValue(temp);
 
-	ComponentEvent eventToFire(UPDATED_VALUE | CHILD_UPDATED);
-	NotifyObservers(eventToFire);
 }
 
 QSize VO_Array::sizeHint()
@@ -113,9 +107,9 @@ QSize VO_Array::sizeHint()
 	int maxHeight = metrics.height();
 
 	BOOST_FOREACH(ViewableObject* element, elements)
-		maxHeight = std::max(maxHeight, element->sizeHint().height());
-	
+		maxHeight = max(maxHeight, element->sizeHint().height());
 	maxHeight += yGap;
+
 
 	BOOST_FOREACH(ViewableObject* element, elements)
 	{
@@ -141,31 +135,6 @@ void VO_Array::paintEvent(QPaintEvent*)
 	QPainter painter(this);
 	painter.setPen(Qt::white);
 	painter.drawText(addressTextPosition, addressText);
-}
-
-
-void VO_Array::Notify(Component* subject, ComponentEvent& newEvent)
-{
-	UL_ASSERT(subject);
-
-	newEvent.ComplementEventType(CHILD_UPDATED);
-
-	if (newEvent.IsOfType(UPDATED_VALUE))
-	{
-		NotifyObservers(newEvent);
-	}
-	else if (newEvent.IsOfType(BEING_DESTROYED))
-	{
-		for(vector<ViewableObject*>::iterator it = elements.begin(); it < elements.end(); it++)
-		{
-			if ((*it) == subject)
-			{
-				elements.erase(it);
-				NotifyObservers(newEvent);
-				return;
-			}
-		}
-	}
 }
 
 

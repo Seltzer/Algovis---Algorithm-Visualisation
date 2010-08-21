@@ -42,7 +42,7 @@ namespace Algovis_Viewer
 		// should consider that drawn value it's history.
 		void ResetHistory(ValueID drawnValue);
 		void Assigned(std::set<ValueID> history, const std::string& newValue);
-		void AssignedUntracked(const void* dsAddress, const std::string& newValue);
+		// TODO combine Modified and ModifiedUntracked
 		void Modified(VO_SinglePrintable* source, const std::string& newValue);
 		void ModifiedUntracked(const void* dsAddress, const std::string& newValue);
 	

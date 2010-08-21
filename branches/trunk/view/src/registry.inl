@@ -1,6 +1,8 @@
 template<class T>
 T* Registry::GetRepresentation(const void* dsAddress)
 {
+	util::ReaderLock<util::LockManager<1>,1> lock(*this);
+
 	UL_ASSERT(dsAddress);
 	UL_ASSERT(IsRegistered(dsAddress));
 	

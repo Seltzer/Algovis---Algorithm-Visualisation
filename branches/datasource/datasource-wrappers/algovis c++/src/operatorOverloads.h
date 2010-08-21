@@ -19,14 +19,15 @@ namespace Algovis
 //		registry.combined(&result, &op1, &op2);
 //		return result;
 //	}
+//Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(&result, &op1, op1.GetStringRepresentation()); \*/
+//Algovis_Viewer::Registry::GetInstance()->PrintableModified(&result, &op2, result.GetStringRepresentation()); \*/
+
 #define AV_OPERATOR_MACRO(WRAPPER_TYPE, OPERATION) \
 	WRAPPER_TYPE operator OPERATION(const WRAPPER_TYPE & op1, const WRAPPER_TYPE & op2) { \
 		WRAPPER_TYPE result(op1.AVGetValue() OPERATION op2.AVGetValue()); \
 		\
 		if (drawingEnabled)\
 		{\
-			Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(&result, &op1, op1.GetStringRepresentation()); \
-			Algovis_Viewer::Registry::GetInstance()->PrintableModified(&result, &op2, result.GetStringRepresentation()); \
 		}\
 		return result; \
 	}

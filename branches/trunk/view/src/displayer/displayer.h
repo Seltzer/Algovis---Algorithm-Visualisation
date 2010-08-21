@@ -7,6 +7,7 @@
 class QApplication;
 class QFrame;
 class QScrollArea;
+class QPushButton;
 
 
 
@@ -65,6 +66,7 @@ private:
 	World* world;
 	ActionAgent* actionAgent;
 	QScrollArea* scrollArea;
+	QPushButton* skipActionButton;
 };
 
 

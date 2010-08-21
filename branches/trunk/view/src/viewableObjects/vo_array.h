@@ -9,7 +9,7 @@
 
 namespace Algovis_Viewer
 {
-	class ComponentEvent;
+
 
 	class VO_Array : public ViewableObject
 	{
@@ -36,12 +36,9 @@ namespace Algovis_Viewer
 		// Currently assumes that elements have already been cleaned up by Registry::DeregisterObject
 		// TODO: this is bad
 		void ClearArray(unsigned newCapacity);
-
 		// Not currently implemented by any DS
 		void SwapElements(unsigned firstElement, unsigned secondElement);
 
-		// Used as an event-handler for elements being updated
-		virtual void Notify(Component* subject, ComponentEvent&);
 
 	private:
 		std::vector<ViewableObject*> elements;

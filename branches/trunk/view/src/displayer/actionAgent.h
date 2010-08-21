@@ -1,8 +1,9 @@
 #ifndef ACTION_AGENT_H_
 #define ACTION_AGENT_H_
 
-#include "boost/thread/recursive_mutex.hpp"
-#include "component.h"
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/condition_variable.hpp"
+#include "components.h"
 
 
 class QWidget;
@@ -15,6 +16,7 @@ namespace Algovis_Viewer
 
 	class ActionAgent : public Component
 	{
+		Q_OBJECT
 
 	public:
 		ActionAgent(QWidget* parent, World* world, QPoint&, QSize&);
@@ -23,6 +25,9 @@ namespace Algovis_Viewer
 		void PerformAndAnimateActionAsync(const Action*);
 
 		virtual void paintEvent(QPaintEvent*); 
+
+	public slots:
+		void skipAnimation();
 	
 	private:
 		World* world;

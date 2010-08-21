@@ -1,7 +1,9 @@
-#include "actionAgent.h"
+#include <QPainter>
+#include "utilities.h"
 
+#include "actionAgent.h"
 #include "../action.h"
-#include "../world.h"
+#include "world.h"
 
 
 
@@ -29,10 +31,9 @@ void ActionAgent::PerformAndAnimateActionAsync(const Action* newAction)
 		actionPendingCondVar.wait<boost::mutex>(performActionMutex);
 
 	duration = 0;
-	actionPending = true;
-
 	actionToBePerformed = newAction->Clone();
 	actionToBePerformed->PrepareToPerform();
+	actionPending = true;
 }
 
 
@@ -40,15 +41,13 @@ void ActionAgent::paintEvent(QPaintEvent*)
 {
 	if (actionPending)
 	{
-		//actionToBePerformed->Perform((float)duration / 60, *win, defaultFont);
-
 		// Animation for the action is suppressed or animation has finished
-		if (actionToBePerformed->AnimationSuppressed() || ++ duration == 60)
+		if (actionToBePerformed->AnimationSuppressed() || ++duration > 60)
 		{
 			#if(DEBUG_ACTION_LEVEL >=1)
-				prt("about to complete action");		
+				prt("\tAbout to complete action");		
 				actionToBePerformed->Complete(true);
-				prt("completed action");		
+				prt("\tCompleted action");		
 			#else			
 				actionToBePerformed->Complete(true);
 			#endif
@@ -58,18 +57,23 @@ void ActionAgent::paintEvent(QPaintEvent*)
 			actionToBePerformed = NULL;
 			actionPending = false;
 
-			// Release locks etc.
-			world->ReleaseWriterLock();
 			performActionMutex.unlock();
 			actionPendingCondVar.notify_all();
 		}
+		else
+		{
+			QPainter painter(this);
+			actionToBePerformed->Perform((float) duration / 60, &painter);
+		}
 	}
-	
-	world->ReleaseWriterLock();
 }
 
 
-
+void ActionAgent::skipAnimation()
+{
+	if (actionPending)
+		duration = 60;
+}
 
 
 }

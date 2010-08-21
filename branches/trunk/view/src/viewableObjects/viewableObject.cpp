@@ -9,22 +9,21 @@ namespace Algovis_Viewer
 
 
 ViewableObject::ViewableObject(const void* dsAddress, World* world) 
-	: dsAddress(dsAddress), world(world), mouseDraggingInitiated(false), boundingBoxColour(Qt::green)
+	: dsAddress(dsAddress), world(world), mouseDraggingInitiated(false), 
+		boundingBoxColour(Qt::green), sizeControlledByParentArray(false)
 {
 }
 
 
 ViewableObject::ViewableObject(QWidget* parent, const void* dsAddress, World* world) 
 	: Component(parent, QPoint(5,5),QSize(200,200)),dsAddress(dsAddress), world(world), 
-		mouseDraggingInitiated(false),boundingBoxColour(Qt::green)
+		mouseDraggingInitiated(false),boundingBoxColour(Qt::green), sizeControlledByParentArray(false)
 {
 }
 
 
 ViewableObject::~ViewableObject()
 {
-	ComponentEvent eventToFire(BEING_DESTROYED);
-	NotifyObservers(eventToFire);
 }
 
 QPoint ViewableObject::GetPositionInWorld()
@@ -100,6 +99,10 @@ void ViewableObject::mouseMoveEvent(QMouseEvent* evt)
 }
 
 
+void ViewableObject::SetSizeControlledByParentArray(bool sizeControlledByParentArray)
+{
+	this->sizeControlledByParentArray = sizeControlledByParentArray;
+}
 
 
 }

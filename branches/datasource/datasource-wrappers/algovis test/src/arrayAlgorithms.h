@@ -33,7 +33,7 @@ void PopulateVectorWithRandomInts(vector<int>& vec, int size, REAL_INT lowerBoun
 		vec.push_back(util::generateRandomNumber(lowerBound, upperBound));
 		//vector<int>::iterator endIt = vec.end() - 1;
 
-		util::PlatformSleep(0.5);
+		//util::PlatformSleep(0.5);
 	}
 }
 
