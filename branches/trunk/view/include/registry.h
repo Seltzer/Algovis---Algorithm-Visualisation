@@ -20,7 +20,7 @@
 #include "boost/thread/mutex.hpp"
 #include "utilities.h"
 #include "common.h"
-
+#include "../src/actions/actionBuffer.h"
 
 
 
@@ -85,37 +85,12 @@ namespace Algovis_Viewer
 		void PrintableAssigned(const void* dsAssigned, const void* dsSource, const std::string& newValue);
 		void PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue);
 
-		// For callbacks from ActionAgent/Actions after creating/destroying a Viewable
-		void ActionAgentCallback(ViewableObject* lastViewableCreated);
-
 		// Used to test out anything imaginable - declared here so that it can be called by the DLL user
-		void TestMethod(); 
+		void TestMethod();
 
-	private:
-		// Members related to non-copyable singleton behaviour
-		static Registry* instance;
-		Registry();
-		Registry(const Registry&);
-		Registry& operator=(const Registry&);
-		~Registry();
-
-		World* world;
-	
-		// See ActionAgentCallback() above
-		bool waitingOnCallback;
-		ViewableObject* lastViewableCreatedOrDestroyed;
-		
-		// Pre-Condition: User does not have any locks on VOs
-		// Only dsActions can be added to buffer at the moment
-		void AddActionToBuffer(DS_Action* action);
-		util::ThreadsafeBuffer<Action*> actionBuffer;
-		boost::mutex bufferMutex;
-		
-
-
-		// Mappings from data source types to viewable objects
-		std::map<const void*,VO_Array*> registeredArrays;
-		std::map<const void*,VO_SinglePrintable*> registeredSinglePrintables;
+		// Only public because actions need them
+		void Register(const void* dsAddress, ViewableObject* obj);
+		bool Deregister(const void* dsAddress);
 
 		// Returns true if a data source object is registered (and hence has a ViewableObject equivalent)
 		bool IsRegistered(const void* dsAddress) const;
@@ -132,8 +107,27 @@ namespace Algovis_Viewer
 		template<class T>
 		T* GetRepresentation(const void* dsAddress);
 
-		void Register(const void* dsAddress, ViewableObject* obj);
-		bool Deregister(const void* dsAddress);
+	private:
+		// Members related to non-copyable singleton behaviour
+		static Registry* instance;
+		Registry();
+		Registry(const Registry&);
+		Registry& operator=(const Registry&);
+		~Registry();
+
+		World* world;
+		
+		// Pre-Condition: User does not have any locks on VOs
+		// Only dsActions can be added to buffer at the moment
+		void AddActionToBuffer(DS_Action* action);
+		boost::mutex bufferMutex;
+		ActionBuffer actionBuffer;
+		
+
+
+		// Mappings from data source types to viewable objects
+		std::map<const void*,VO_Array*> registeredArrays;
+		std::map<const void*,VO_SinglePrintable*> registeredSinglePrintables;
 	};
 	#include "../src/registry.inl"
 

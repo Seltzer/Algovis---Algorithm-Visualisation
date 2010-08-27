@@ -13,6 +13,8 @@ namespace Algovis_Viewer
 	class DS_Action;
 
 
+	// This buffer is in charge of buffering actions and firing them off to the view when appropriate.
+	// It will only block when the buffer is full AND the viewer is still performing an action
 	class ActionBuffer
 	{
 
@@ -22,25 +24,15 @@ namespace Algovis_Viewer
 
 		// Param copy semantics
 		void PushBack(DS_Action*);
-		bool TryPushBack(DS_Action*);
 
-		// Both return NULL if buffer is empty
-		DS_Action* Peek();
-		// Caller must delete
-		DS_Action* Pop_Front();
-
-		bool IsFull();
-
-
+		bool Full()
+		{
+			return buffer.size() >= bufferCapacity;
+		}
 
 	private:
-		std::vector<DS_Action*> buffer;
+		std::deque<DS_Action*> buffer;
 		unsigned bufferCapacity;
-		boost::mutex bufferMutex;
-
-		bool isFull;
-		
-
 	};
 
 

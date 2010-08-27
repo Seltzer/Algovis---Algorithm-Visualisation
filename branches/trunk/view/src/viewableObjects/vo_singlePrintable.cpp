@@ -105,23 +105,6 @@ void VO_SinglePrintable::Assigned(std::set<ValueID> history, const std::string& 
 	UpdateValue(newValue);
 }
 
-void VO_SinglePrintable::Modified(VO_SinglePrintable* source, const std::string& newValue)
-{
-	// This printable now includes the history of the printable that modified it, plus it's own history
-	const std::set<ValueID>& sourceHistory = source->GetHistory();
-	history.insert(sourceHistory.begin(), sourceHistory.end());
-
-	UpdateValue(newValue);
-}
-
-void VO_SinglePrintable::ModifiedUntracked(const void* dsAddress, const std::string& newValue)
-{
-	// The printable retains it's current history, but notes that it has been modified by something that is not tracked.
-	history.insert(ValueID(dsAddress, -1)); // Time -1 denotes elements that aren't actually tracked (TODO: That sucks)
-
-	UpdateValue(newValue);
-}
-
 
 
 }

@@ -62,8 +62,7 @@ namespace Algovis_Viewer
 	{
 	public:
 		DS_Assigned(World* world);
-		DS_Assigned(World* world, VO_SinglePrintable* subject, 
-						std::set<ValueID> history, std::string value, bool tracked);
+		DS_Assigned(World* world, const void* dsAssigned, const void* dsSource, std::string value, bool tracked);
 		DS_Assigned(const DS_Assigned& other);
 		virtual Action* Clone() const;
 
@@ -74,6 +73,40 @@ namespace Algovis_Viewer
 		virtual void Complete(bool displayed);
 
 	protected:
+		const void* dsAssigned;
+		const void* dsSource;
+
+		std::string value;
+		VO_SinglePrintable* subject;
+		std::set<ValueID> history;
+		bool tracked;
+
+		// Animation stuff
+		QRect subjectDimensions;
+		QRect sourceDimensions;
+		VO_SinglePrintable* source;
+		bool sourceIsSibling;
+	};
+
+		// Action class for printable being modified. Depressingly similar to assigned 
+	class DS_Modified : public DS_Action
+	{
+	public:
+		DS_Modified(World* world);
+		DS_Modified(World* world, const void* dsModified, const void* dsSource, std::string value, bool tracked);
+		DS_Modified(const DS_Modified& other);
+		virtual Action* Clone() const;
+
+		void SetSource(VO_SinglePrintable* source);
+
+		virtual void PrepareToPerform();
+		virtual void Perform(float progress, QPainter*);
+		virtual void Complete(bool displayed);
+
+	protected:
+		const void* dsModified;
+		const void* dsSource;
+
 		std::string value;
 		VO_SinglePrintable* subject;
 		std::set<ValueID> history;
@@ -92,7 +125,7 @@ namespace Algovis_Viewer
 	{
 	public:
 		DS_Deleted(World*);
-		DS_Deleted(World*, ViewableObject* subject);
+		DS_Deleted(World*, const void* dsSubject);
 		DS_Deleted(const DS_Deleted&);
 		virtual Action* Clone() const;
 
@@ -101,7 +134,7 @@ namespace Algovis_Viewer
 		virtual void Complete(bool displayed);
 
 	private:
-		ViewableObject* subject;
+		const void* dsSubject;
 
 	};
 
@@ -112,7 +145,7 @@ namespace Algovis_Viewer
 	{
 	public:
 		DS_CreateArray(World*, const void* dsArrayAddress, ViewableObjectType elementType, 
-				std::vector<ViewableObject*> elements);
+				std::vector<void*> elements);
 		DS_CreateArray(const DS_CreateArray&);
 		virtual Action* Clone() const;
 
@@ -121,7 +154,7 @@ namespace Algovis_Viewer
 	private:
 		const void* dsArrayAddress;
 		ViewableObjectType elementType;
-		std::vector<ViewableObject*> elements;
+		std::vector<void*> elements;
 	};
 
 
@@ -146,15 +179,15 @@ namespace Algovis_Viewer
 	class DS_AddElementToArray : public DS_Action
 	{
 	public:
-		DS_AddElementToArray(World*, VO_Array* voArray, ViewableObject* element, unsigned position);
+		DS_AddElementToArray(World*, const void* dsArray, const void* dsElement, unsigned position);
 		DS_AddElementToArray(const DS_AddElementToArray&);
 		virtual Action* Clone() const;
 
 		virtual void Complete(bool displayed);
 
 	private:
-		VO_Array* voArray;
-		ViewableObject* element;
+		const void* dsArray;
+		const void* dsElement;
 		unsigned position;
 	};
 
@@ -163,15 +196,15 @@ namespace Algovis_Viewer
 	class DS_ArrayResize : public DS_Action
 	{
 	public:
-		DS_ArrayResize(World*, VO_Array* voArray, std::vector<ViewableObject*> elementsToAdd, unsigned newCapacity);
+		DS_ArrayResize(World*, const void* voArray, std::vector<void*> elements, unsigned newCapacity);
 		DS_ArrayResize(const DS_ArrayResize&);
 		virtual Action* Clone() const;
 
 		virtual void Complete(bool displayed);
 
 	private:
-		VO_Array* voArray;
-		std::vector<ViewableObject*> elementsToAdd;
+		const void* dsArray;
+		std::vector<void*> elements;
 		unsigned newCapacity;
 	};
 
