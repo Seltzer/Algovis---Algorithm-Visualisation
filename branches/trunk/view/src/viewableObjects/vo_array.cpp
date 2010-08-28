@@ -65,9 +65,7 @@ void VO_Array::AddElement(ViewableObject* element, unsigned position)
 	elements[position]->setParent(this);
 	elements[position]->setVisible(true);
 
-	// TODO: This is called again in World::event()
-	elements[position]->SetupLayout();
-	elements[position]->sizeHint();
+	adjustSize();
 }
 
 void VO_Array::PushElementToBack(ViewableObject* element)
@@ -98,7 +96,38 @@ void VO_Array::SwapElements(unsigned firstElement, unsigned secondElement)
 
 }
 
-QSize VO_Array::sizeHint()
+QSize VO_Array::sizeHint() const
+{
+	static float xGap = 1, yGap = 5;
+
+	float x = 0, y = 0;
+
+	// Address stuff
+	QString addressText = util::ToString<const void*>(dsAddress).append(":").c_str();
+	QFontMetrics metrics(font());
+	QPoint addressTextPosition = QPoint(0,metrics.ascent());
+	x += metrics.width(addressText,addressText.length()) + xGap;
+
+	
+	// Array elements
+	int maxHeight = metrics.height();
+
+	BOOST_FOREACH(ViewableObject* element, elements)
+		maxHeight = max(maxHeight, element->sizeHint().height());
+	maxHeight += yGap;
+
+
+	BOOST_FOREACH(ViewableObject* element, elements)
+	{
+		QSize preferredSize = element->sizeHint();
+		x += element->width();
+	}
+
+	return QSize(x,maxHeight);
+}
+
+
+void VO_Array::adjustSize()
 {
 	static float xGap = 1, yGap = 5;
 
@@ -123,25 +152,12 @@ QSize VO_Array::sizeHint()
 	{
 		QSize preferredSize = element->sizeHint();
 		element->setGeometry(x,y,preferredSize.width(), maxHeight);
-		//element->SetupLayout();
-		//x += element->width() + xGap;
 		x += element->width();
 	}
 
-	return QSize(x,maxHeight);
+	resize(x, maxHeight);
 }
 
-
-void VO_Array::SetupLayout()
-{
-	sizeHint();
-	
-}
-
-void VO_Array::SetupLayout2()
-{
-	resize(sizeHint());
-}
 
 void VO_Array::paintEvent(QPaintEvent*) 
 {

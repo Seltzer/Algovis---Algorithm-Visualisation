@@ -27,13 +27,6 @@ VO_SinglePrintable::~VO_SinglePrintable()
 }
 
 
-void VO_SinglePrintable::SetupLayout()
-{
-	graphicalText = QString(value.c_str());
-	
-	QFontMetrics metrics(font());
-	graphicalTextPosition = QPoint(0,metrics.ascent());
-}
 
 QSize VO_SinglePrintable::sizeHint() const
 {
@@ -73,24 +66,23 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue)
 	//if (value != newValue) // Update should be displayed, with history, even if the same value is assigned!
 	{
 		value = newValue;
+			
+		graphicalText = QString(value.c_str());
 	
+		QFontMetrics metrics(font());
+		graphicalTextPosition = QPoint(0,metrics.ascent());
+		
+		
+
 		if (sizeControlledByParentArray)
 		{
-			SetupLayout();
 			VO_Array* parent = (VO_Array*) parentWidget();
-//			parent->SetupLayout();
-			parent->resize(parent->sizeHint());
+			parent->adjustSize();
 		}
 		else
 		{
-			SetupLayout();
-			resize(sizeHint());
+			adjustSize();
 		}
-
-		//if (this->IsTopLevel())
-		//	((ViewableObject*) this->parentWidget())->SetupLayout();
-
-		//SetupLayout();
 	}
 }
 

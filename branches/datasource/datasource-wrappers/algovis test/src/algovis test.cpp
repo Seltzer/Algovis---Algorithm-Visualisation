@@ -13,7 +13,9 @@ using namespace std;
 
 REAL_INT wmain()
 {
-	MultipleVectorDemo();
+	MultipleVectorDemoWithDelete();
+	//MultipleVectorDemo();
+	//DeleteDemo();
 
 	return 0;
 }

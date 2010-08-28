@@ -118,7 +118,7 @@ void ViewableObject::wheelEvent(QWheelEvent* evt)
 			child->setFont(newFont);
 		}
 
-		SetupLayout2();
+		adjustSize();
 		
 		world->repaint();
 		evt->accept();

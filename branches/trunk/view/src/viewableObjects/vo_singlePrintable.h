@@ -30,8 +30,7 @@ namespace Algovis_Viewer
 		virtual void DrawValue(QRect& desiredBoundingBox, QPainter*);
 		virtual void DrawWithoutValue(QRect& desiredBoundingBox, QPainter*);
 
-		virtual void SetupLayout();
-
+		
 		
 
 		std::string GetValue() { return value; }

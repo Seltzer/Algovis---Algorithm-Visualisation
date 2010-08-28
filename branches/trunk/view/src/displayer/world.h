@@ -19,9 +19,7 @@ namespace Algovis_Viewer
 		World(QWidget* parent, QPoint&, QSize&, QColor& bgColour, QColor& borderColour, unsigned refreshRate = 100);
 
 		// QT Overloads
-		virtual void paintEvent(QPaintEvent*);
-		virtual void repaint();
-		virtual void update();
+		// hack to try and get scrollbars working
 		virtual QSize sizeHint() const;
 		
 		// hack until we get around to writing a position allocator
@@ -33,8 +31,6 @@ namespace Algovis_Viewer
 		QColor bgColour, borderColour;
 		QTimer myTimer;
 		unsigned refreshRate;
-
-		int i;
 
 		// hack until we get around to writing a position allocator
 		QPoint locationForNextArray;

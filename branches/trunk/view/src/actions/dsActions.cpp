@@ -436,7 +436,6 @@ void DS_CreateArray::Complete(bool displayed)
 {
 	Registry* registry = Registry::GetInstance();
 
-	// not with ViewableObject*
 	// Verify that array hasn't already been registered
 	UL_ASSERT(!registry->IsRegistered(dsArrayAddress));
 
@@ -544,7 +543,8 @@ void DS_AddElementToArray::Complete(bool displayed)
 	VO_SinglePrintable* element = registry->GetRepresentation<VO_SinglePrintable>(dsElement);
 
 	voArray->AddElement(element, position);
-	voArray->resize(voArray->sizeHint());
+	//voArray->SetupLayout();
+	voArray->adjustSize();
 	element->SetSizeControlledByParentArray(true);
 
 	//cout << "\tInside DS_AddElementToArray::Complete - callback for array " << voArray << endl;

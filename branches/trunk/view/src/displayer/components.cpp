@@ -35,20 +35,6 @@ Component::~Component()
 }
 
 
-
-void Component::resize(QSize& newSize)
-{
-	QWidget::resize(newSize);
-	SetupLayout();
-}
-
-void Component::resize(int w, int h)
-{
-	QWidget::resize(w,h);
-	SetupLayout();
-}
-
-
 void Component::EnableDrawing(bool drawingEnabled)
 {
 	this->drawingEnabled = drawingEnabled;
