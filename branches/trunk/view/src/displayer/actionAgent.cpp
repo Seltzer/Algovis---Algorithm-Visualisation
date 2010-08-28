@@ -68,6 +68,10 @@ void ActionAgent::paintEvent(QPaintEvent*)
 	}
 }
 
+QSize ActionAgent::sizeHint() const 
+{ 
+	return size();
+}
 
 void ActionAgent::skipAnimation()
 {

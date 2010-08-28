@@ -34,9 +34,8 @@ namespace Algovis_Viewer
 		void AddElement(ViewableObject*, unsigned position);
 		void PushElementToBack(ViewableObject*);
 
-		// Currently assumes that elements have already been cleaned up by Registry::DeregisterObject
-		// TODO: this is bad
-		void ClearArray(unsigned newCapacity);
+		void ClearArray();
+
 		// Not currently implemented by any DS
 		void SwapElements(unsigned firstElement, unsigned secondElement);
 
@@ -45,8 +44,8 @@ namespace Algovis_Viewer
 		std::vector<ViewableObject*> elements;
 		ViewableObjectType elementType;
 
-		QString addressText;
-		QPoint addressTextPosition;
+		mutable QString addressText;
+		mutable QPoint addressTextPosition;
 
 	};
 }

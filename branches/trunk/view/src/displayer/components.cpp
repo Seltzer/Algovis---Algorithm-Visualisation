@@ -40,13 +40,43 @@ void Component::EnableDrawing(bool drawingEnabled)
 	this->drawingEnabled = drawingEnabled;
 }
 
+///////////////// QT overrides
+void Component::paintEvent(QPaintEvent* evt) 
+{
+	return QWidget::paintEvent(evt);
+}
+
+QSize Component::sizeHint() const 
+{ 
+	return QWidget::sizeHint(); 
+}
+
+void Component::resize(const QSize& size) 
+{ 
+	return QWidget::resize(size); 
+}
+
+void Component::resize(int w, int h) 
+{ 
+	return QWidget::resize(w, h); 
+}
+
+void Component::adjustSize() 
+{ 
+	return QWidget::adjustSize(); 
+}
 
 
 
+MainFrame::MainFrame(Displayer* disp)
+	: displayer(disp)
+{
+}
 
-
-
-
+void MainFrame::resizeEvent(QResizeEvent* evt)
+{
+	displayer->ResizeWindow(evt->size());
+}
 
 
 

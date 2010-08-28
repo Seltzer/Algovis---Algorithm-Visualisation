@@ -73,27 +73,21 @@ void VO_Array::PushElementToBack(ViewableObject* element)
 	AddElement(element, elements.size());
 }
 
-void VO_Array::ClearArray(unsigned newCapacity)
+void VO_Array::ClearArray()
 {
-	// TODO do more clean-up such as deregistering as observer etc.
 	elements.clear();
 	UL_ASSERT(elements.size() == 0);
-	// TODO do something with newCapacity
 }
 
 void VO_Array::SwapElements(unsigned firstElement, unsigned secondElement)
 {
+	/*
 	UL_ASSERT(elementType == SINGLE_PRINTABLE);
 
 	VO_SinglePrintable* first = (VO_SinglePrintable*) elements[firstElement];
 	VO_SinglePrintable* second = (VO_SinglePrintable*) elements[secondElement];
 
-	std::string temp = first->GetValue();
-	
-	// TODO: UpdateValue is obsolete, and this does not track history for the elements involved.
-	//first->UpdateValue(second->GetValue());
-	//second->UpdateValue(temp);
-
+	std::string temp = first->GetValue();*/
 }
 
 QSize VO_Array::sizeHint() const
@@ -103,9 +97,9 @@ QSize VO_Array::sizeHint() const
 	float x = 0, y = 0;
 
 	// Address stuff
-	QString addressText = util::ToString<const void*>(dsAddress).append(":").c_str();
+	addressText = util::ToString<const void*>(dsAddress).append(":").c_str();
 	QFontMetrics metrics(font());
-	QPoint addressTextPosition = QPoint(0,metrics.ascent());
+	addressTextPosition = QPoint(0,metrics.ascent());
 	x += metrics.width(addressText,addressText.length()) + xGap;
 
 	
@@ -120,7 +114,7 @@ QSize VO_Array::sizeHint() const
 	BOOST_FOREACH(ViewableObject* element, elements)
 	{
 		QSize preferredSize = element->sizeHint();
-		x += element->width();
+		x += preferredSize.width();
 	}
 
 	return QSize(x,maxHeight);
@@ -152,7 +146,7 @@ void VO_Array::adjustSize()
 	{
 		QSize preferredSize = element->sizeHint();
 		element->setGeometry(x,y,preferredSize.width(), maxHeight);
-		x += element->width();
+		x += preferredSize.width();
 	}
 
 	resize(x, maxHeight);

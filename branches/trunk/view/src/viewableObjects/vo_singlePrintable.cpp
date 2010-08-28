@@ -20,6 +20,7 @@ VO_SinglePrintable::VO_SinglePrintable(ID id, const void* dsAddress, World* worl
 {
 }
 
+
 VO_SinglePrintable::~VO_SinglePrintable()
 {
 	//prt("~VO_SinglePrintable()");
@@ -30,9 +31,12 @@ VO_SinglePrintable::~VO_SinglePrintable()
 
 QSize VO_SinglePrintable::sizeHint() const
 {
-	QFontMetrics metrics(font());
+	graphicalText = QString(value.c_str());
 	
-	return QSize(metrics.width(graphicalText, graphicalText.length()),metrics.height());
+	QFontMetrics metrics(font());
+	graphicalTextPosition = QPoint(1,metrics.ascent());
+
+	return QSize(metrics.width(graphicalText, graphicalText.length()) + 2, metrics.height() + 2);
 }
 
 
@@ -67,13 +71,6 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue)
 	{
 		value = newValue;
 			
-		graphicalText = QString(value.c_str());
-	
-		QFontMetrics metrics(font());
-		graphicalTextPosition = QPoint(0,metrics.ascent());
-		
-		
-
 		if (sizeControlledByParentArray)
 		{
 			VO_Array* parent = (VO_Array*) parentWidget();

@@ -50,8 +50,8 @@ namespace Algovis_Viewer
 
 	private:
 		std::string value;
-		QString graphicalText;
-		QPoint graphicalTextPosition;
+		mutable QString graphicalText;
+		mutable QPoint graphicalTextPosition;
 	
 		// Keep track of the displayed values which have contributed to the current value.
 		// If the value has just been displayed, then this is a single element set with the current

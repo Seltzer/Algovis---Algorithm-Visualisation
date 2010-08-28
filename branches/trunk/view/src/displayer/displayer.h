@@ -1,8 +1,11 @@
 #ifndef QT_DISPLAY_H
 #define QT_DISPLAY_H
 
+#include "boost/thread/thread.hpp"
+#include <QObject>
 #include <QFont>
-#include "boost/thread/mutex.hpp"
+#include <QResizeEvent>
+
 
 class QApplication;
 class QFrame;
@@ -17,10 +20,12 @@ namespace Algovis_Viewer
 class World;
 class Action;
 class ActionAgent;
+class MainFrame;
 
 
-class Displayer
+class Displayer : QObject
 {
+	Q_OBJECT
 
 public:
 	// Public static methods
@@ -44,6 +49,9 @@ public:
 	 */
 	void PerformAndAnimateActionAsync(const Action*);
 
+	// TODO should be using signals/slots for this, but they're not bloody working for some reason
+	void ResizeWindow(const QSize&);
+
 
 private:
 	static bool drawingEnabled;
@@ -62,11 +70,16 @@ private:
 	
 	// QT Widgets
 	QApplication* app;
-	QFrame *appFrame, *controlFrame;
+	MainFrame *appFrame;
+	QFrame *controlFrame;
 	World* world;
 	ActionAgent* actionAgent;
-	QScrollArea* scrollArea;
+	QScrollArea* worldScrollArea;
 	QPushButton* skipActionButton;
+
+	
+
+
 };
 
 

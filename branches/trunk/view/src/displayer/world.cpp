@@ -1,5 +1,6 @@
 #include "boost/foreach.hpp"
 #include <QPainter>
+
 #include "utilities.h"
 #include "world.h"
 
@@ -23,8 +24,23 @@ World::World(QWidget* parent, QPoint& position, QSize& dimensions,
 
 QSize World::sizeHint() const
 {
-	// TODO
-	return QSize(900,900);
+	unsigned requiredWidth = 0, requiredHeight = 0;
+
+	for (QObjectList::const_iterator it = children().begin(); it != children().end(); it++)
+	{
+		QWidget* child = (QWidget*) *it;
+		QSize dimensions = child->sizeHint();
+	
+
+		if (child->x() + dimensions.width() > requiredWidth)
+			requiredWidth = child->x() + dimensions.width();
+
+		if (child->y() + dimensions.height() > requiredHeight)
+			requiredHeight = child->y() + dimensions.height();
+		
+	}
+	
+	return QSize(requiredWidth, requiredHeight);
 }
 
 
@@ -33,6 +49,8 @@ QPoint World::GetArrayPosition()
 	locationForNextArray += QPoint(0,50);
 	return locationForNextArray;
 }
+
+
 
 
 }

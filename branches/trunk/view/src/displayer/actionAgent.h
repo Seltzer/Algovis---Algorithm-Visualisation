@@ -26,6 +26,8 @@ namespace Algovis_Viewer
 
 		virtual void paintEvent(QPaintEvent*); 
 
+		virtual QSize sizeHint() const;
+
 	public slots:
 		void skipAnimation();
 	

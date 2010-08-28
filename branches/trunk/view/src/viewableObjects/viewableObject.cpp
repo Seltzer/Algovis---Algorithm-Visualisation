@@ -1,10 +1,9 @@
-#include "utilities.h"
 #include <QObject>
 #include "QtGui/qevent.h"
+#include "utilities.h"
 #include "viewableObject.h"
 
-// hack
-#include "../displayer/world.h"
+
 
 namespace Algovis_Viewer
 {
@@ -88,6 +87,7 @@ void ViewableObject::mouseMoveEvent(QMouseEvent* evt)
 			newPosition.setY(0);
 
 		move(newPosition);
+		repaint();
 	}
 	else
 	{
@@ -119,8 +119,6 @@ void ViewableObject::wheelEvent(QWheelEvent* evt)
 		}
 
 		adjustSize();
-		
-		world->repaint();
 		evt->accept();
 	}
 	else

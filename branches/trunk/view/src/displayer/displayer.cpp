@@ -3,6 +3,7 @@
 #include <Qt/qapplication.h>
 #include <Qt/qframe.h>
 #include <Qt/qscrollarea.h>
+#include <QScrollbar>
 #include <QPushButton>
 #include "utilities.h"
 
@@ -10,6 +11,7 @@
 #include "world.h"
 #include "../actions/action.h"
 #include "actionAgent.h"
+#include "components.h"
 
 
 
@@ -63,25 +65,30 @@ void Displayer::QtAppThread()
 	
 
     // Create the main frame
-	appFrame = new QFrame;
+	appFrame = new MainFrame(this);
     appFrame->setWindowTitle("Algovis Viewer");
-
 	QPalette palette = appFrame->palette();
-	
 	palette.setColor(QPalette::Background, QColor(0, 0, 0));
 	appFrame->setPalette(palette);
 	appFrame->setAutoFillBackground(true);
-
-	// Create world panel and animationAgent
-	world = new World(appFrame, QPoint(0,0),QSize(801,501),QColor(0,0,0), QColor(255,0,0));
-	world->setEnabled(true);
 	
-	//scrollArea = new QScrollArea;
-	//scrollArea->setBackgroundRole(QPalette::Dark);
-	//scrollArea->setWidget(world);
 
-	actionAgent = new ActionAgent(world, world, QPoint(0,0),QSize(801, 501));
+	worldScrollArea = new QScrollArea(appFrame);
+	worldScrollArea->setGeometry(0,0,801,501);
+
+	// worldDimensions should exclude the area occupied by scrollbars
+	QSize worldDimensions(801, 501);
+	worldDimensions -= QSize(worldScrollArea->horizontalScrollBar()->width(), 
+				worldScrollArea->verticalScrollBar()->height());
+
+	// Create world panel and actionAgent
+	world = new World(worldScrollArea, QPoint(0,0),worldDimensions, QColor(0,0,0), QColor(255,0,0));
+	worldScrollArea->setWidget(world);
+
+	actionAgent = new ActionAgent(world, world, QPoint(0,0),worldDimensions);
 	actionAgent->raise();
+
+
 
 	// Create control frame
 	controlFrame = new QFrame(appFrame);
@@ -101,14 +108,13 @@ void Displayer::QtAppThread()
 	QObject::connect(skipActionButton,SIGNAL(clicked()),actionAgent, SLOT(skipAnimation()));
 	
 	
-
-
     appFrame->show();
 	initialised = true;
 
 	#if (DEBUG_GENERAL_LEVEL >= 1)
 		prt("Started QApplication's event thread");
 	#endif
+
 	app->exec();
 }
 
@@ -138,6 +144,24 @@ void Displayer::PerformAndAnimateActionAsync(const Action* newAction)
 	actionAgent->PerformAndAnimateActionAsync(newAction);
 }
 
+
+
+void Displayer::ResizeWindow(const QSize& size)
+{
+	controlFrame->setGeometry(0,size.height() - controlFrame->height(), size.width(), controlFrame->height());
+
+	QSize dim(size.width(), size.height() - controlFrame->height());
+
+	worldScrollArea->setGeometry(0,0,dim.width(), dim.height());
+
+	dim -= QSize(worldScrollArea->horizontalScrollBar()->width(), 
+				worldScrollArea->verticalScrollBar()->height());
+
+	world->setGeometry(0,0, dim.width(), dim.height());
+	actionAgent->setGeometry(0,0, dim.width(), dim.height());
+	world->repaint();
+
+}
 
 
 

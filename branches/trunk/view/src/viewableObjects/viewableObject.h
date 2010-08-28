@@ -30,7 +30,7 @@ namespace Algovis_Viewer
 
 		// Optional method for drawing a VO exactly like paintEvent(), but without its value
 		virtual void DrawWithoutValue(QRect&, QPainter*) {}
-		
+
 		// NB: Returns false if VO hasn't been added to the World
 		bool IsTopLevel();
 

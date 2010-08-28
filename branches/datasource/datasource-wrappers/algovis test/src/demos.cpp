@@ -260,9 +260,34 @@ void UnconversionsDemo()
 		prtVar(*it);
 	}
 
+	#include "conversions.h"
 
 
 	prt("Press any key to leave UnconversionDemo");
 	getchar();
 }
 
+
+
+void MultipleVectorWithoutExtraCrap()
+{
+	EnableDrawing(true);
+
+	// Populate
+	vector<int> c1, c2, c3, c4, c5, c6;
+	
+	// Sort c1
+	PopulateVectorWithRandomInts(c1, 5, 0, 9);
+	for (int i = 3; i >= 0; --i)
+		c1[i] = c1[i] + c1[i+1];
+
+	// Do stuff with other vectors
+	PopulateVectorWithRandomInts(c2, 9, 0, 9);
+	PopulateVectorWithRandomInts(c3, 9, 0, 99);
+	PopulateVectorWithRandomInts(c4, 9, 0, 999);
+	PopulateVectorWithRandomInts(c5, 9, 0, 99);
+	PopulateVectorWithRandomInts(c6, 9, 0, 9);
+
+	prt("Press any key to leave MultipleVectorWithoutExtraCrap");
+	getchar();
+}

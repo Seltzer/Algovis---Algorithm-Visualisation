@@ -3,8 +3,7 @@ Currently in progress:
 * Analyse dependencies between actions
 * Write a mergesort demo (dependent on VectorWrapper::erase being implemented)
 * Make everything shutdown cleanly - the QT migration broke it
-* Implement a scrollbar widget on the world panel (most likely involving QScrollArea or QScrollBar)
-	and handle window resizing
+
 
 
 ***** CRITICAL *****
@@ -16,8 +15,7 @@ Currently in progress:
 
   
 ***** HIGH PRIORITY *****
-* Finish VectorWrapper
-* Write wrappers for STL stacks + maps, and unsigned types
+* Finish VectorWrapper and write wrappers for STL stacks + maps, and unsigned types
 * Add mouse over expand feature
 	- We can display 'thumbnail' views of large VOs by default and display the large versions 
 		when moused over
@@ -38,6 +36,7 @@ Currently in progress:
 	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
 		arrays of arrays.
 	 - Show action descriptions down the bottom?
+	 - Improve window resizing and implement snap to current action feature
 * Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
 
 

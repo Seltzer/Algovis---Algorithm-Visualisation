@@ -13,6 +13,7 @@ using namespace std;
 
 REAL_INT wmain()
 {
+	//MultipleVectorWithoutExtraCrap();
 	MultipleVectorDemoWithDelete();
 	//DeleteDemo();
 	//MergeSortDemo();

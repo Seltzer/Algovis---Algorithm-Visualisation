@@ -80,8 +80,7 @@ namespace Algovis_Viewer
 		 */
 		void AddElementToArray(ID dsArray, ID dsElement, unsigned position);
 
-		// TODO incomplete
-		void ClearArray(const void* dsArray);
+		//void ClearArray(const void* dsArray);
 
 		// The following functions are all that is needed to trace the history of a primitive
 		// TODO dsSource can be invalid

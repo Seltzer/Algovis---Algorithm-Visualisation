@@ -133,7 +133,7 @@ bool Registry::DeregisterObject(ID id)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 1)
-		cout << "Deregistering " << dsAddress << endl;
+		cout << "Deregistering " << id << endl;
 	#endif
 
 
@@ -159,12 +159,12 @@ void Registry::AddElementToArray(ID dsArray, ID dsElement, unsigned position)
 	AddActionToBuffer(addAction);
 }
 
-
+/*
 void Registry::ClearArray(const void* dsArray)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 	prt("UNIMPLEMENTED!!!!!!!!!!!!!!!!!!!!!!!");
-}
+}*/
 
 void Registry::PrintableAssigned(ID dsAssigned, ID dsSource, const std::string& newValue)
 {

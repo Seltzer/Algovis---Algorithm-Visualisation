@@ -1,11 +1,9 @@
 #ifndef COMPONENTS_H_
 #define COMPONENTS_H_
 
-#include <set>
-#include <QEvent>
 #include "qt/qwidget.h"
-
-
+#include <QFrame>
+#include <QResizeEvent>
 
 
 
@@ -14,7 +12,7 @@
 // Contains Component
 namespace Algovis_Viewer
 {
-
+	class Displayer;
 
 	class Component : public QWidget
 	{
@@ -24,9 +22,12 @@ namespace Algovis_Viewer
 		Component(QWidget* parentComponent, QPoint&, QSize&);
 		virtual ~Component();
 
-		// QT Overloads
-		virtual void paintEvent(QPaintEvent*) {}
-
+		// QT Overrides
+		virtual void paintEvent(QPaintEvent*);
+		virtual QSize sizeHint() const;
+		virtual void resize(const QSize&);
+		virtual void resize(int w, int h);
+		virtual void adjustSize();
 
 
 		// So that an ActionAgent can take over drawing responsibilities for a Component during an animation
@@ -38,10 +39,20 @@ namespace Algovis_Viewer
 	};
 
 
+
+	class MainFrame : public QFrame
+	{
 	
+	public:
+		MainFrame(Displayer*);
+		
+	protected:
+		virtual void resizeEvent(QResizeEvent*);
 
-
-
+	private:
+		Displayer* displayer;
+		
+	};
 
 
 }

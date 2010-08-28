@@ -411,6 +411,9 @@ void DS_CreateArray::Complete(bool displayed)
 	newArray->setParent(world);
 	newArray->setVisible(true);
 
+	// TODO hack
+	world->adjustSize();
+
 	Registry::GetInstance()->Register(arrayId, newArray);
 	
 	// hrmmm
@@ -446,6 +449,10 @@ void DS_CreateSP::Complete(bool displayed)
 
 	VO_SinglePrintable* newSP = new VO_SinglePrintable(id,dsAddress, world, value);
 	registry->Register(id, newSP);
+
+		// TODO hack
+	world->adjustSize();
+
 
 	UL_ASSERT(registry->IsRegistered(id,SINGLE_PRINTABLE));
 }
