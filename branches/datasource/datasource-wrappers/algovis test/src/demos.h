@@ -18,7 +18,6 @@ void MultipleVectorDemo();
 // Same as above, but with the deletion of wrappers separated from QApplication/Displayer destruction
 void MultipleVectorDemoWithDelete();
 
-
 // Incomplete - currently working on the merging part which won't work until we have
 // vector resizing working properly
 void MergeSortDemo();

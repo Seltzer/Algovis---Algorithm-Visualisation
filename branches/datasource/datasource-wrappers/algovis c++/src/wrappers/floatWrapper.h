@@ -1,7 +1,7 @@
 #ifndef FLOAT_WRAPPER_H_
 #define FLOAT_WRAPPER_H_
 
-#include "wrapper.h"
+#include "primitiveWrapper.h"
 #include "intWrapper.h"
 
 

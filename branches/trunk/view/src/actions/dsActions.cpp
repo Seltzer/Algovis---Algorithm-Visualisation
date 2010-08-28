@@ -10,6 +10,8 @@
 using namespace std;
 
 
+
+
 namespace Algovis_Viewer
 {
 
@@ -18,6 +20,7 @@ int time = 0; // TODO: Seriously?... Seriously guys.
 
 
 ////////////////////// DS_Action implementation ////////////////////////////
+
 
 DS_Action::DS_Action(World* world, bool suppressAnimation)
 	: Action(world, suppressAnimation)
@@ -45,15 +48,7 @@ Action* DS_Action::Clone() const
 
 
 ////////////////////// DS_Assigned implementation ////////////////////////////
-
-DS_Assigned::DS_Assigned(World* world) 
-	: DS_Action(world), sourceDimensions(0,0,0,0), source(NULL)
-{
-	UL_ASSERT(world);
-}
-
-DS_Assigned::DS_Assigned(World* world, const void* dsAssigned, const void* dsSource, 
-							std::string value, bool tracked)
+DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string value, bool tracked)
 	: DS_Action(world), value(value), dsAssigned(dsAssigned), dsSource(dsSource), tracked(tracked),
 			sourceDimensions(0,0,0,0), source(NULL)
 {
@@ -68,10 +63,9 @@ DS_Assigned::DS_Assigned(const DS_Assigned& other)
 {
 }
 
-
-Action* DS_Assigned::Clone() const
-{
-	return new DS_Assigned(*this);
+Action* DS_Assigned::Clone() const 
+{ 
+	return new DS_Assigned(*this); 
 }
 
 void DS_Assigned::SetSource(VO_SinglePrintable* source)
@@ -199,7 +193,7 @@ void DS_Assigned::Complete(bool displayed)
 		// That way future things will have the just-displayed-element in their history, instead of everything
 		// that was used to produce is.
 		//int time = Algovis_Viewer::Registry::GetInstance()->GetTime();
-		subject->ResetHistory(ValueID(subject->GetDSAddress(), time));
+		subject->ResetHistory(ValueID(subject->GetId(), time));
 
 		++time;
 		subject->EnableDrawing(true);
@@ -210,15 +204,7 @@ void DS_Assigned::Complete(bool displayed)
 
 
 ////////////////////// DS_Modified implementation ////////////////////////////
-
-DS_Modified::DS_Modified(World* world) 
-	: DS_Action(world), sourceDimensions(0,0,0,0), source(NULL)
-{
-	UL_ASSERT(world);
-}
-
-DS_Modified::DS_Modified(World* world, const void* dsModified, const void* dsSource, 
-							std::string value, bool tracked)
+DS_Modified::DS_Modified(World* world, ID dsModified, ID dsSource, std::string value, bool tracked)
 	: DS_Action(world), value(value), dsModified(dsModified), dsSource(dsSource), tracked(tracked),
 			sourceDimensions(0,0,0,0), source(NULL)
 {
@@ -319,38 +305,6 @@ void DS_Modified::Perform(float progress, QPainter* painter)
 	}
 
 	source->DrawValue(QRect(QPoint(x,y),QSize(sourceDimensions.width(), sourceDimensions.height())),painter);
-	//source->DrawWithoutValue(sourceDimensions, painter);
-	//subject->DrawWithoutValue(subjectDimensions, painter);
-
-	/* Bulging is commented out until DrawValue can draw to a specified dimension properly
-
-	QRect updatedBounds = subjectStart;
-	int bulge = int(progress * 100);
-
-	updatedBounds.Left -= bulge;
-	updatedBounds.Right += bulge;
-	updatedBounds.Top -= bulge;
-	updatedBounds.Bottom += bulge;*/
-	
-	// MIGRATION
-	//subject->SetBoundingBox(updatedBounds);
-
-
-	//subject->DrawWithoutValue(QRect(
-	//subject->DrawWithoutValue(
-	//subject->DrawWithoutValue(renderWindow, defaultFont);
-	//subject->DrawValue(updatedBounds,renderWindow, defaultFont);
-
-
-	/*for (std::set<ValueID>::iterator i = history.begin(); i != history.end(); i++)
-	{
-		Registry* reg = Registry::GetInstance();
-		if (i->address != 
-		if (reg->IsRegistered(i->address, SINGLE_PRINTABLE))
-		{
-			VO_SinglePrintable* printable = 
-		}
-	}*/
 }
 
 void DS_Modified::Complete(bool displayed)
@@ -364,7 +318,7 @@ void DS_Modified::Complete(bool displayed)
 		// That way future things will have the just-displayed-element in their history, instead of everything
 		// that was used to produce is.
 		//int time = Algovis_Viewer::Registry::GetInstance()->GetTime();
-		subject->ResetHistory(ValueID(subject->GetDSAddress(), time));
+		subject->ResetHistory(ValueID(subject->GetId(), time));
 
 		++time;
 		subject->EnableDrawing(true);
@@ -376,13 +330,7 @@ void DS_Modified::Complete(bool displayed)
 
 
 ////////////////////// DS_Deleted implementation ////////////////////////////
-
-DS_Deleted::DS_Deleted(World* world) 
-	: DS_Action(world) 
-{
-}
-
-DS_Deleted::DS_Deleted(World* world, const void* dsSubject)
+DS_Deleted::DS_Deleted(World*, ID dsSubject)
 	: DS_Action(world), dsSubject(dsSubject)
 {
 	//subjects.insert(subject);  // TODO: Sort out whether subjects is needed
@@ -393,7 +341,6 @@ DS_Deleted::DS_Deleted(const DS_Deleted& other)
 	: DS_Action(other), dsSubject(other.dsSubject)
 {
 }
-
 
 Action* DS_Deleted::Clone() const
 {
@@ -407,7 +354,7 @@ void DS_Deleted::Complete(bool displayed)
 	ViewableObject* voToBeDeleted = registry->GetRepresentation(dsSubject);
 	UL_ASSERT(voToBeDeleted);
 	
-	registry->Deregister(voToBeDeleted->GetId(), voToBeDeleted->GetDSAddress());
+	registry->Deregister(voToBeDeleted->GetId());
 	delete voToBeDeleted;
 }
 
@@ -415,14 +362,15 @@ void DS_Deleted::Complete(bool displayed)
 
 
 //////////////// DS_CreateArray
-DS_CreateArray::DS_CreateArray(World* world, ID id, 
-	const void* dsArrayAddress, ViewableObjectType elementType, std::vector<void*> elements)
-		: DS_Action(world, true), id(id), dsArrayAddress(dsArrayAddress), elementType(elementType), elements(elements)
+DS_CreateArray::DS_CreateArray(World* world, ID arrayId, const void* arrayAddress, 
+								ViewableObjectType elementType, std::vector<ID> elements)
+		: DS_Action(world, true), arrayId(arrayId), arrayAddress(arrayAddress), 
+				elementType(elementType), elements(elements)
 {
 }
 
 DS_CreateArray::DS_CreateArray(const DS_CreateArray& other)
-	: DS_Action(other), id(other.id),dsArrayAddress(other.dsArrayAddress), 
+	: DS_Action(other), arrayId(other.arrayId),arrayAddress(other.arrayAddress), 
 		elementType(other.elementType), elements(other.elements)
 {
 }
@@ -437,14 +385,14 @@ void DS_CreateArray::Complete(bool displayed)
 	Registry* registry = Registry::GetInstance();
 
 	// Verify that array hasn't already been registered
-	UL_ASSERT(!registry->IsRegistered(dsArrayAddress));
+	UL_ASSERT(!registry->IsRegistered(arrayId));
 
 
 	// ViewableObject equivalents of elements
 	vector<ViewableObject*> arrayElements;
 
 	// Iterate over elements, verify that they are all registered and populate arrayElements
-	BOOST_FOREACH(void* dsElement, elements)
+	BOOST_FOREACH(ID dsElement, elements)
 	{
 		// TODO: change behaviour when above registration condition is violated (i.e. throw exception)
 		UL_ASSERT(registry->IsRegistered(dsElement));
@@ -452,20 +400,18 @@ void DS_CreateArray::Complete(bool displayed)
 	}
 
 
-	VO_Array* newArray = new VO_Array(id, dsArrayAddress, world, elementType, arrayElements);
+	VO_Array* newArray = new VO_Array(arrayId, arrayAddress, world, elementType, arrayElements);
 	
 
 	newArray->move(world->GetArrayPosition());
-		
-	// TODO implement const sizeHint
-	newArray->resize(newArray->sizeHint());
+	newArray->adjustSize();
+
 	//newArray->setMinimumSize(newArray->sizeHint());
 	// MIGRATION assume top level
 	newArray->setParent(world);
 	newArray->setVisible(true);
-	//newViewable->SetupLayout();
 
-	Registry::GetInstance()->Register(id, dsArrayAddress, newArray);
+	Registry::GetInstance()->Register(arrayId, newArray);
 	
 	// hrmmm
 	//world->setMinimumSize(world->sizeHint());
@@ -496,26 +442,46 @@ void DS_CreateSP::Complete(bool displayed)
 	Registry* registry = Registry::GetInstance();
 
 	// Verify that array hasn't already been registered
-	UL_ASSERT(!registry->IsRegistered(dsAddress));
+	UL_ASSERT(!registry->IsRegistered(id));
 
 	VO_SinglePrintable* newSP = new VO_SinglePrintable(id,dsAddress, world, value);
-	registry->Register(id, dsAddress, newSP);
+	registry->Register(id, newSP);
 
-	UL_ASSERT(registry->IsRegistered(dsAddress,SINGLE_PRINTABLE));
-
-	//cout << "\tInside DS_CreateSP::Complete - callback for " << dsAddress << "\\" << newSP << endl
+	UL_ASSERT(registry->IsRegistered(id,SINGLE_PRINTABLE));
 }
 
 
+//////////////// DS_AddressChanged
+DS_AddressChanged::DS_AddressChanged(World* world, const ID id, const void* newAddress, const void* oldAddress)
+	: DS_Action(world, true), id(id), newAddress(newAddress), oldAddress(oldAddress)
+{
+}
+
+DS_AddressChanged::DS_AddressChanged(const DS_AddressChanged& other)
+	: DS_Action(other), id(other.id), newAddress(other.newAddress), oldAddress(other.oldAddress)
+{
+}
 
 
+Action* DS_AddressChanged::Clone() const
+{
+	return new DS_AddressChanged(*this);
+}
 
+
+void DS_AddressChanged::Complete(bool displayed)
+{
+	ViewableObject* viewable = Registry::GetInstance()->GetRepresentation(id);
+	UL_ASSERT(viewable);
+
+	viewable->SetDSAddress(newAddress);
+}
 
 
 
 //////////////// DS_AddElementToArray
 DS_AddElementToArray::DS_AddElementToArray
-		(World* world, const void* dsArray, const void* dsElement, unsigned position)
+		(World* world, ID dsArray, ID dsElement, unsigned position)
 			: DS_Action(world, true), dsArray(dsArray), dsElement(dsElement), position(position)
 {
 }
@@ -543,58 +509,13 @@ void DS_AddElementToArray::Complete(bool displayed)
 	VO_SinglePrintable* element = registry->GetRepresentation<VO_SinglePrintable>(dsElement);
 
 	voArray->AddElement(element, position);
-	//voArray->SetupLayout();
 	voArray->adjustSize();
 	element->SetSizeControlledByParentArray(true);
-
-	//cout << "\tInside DS_AddElementToArray::Complete - callback for array " << voArray << endl;
 }
 
 	
 
 
 
-//////////////// DS_ArrayResize
-DS_ArrayResize::DS_ArrayResize(World* world, const void* dsArray, 
-								std::vector<void*> elements, unsigned newCapacity)
-	: DS_Action(world, true), dsArray(dsArray), elements(elements), newCapacity(newCapacity)
-{
-}
-
-DS_ArrayResize::DS_ArrayResize(const DS_ArrayResize& other)
-		: DS_Action(other), dsArray(other.dsArray), elements(other.elements), newCapacity(other.newCapacity)
-{
-}
-
-Action* DS_ArrayResize::Clone() const
-{
-	return new DS_ArrayResize(*this);
-}
-
-void DS_ArrayResize::Complete(bool displayed)
-{
-	Registry* registry = Registry::GetInstance();
-
-	UL_ASSERT(registry->IsRegistered(dsArray, ARRAY));
-	VO_Array* voArray = registry->GetRepresentation<VO_Array>(dsArray);
-	UL_ASSERT(voArray);
-
-	UL_ASSERT(newCapacity >= elements.size());
-	vector<ViewableObject*> elementsToAdd;
-	
-	BOOST_FOREACH(void* dsElement, elements)
-	{
-		UL_ASSERT(registry->IsRegistered(dsElement));
-		elementsToAdd.push_back(registry->GetRepresentation(dsElement));
-	}
-
-
-	voArray->ClearArray(newCapacity);
-	
-	unsigned position = 0;
-
-	BOOST_FOREACH(ViewableObject* element, elementsToAdd)
-		voArray->AddElement(element, position++);
-}
 
 }

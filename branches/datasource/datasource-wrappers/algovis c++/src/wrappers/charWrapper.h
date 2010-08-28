@@ -1,7 +1,7 @@
 #ifndef CHAR_WRAPPER_H_
 #define CHAR_WRAPPER_H_
 
-#include "wrapper.h"
+#include "primitiveWrapper.h"
 
 
 namespace Algovis

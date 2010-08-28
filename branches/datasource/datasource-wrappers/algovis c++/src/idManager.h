@@ -10,6 +10,7 @@
 namespace Algovis
 {
 
+	typedef unsigned ID;
 
 	class IdManager
 	{
@@ -18,10 +19,12 @@ namespace Algovis
 		static IdManager* GetInstance();
 		IdManager();
 
-		unsigned GetIdForConstruction(const void* wrapperAddress);
+		ID GetId(const void* wrapper);
+
+		ID GetIdForConstruction(const void* wrapperAddress);
 		
 		// Assigns newWrapper with a new ID unless transplantMode is enabled
-		unsigned GetIdForCopyConstruction(const void* newWrapper, const void* originalWrapper);
+		ID GetIdForCopyConstruction(const void* newWrapper, const void* originalWrapper);
 		
 		/* Enables transplant mode where copy constructed wrappers are allocated the same
 		 * ID as their original wrapper (essentially transplanting wrappers to different memory locations).
@@ -49,7 +52,7 @@ namespace Algovis
 		static IdManager* idMgrInstance;
 		
 		unsigned currentId;
-		std::map<const void*,unsigned> idMapping;
+		std::map<const void*,ID> idMapping;
 
 
 		bool transplantModeEnabled;

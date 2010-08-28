@@ -136,5 +136,23 @@ void ViewableObject::SetSizeControlledByParentArray(bool sizeControlledByParentA
 }
 
 
+ID ViewableObject::GetId()
+{
+	return id;
+}
+
+const void* ViewableObject::GetDSAddress() 
+{ 
+	return dsAddress; 
+}
+
+void ViewableObject::SetDSAddress(const void* newAddress)
+{
+	dsAddress = newAddress;
+	// TODO notify
+}
+
+
+
 }
 

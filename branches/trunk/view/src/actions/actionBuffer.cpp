@@ -23,12 +23,10 @@ void ActionBuffer::PushBack(DS_Action* action)
 		// TODO: Delete action
 	}
 
-	// TODO: Collaps actions if appropriate.
-
+	// TODO: Collapse actions if appropriate.
 	Action* copy = action->Clone();
-//	buffer.push_back(action);
-	buffer.push_back((DS_Action*) copy);
 
+	buffer.push_back((DS_Action*) copy);
 }
 
 }

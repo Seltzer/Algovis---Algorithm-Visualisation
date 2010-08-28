@@ -14,8 +14,8 @@ using namespace std;
 REAL_INT wmain()
 {
 	MultipleVectorDemoWithDelete();
-	//MultipleVectorDemo();
 	//DeleteDemo();
+	//MergeSortDemo();
 
 	return 0;
 }

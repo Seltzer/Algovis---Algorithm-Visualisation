@@ -1,12 +1,11 @@
 template<class T>
-T* Registry::GetRepresentation(const void* dsAddress)
+T* Registry::GetRepresentation(ID id)
 {
 	util::ReaderLock<util::LockManager<1>,1> lock(*this);
 
-	UL_ASSERT(dsAddress);
-	UL_ASSERT(IsRegistered(dsAddress));
+	UL_ASSERT(IsRegistered(id));
 	
-	ViewableObject* viewRepresentation = GetRepresentation(dsAddress);
+	ViewableObject* viewRepresentation = GetRepresentation(id);
 	UL_ASSERT(viewRepresentation);
 
 	if (typeid(T).name() == typeid(VO_Array).name())

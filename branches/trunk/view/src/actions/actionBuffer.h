@@ -2,9 +2,7 @@
 #define ACTION_BUFFER_H_
 
 #include <vector>
-#include "utilities.h"
-
-
+#include <deque>
 
 
 namespace Algovis_Viewer

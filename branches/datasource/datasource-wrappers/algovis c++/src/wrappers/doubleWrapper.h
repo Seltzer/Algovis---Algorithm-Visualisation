@@ -1,7 +1,7 @@
 #ifndef DOUBLE_WRAPPER_H_
 #define DOUBLE_WRAPPER_H_
 
-#include "wrapper.h"
+#include "primitiveWrapper.h"
 #include "intWrapper.h"
 #include "floatWrapper.h"
 

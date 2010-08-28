@@ -1,24 +1,23 @@
 Currently in progress:
 
 * Analyse dependencies between actions
-* Add a primitive position allocation algorithm to the Container class.
-* Write a mergesort demo
-* Finish VectorWrapper
+* Write a mergesort demo (dependent on VectorWrapper::erase being implemented)
 * Make everything shutdown cleanly - the QT migration broke it
-* Changing model to use IDs maintained by the data source
+* Implement a scrollbar widget on the world panel (most likely involving QScrollArea or QScrollBar)
+	and handle window resizing
 
 
 ***** CRITICAL *****
 * Improve dsAssigned aesthetically - maybe display temp vars for clarity until we get the buffer working
+* Add a primitive position allocation algorithm to the Container class.
 * Speed up and control painting  
-* Fix painting model and remove hacks  
 * Add a singleton Settings class
 * Highlight operands for comparison operators if user desires
+
   
 ***** HIGH PRIORITY *****
+* Finish VectorWrapper
 * Write wrappers for STL stacks + maps, and unsigned types
-* Implement a scrollbar widget on the world panel (most likely involving QScrollArea or QScrollBar)
-	and handle window resizing
 * Add mouse over expand feature
 	- We can display 'thumbnail' views of large VOs by default and display the large versions 
 		when moused over
@@ -39,8 +38,8 @@ Currently in progress:
 	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
 		arrays of arrays.
 	 - Show action descriptions down the bottom?
-
 * Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
+
 
 ***** LOW PRIORITY *****
 

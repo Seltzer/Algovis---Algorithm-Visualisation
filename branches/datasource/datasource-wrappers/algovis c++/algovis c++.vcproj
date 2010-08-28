@@ -209,6 +209,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\wrappers\primitiveWrapper.h"
+					>
+				</File>
+				<File
 					RelativePath=".\src\wrappers\vectorWrapper.h"
 					>
 				</File>

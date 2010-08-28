@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iterator>
 #include <string>
+#include "wrapper.h"
 
 
 
@@ -22,17 +23,6 @@ class VectorWrapper : Wrapper
 
 private:
 	std::vector<T,Alloc> value;
-
-	void ReportVectorResizeToView()
-	{
-		Algovis_Viewer::Registry* registry = Algovis_Viewer::Registry::GetInstance();
-		
-		std::vector<void*> elements;
-		for (std::vector<T>::iterator it = value.begin(); it != value.end(); it++)
-			elements.push_back(&(*it));
-
-		registry->ArrayResized(this, elements, value.capacity());
-	}
 
 public:
 	typedef typename std::vector<T>::reference reference;
@@ -55,9 +45,9 @@ public:
 	{
 		if (drawingEnabled)
 		{
-			unsigned id = IdManager::GetInstance()->GetIdForConstruction(this);
+			ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 			Algovis_Viewer::Registry::GetInstance()->RegisterArray
-						(id, this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
+						(id, this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<unsigned>());
 		}
 	};
 
@@ -66,9 +56,9 @@ public:
 	{
 		if (drawingEnabled)
 		{
-			unsigned id = IdManager::GetInstance()->GetIdForConstruction(this);
+			ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 			Algovis_Viewer::Registry::GetInstance()->RegisterArray
-						(id, this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
+						(id, this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<unsigned>());
 		}
 
 	}
@@ -81,7 +71,7 @@ public:
 		{
 			unsigned id = IdManager::GetInstance()->GetIdForConstruction(this);
 			Algovis_Viewer::Registry::GetInstance()->RegisterArray
-						(id, this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
+						(id, this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<unsigned>());
 		}
 
 	}
@@ -89,14 +79,14 @@ public:
 	VectorWrapper(const VectorWrapper& other)
 		: value(other.value)
 	{
-		unsigned id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
+		ID id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
 		
 		if (drawingEnabled)
 		{
-			std::vector<void*> elements;
+			std::vector<ID> elements;
 
 			for (std::vector<T>::iterator it = value.begin(); it < value.end(); it++)
-				elements.push_back(&(*it));
+				elements.push_back(IdManager::GetInstance()->GetId(&(*it)));
 
 			Algovis_Viewer::Registry::GetInstance()->RegisterArray(id, this, 
 								Algovis_Viewer::SINGLE_PRINTABLE,elements);
@@ -168,22 +158,13 @@ public:
 		exceptions.push_back(&x);
 		Algovis::IdManager::GetInstance()->EnableTransplantMode(exceptions);
 
-		size_t oldCapacity = value.capacity();
+//		size_t oldCapacity = value.capacity();
 		value.push_back(x);
 
 		if (drawingEnabled)
 		{
-			// Determine whether the vector resized itself
-			if (value.capacity() == oldCapacity)
-			{
-				void* xAddress = &value[value.size()-1];
-				Algovis_Viewer::Registry::GetInstance()->AddElementToArray(this, xAddress, value.size() - 1);
-			}
-			else
-			{
-				prt("\tVector resize");
-				ReportVectorResizeToView();
-			}
+			ID newElementId = IdManager::GetInstance()->GetId(&value[value.size()-1]);
+			Algovis_Viewer::Registry::GetInstance()->AddElementToArray(Id(), newElementId, value.size() - 1);
 		}
 
 		Algovis::IdManager::GetInstance()->DisableTransplantMode();
@@ -210,20 +191,17 @@ public:
 	}
 
 
-
-	// TODO This is a hack and it shouldn't use ReportVectorResizeToView
+	// TODO incomplete
 	iterator erase(iterator position)
 	{
 		iterator iteratorToReturn = value.erase(position);
-		ReportVectorResizeToView();
 		return iteratorToReturn;
 	}
 
-	// TODO This is a hack and it shouldn't use ReportVectorResizeToView
+	// TODO incomplete
 	iterator erase(iterator first, iterator last)
 	{
 		iterator iteratorToReturn = value.erase(first, last);
-		ReportVectorResizeToView();
 		return iteratorToReturn;
 	}
 	

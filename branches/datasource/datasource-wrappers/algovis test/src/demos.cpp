@@ -111,7 +111,7 @@ void MultipleVectorDemoWithDelete()
 		// Populate
 		vector<int> c1, c2, c3, c4, c5, c6;
 		
-		c1.reserve(20);
+		//c1.reserve(20);
 
 		// Sort c1
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
@@ -143,11 +143,11 @@ void MultipleVectorDemoWithDelete()
 
 
 		// Do stuff with other vectors
-		c2.reserve(50);
-		c3.reserve(50);
-		c4.reserve(50);
-		c5.reserve(50);
-		c6.reserve(50);
+		//c2.reserve(50);
+		//c3.reserve(50);
+		//c4.reserve(50);
+		//c5.reserve(50);
+		//c6.reserve(50);
 
 		
 		PopulateVectorWithRandomInts(c2, 9, 0, 9);
@@ -183,8 +183,6 @@ void MergeSortDemo()
 
 	// Populate
 	vector<int> c1, c2;
-	c1.reserve(20);
-	c2.reserve(20);
 	PopulateVectorWithRandomInts(c1, 5, 0, 9);
 	PopulateVectorWithRandomInts(c2, 5, 0, 9);
 
@@ -222,6 +220,7 @@ void DeleteDemo()
 	prt("Press any key to leave DeleteDemo");
 	getchar();
 }
+
 
 
 // Tests unconversions.h

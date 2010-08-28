@@ -39,13 +39,15 @@ namespace Algovis_Viewer
 
 		virtual void SetBoundingBoxColour(QColor&);
 
-		const void* GetDSAddress() { return dsAddress; }
+		
 		virtual ViewableObjectType GetType() const = 0;
 	
 		// hack hack hack hack TODO
 		void SetSizeControlledByParentArray(bool);
 
-		ID GetId() { return id; }
+		ID GetId();
+		const void* GetDSAddress();
+		void SetDSAddress(const void*);
 
 	protected:	
 		ViewableObject(ID id, const void* dsAddress, World* world); 

@@ -9,9 +9,8 @@
 
 
 
-
-// Contains ValueID struct and DSAction, DS_AddElementToArray, DS_Assigned, DS_CreateArray, DS_CreateSP
-// and DS_Deleted classes
+// Contains ValueID struct and DS_Action, DS_CreateArray, DS_CreateSP, DS_AddressChanged, DS_Deleted,
+//							   DS_Assigned, DS_Modified and DS_AddElementToArray classes.
 namespace Algovis_Viewer
 {
 	class ViewableObject;
@@ -21,24 +20,26 @@ namespace Algovis_Viewer
 
 	struct ValueID
 	{
-		ValueID(const void* address, int time) : address(address), time(time) {}
+		ValueID(ID id, int time) : id(id), time(time) {}
 		bool operator<(const ValueID& rhs) const
 		{
 			if (time == rhs.time)
-				return address < rhs.address;
+				return id < rhs.id;
 			return time < rhs.time;
 		}
-		const void* address;
+		ID id;
 		int time;
 	};
+
+
 
 	//enum DS_ActionType { DAT_Insert, DAT_Erase, DAT_Assign, DAT_BeingDestroyed };
 
 	class DS_Action : public Action
 	{
 	protected:
-		//DS_ActionType actionType;
 		std::set<ViewableObject*> subjects;
+		//DS_ActionType actionType;
 		//std::string value;
 		//std::set<ValueID> history;
 
@@ -57,105 +58,21 @@ namespace Algovis_Viewer
 
 
 
-	// Action class for printable being assigned 
-	class DS_Assigned : public DS_Action
-	{
-	public:
-		DS_Assigned(World* world);
-		DS_Assigned(World* world, const void* dsAssigned, const void* dsSource, std::string value, bool tracked);
-		DS_Assigned(const DS_Assigned& other);
-		virtual Action* Clone() const;
-
-		void SetSource(VO_SinglePrintable* source);
-
-		virtual void PrepareToPerform();
-		virtual void Perform(float progress, QPainter*);
-		virtual void Complete(bool displayed);
-
-	protected:
-		const void* dsAssigned;
-		const void* dsSource;
-
-		std::string value;
-		VO_SinglePrintable* subject;
-		std::set<ValueID> history;
-		bool tracked;
-
-		// Animation stuff
-		QRect subjectDimensions;
-		QRect sourceDimensions;
-		VO_SinglePrintable* source;
-		bool sourceIsSibling;
-	};
-
-		// Action class for printable being modified. Depressingly similar to assigned 
-	class DS_Modified : public DS_Action
-	{
-	public:
-		DS_Modified(World* world);
-		DS_Modified(World* world, const void* dsModified, const void* dsSource, std::string value, bool tracked);
-		DS_Modified(const DS_Modified& other);
-		virtual Action* Clone() const;
-
-		void SetSource(VO_SinglePrintable* source);
-
-		virtual void PrepareToPerform();
-		virtual void Perform(float progress, QPainter*);
-		virtual void Complete(bool displayed);
-
-	protected:
-		const void* dsModified;
-		const void* dsSource;
-
-		std::string value;
-		VO_SinglePrintable* subject;
-		std::set<ValueID> history;
-		bool tracked;
-
-		// Animation stuff
-		QRect subjectDimensions;
-		QRect sourceDimensions;
-		VO_SinglePrintable* source;
-		bool sourceIsSibling;
-	};
-
-
-	// Action class for deleting a VO (hacky atm)
-	class DS_Deleted : public DS_Action
-	{
-	public:
-		DS_Deleted(World*);
-		DS_Deleted(World*, const void* dsSubject);
-		DS_Deleted(const DS_Deleted&);
-		virtual Action* Clone() const;
-
-		//virtual void PrepareToPerform();
-		//virtual void Perform(float progress, QPainter*);
-		virtual void Complete(bool displayed);
-
-	private:
-		const void* dsSubject;
-
-	};
-
-
-
-
 	class DS_CreateArray : public DS_Action
 	{
 	public:
-		DS_CreateArray(World*, ID id, const void* dsArrayAddress, ViewableObjectType elementType, 
-				std::vector<void*> elements);
+		DS_CreateArray(World*, ID arrayId, const void* arrayAddress, 
+					ViewableObjectType elementType, std::vector<ID> elements);
 		DS_CreateArray(const DS_CreateArray&);
 		virtual Action* Clone() const;
 
 		virtual void Complete(bool displayed);
 
 	private:
-		const ID id;
-		const void* dsArrayAddress;
+		const ID arrayId;
+		const void* arrayAddress;
 		ViewableObjectType elementType;
-		std::vector<void*> elements;
+		std::vector<ID> elements;
 	};
 
 
@@ -177,38 +94,112 @@ namespace Algovis_Viewer
 	};
 
 
+	class DS_AddressChanged : public DS_Action
+	{
+	public:
+		DS_AddressChanged(World*, const ID id, const void* newAddress, const void* oldAddress);
+		DS_AddressChanged(const DS_AddressChanged&);
+
+		virtual Action* Clone() const;
+		virtual void Complete(bool displayed);
+
+	private:
+		const ID id;
+		const void* newAddress;
+		const void* oldAddress;
+	};
+
+	// Action class for deleting a VO (TODO add deletion animation?)
+	class DS_Deleted : public DS_Action
+	{
+	public:
+		DS_Deleted(World*, ID dsSubject);
+		DS_Deleted(const DS_Deleted&);
+		virtual Action* Clone() const;
+
+		virtual void Complete(bool displayed);
+
+	private:
+		const ID dsSubject;
+	};
+
+
+
+	// Action class for printable being assigned 
+	class DS_Assigned : public DS_Action
+	{
+	public:
+		DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string value, bool tracked);
+		DS_Assigned(const DS_Assigned& other);
+		virtual Action* Clone() const;
+
+		void SetSource(VO_SinglePrintable* source);
+
+		virtual void PrepareToPerform();
+		virtual void Perform(float progress, QPainter*);
+		virtual void Complete(bool displayed);
+
+	protected:
+		ID dsAssigned;
+		ID dsSource;
+
+		std::string value;
+		VO_SinglePrintable* subject;
+		std::set<ValueID> history;
+		bool tracked;
+
+		// Animation stuff
+		QRect subjectDimensions;
+		QRect sourceDimensions;
+		VO_SinglePrintable* source;
+		bool sourceIsSibling;
+	};
+
+	// Action class for printable being modified. Depressingly similar to assigned (Nathan LOL'd at this)
+	class DS_Modified : public DS_Action
+	{
+	public:
+		DS_Modified(World* world, ID dsModified, ID dsSource, std::string value, bool tracked);
+		DS_Modified(const DS_Modified& other);
+		virtual Action* Clone() const;
+
+		void SetSource(VO_SinglePrintable* source);
+
+		virtual void PrepareToPerform();
+		virtual void Perform(float progress, QPainter*);
+		virtual void Complete(bool displayed);
+
+	protected:
+		ID dsModified, dsSource;
+
+		std::string value;
+		VO_SinglePrintable* subject;
+		std::set<ValueID> history;
+		bool tracked;
+
+		// Animation stuff
+		QRect subjectDimensions;
+		QRect sourceDimensions;
+		VO_SinglePrintable* source;
+		bool sourceIsSibling;
+	};
+
+
 	// TODO implement animation?
 	class DS_AddElementToArray : public DS_Action
 	{
 	public:
-		DS_AddElementToArray(World*, const void* dsArray, const void* dsElement, unsigned position);
+		DS_AddElementToArray(World*, ID dsArray, ID dsElement, unsigned position);
 		DS_AddElementToArray(const DS_AddElementToArray&);
 		virtual Action* Clone() const;
 
 		virtual void Complete(bool displayed);
 
 	private:
-		const void* dsArray;
-		const void* dsElement;
+		ID dsArray, dsElement;
 		unsigned position;
 	};
-
-
-		
-	class DS_ArrayResize : public DS_Action
-	{
-	public:
-		DS_ArrayResize(World*, const void* voArray, std::vector<void*> elements, unsigned newCapacity);
-		DS_ArrayResize(const DS_ArrayResize&);
-		virtual Action* Clone() const;
-
-		virtual void Complete(bool displayed);
-
-	private:
-		const void* dsArray;
-		std::vector<void*> elements;
-		unsigned newCapacity;
-	};
+	
 
 }
 

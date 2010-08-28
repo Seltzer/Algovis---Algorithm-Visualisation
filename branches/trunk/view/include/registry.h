@@ -38,7 +38,8 @@ namespace Algovis_Viewer
 	class DS_Action;
 
 	// Registry is a non-copyable singleton
-	class DECLSPEC Registry : public util::LockManager<1>
+	class DECLSPEC Registry 
+		: public util::LockManager<1> // Lock #1 used for IsRegistered/GetRepresentation/Register/Deregister
 	{
 
 	public:
@@ -55,10 +56,13 @@ namespace Algovis_Viewer
 		 *		attempt at porting the existing code which represented arrays as a void* plus 
 		 *		a vector<string>. This is enforced as a runtime constraint in the VO_Array ctor
 		 */
-		void RegisterArray(unsigned id, const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements);
+		void RegisterArray(ID id, const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<ID>& elements);
 
 		// TODO: This shouldn't take a value, it should just note the existance of the variable. PrintableAssigned can initialise the value.
-		void RegisterSinglePrintable(unsigned id, const void* dsSinglePrintableAddress, const std::string& value);
+		void RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddress, const std::string& value);
+
+		void AddressChanged(ID id, const void* newAddress);
+
 
 		// Unimplemented
 		//void RegisterLinkedList(const void* dsLLAddress, ViewableObjectType elementType, std::vector<void*> elements) {}
@@ -67,39 +71,41 @@ namespace Algovis_Viewer
 		
 		// Returns true if the DS object was successfully deregistered and its ViewableObject equivalent deleted
 		// Returns false if the DS object was never registered
-		bool DeregisterObject(const void* dsAddress);
+		bool DeregisterObject(ID);
 		
 
 		/* PRE-CONDITIONS:
 		 *		- Element being added has already been registered
 		 *		- 0 <= position <= array capacity
 		 */
-		void AddElementToArray(const void* dsArray, void* dsElement, unsigned position);
-		// Unimplemented
-		void SwapElementsInArray(const void* dsArray, unsigned firstElementIndex, unsigned secondElementIndex);
-		// Should be called when an array dynamically resizes and its elements change locations
-		void ArrayResized(const void* dsArray, const std::vector<void*>& elements, unsigned newCapacity);
+		void AddElementToArray(ID dsArray, ID dsElement, unsigned position);
+
+		// TODO incomplete
 		void ClearArray(const void* dsArray);
 
 		// The following functions are all that is needed to trace the history of a primitive
-		void PrintableAssigned(const void* dsAssigned, const void* dsSource, const std::string& newValue);
-		void PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue);
+		// TODO dsSource can be invalid
+		void PrintableAssigned(ID dsAssigned, ID dsSource, const std::string& newValue);
+		void PrintableModified(ID dsModified, ID dsSource, const std::string& newValue);
 
 		// Used to test out anything imaginable - declared here so that it can be called by the DLL user
 		void TestMethod();
 
 		// Only public because actions need them
-		void Register(ID id, const void* dsAddress, ViewableObject* obj);
-		bool Deregister(ID id, const void* dsAddress);
+		void Register(ID id, ViewableObject* obj);
+		bool Deregister(ID id);
 
 
 
 		// Returns true if a data source object is registered (and hence has a ViewableObject equivalent)
-		bool IsRegistered(const void* dsAddress) const;
+		bool IsRegistered(ID) const;
+		
 		// Returns true if a data source object is registered as voType, false otherwise		
-		bool IsRegistered(const void* dsAddress, ViewableObjectType voType) const;
+		// TODO fix constness
+		bool IsRegistered(ID, ViewableObjectType voType);
+		
 		// Returns NULL if !IsRegistered(dsAddress)
-		ViewableObject* GetRepresentation(const void* dsAddress);
+		ViewableObject* GetRepresentation(ID);
 
 		/* Fetches a pointer to the ViewableObject of type T corresponding to dsAddress. Note:
 		 *		- Throws a bad assertion if !IsRegistered(dsAddress)
@@ -107,7 +113,7 @@ namespace Algovis_Viewer
 		 *			is different to T; i.e. !IsRegistered(dsAddress, voType) where voType != ViewObject::GetType()
 		 */
 		template<class T>
-		T* GetRepresentation(const void* dsAddress);
+		T* GetRepresentation(ID);
 
 	private:
 		// Members related to non-copyable singleton behaviour
@@ -119,17 +125,13 @@ namespace Algovis_Viewer
 
 		World* world;
 		
-		// Pre-Condition: User does not have any locks on VOs
-		// Only dsActions can be added to buffer at the moment
-		void AddActionToBuffer(DS_Action* action);
-		boost::mutex bufferMutex;
+		// ActionBuffer Stuff
 		ActionBuffer actionBuffer;
+		void AddActionToBuffer(DS_Action* action);
 		
-		// Keeping track of Viewables
-		std::map<const void*,ID> idMapping;
-		std::map<ID,VO_Array*> registeredArrays;
-		std::map<ID,VO_SinglePrintable*> registeredSinglePrintables;
-		
+		// Registered viewables
+		std::map<ID, ViewableObject*> registeredViewables;
+		boost::mutex registryMutex;
 	};
 	#include "../src/registry.inl"
 

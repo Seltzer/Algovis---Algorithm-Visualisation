@@ -27,13 +27,21 @@ IdManager::IdManager()
 }
 
 
-unsigned IdManager::GetIdForConstruction(const void* wrapperAddress)
+ID IdManager::GetId(const void* wrapper)
+{
+	if (idMapping.count(wrapper))
+		return idMapping[wrapper];
+	else
+		return INVALID;
+}
+
+ID IdManager::GetIdForConstruction(const void* wrapperAddress)
 {
 	idMapping[wrapperAddress] = currentId;
 	return currentId++;
 }
 
-unsigned IdManager::GetIdForCopyConstruction(const void* newWrapper, const void* originalWrapper)
+ID IdManager::GetIdForCopyConstruction(const void* newWrapper, const void* originalWrapper)
 {
 	if (!transplantModeEnabled)
 	{
@@ -64,15 +72,23 @@ unsigned IdManager::GetIdForCopyConstruction(const void* newWrapper, const void*
 void IdManager::ReportDestruction(const void* wrapperAddress)
 {
 	// Remove wrapper from id mapping
-	if (idMapping.count(wrapperAddress))
-		idMapping.erase(idMapping.find(wrapperAddress));
+	if (!idMapping.count(wrapperAddress))
+	{
+		UL_ASSERT(false);
+		return;
+	}
+	
+
+	ID id = idMapping[wrapperAddress];
+	idMapping.erase(idMapping.find(wrapperAddress));
+		
 
 	// If wrapper has been transplanted in the past, then don't report its destruction to the Registry
 	if (transplantedWrappers.count(wrapperAddress) == 0)
 	{
 		// Wrapper was not the source of a transplant, so deregister it with the Registry
 		if (drawingEnabled)
-			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(wrapperAddress);
+			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(id);
 	}
 	else
 	{
@@ -83,7 +99,6 @@ void IdManager::ReportDestruction(const void* wrapperAddress)
 
 void IdManager::EnableTransplantMode(std::vector<const void*>& exceptions)
 {
-	prt("Transplant mode enabled");
 	transplantExceptions = exceptions;
 	transplantModeEnabled = true;
 }
