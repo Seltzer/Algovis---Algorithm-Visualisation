@@ -19,9 +19,9 @@ namespace Algovis_Viewer
 
 
 
-VO_Array::VO_Array(const void* dsAddress, World* world, ViewableObjectType elementType, 
+VO_Array::VO_Array(ID id, const void* dsAddress, World* world, ViewableObjectType elementType, 
 					const std::vector<ViewableObject*>& elements, QWidget* parent)
-		: ViewableObject(parent, dsAddress, world), elementType(elementType)
+		: ViewableObject(id, dsAddress, world, parent), elementType(elementType)
 {
 	BOOST_FOREACH(ViewableObject* element, elements)
 		this->elements.push_back(element);	
@@ -33,6 +33,15 @@ VO_Array::VO_Array(const void* dsAddress, World* world, ViewableObjectType eleme
 
 VO_Array::~VO_Array()
 {
+	//prt("~VO_Array()");
+
+	BOOST_FOREACH(ViewableObject* element, elements)
+	{
+		element->setParent(NULL);
+		element->setVisible(false);
+	}
+	destroy(true,false);
+
 	/*
 	Registry* registry = Registry::GetInstance();
 

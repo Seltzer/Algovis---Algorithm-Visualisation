@@ -1,57 +1,46 @@
 Currently in progress:
 
-
+* Analyse dependencies between actions
+* Add a primitive position allocation algorithm to the Container class.
+* Write a mergesort demo
+* Finish VectorWrapper
+* Make everything shutdown cleanly - the QT migration broke it
+* Changing model to use IDs maintained by the data source
 
 
 ***** CRITICAL *****
-
-* Use history to analyse dependencies between actions
-* Create an ActionBuffer class specific to our purposes.
 * Improve dsAssigned aesthetically - maybe display temp vars for clarity until we get the buffer working
-* Work on UI (dependent on QT integration)
-	 - Implement a scrollbar widget on the world panel (most likely involving QScrollArea or QScrollBar)
-	 - Add a primitive position allocation algorithm to the Container class.
-	 - Add mouse over expand feature. 
-		- We can display 'thumbnail' views of large VOs by default and display the large versions 
-			when moused over
-		- Names/addresses of Viewables should only be shown when moused over
-			(this will speed up painting too)
-	 - Add pause/resume/undo and possibly textual descriptions of actions to the bottom panel
-			(depends on history feature)
-  
+* Speed up and control painting  
+* Fix painting model and remove hacks  
+* Add a singleton Settings class
+* Highlight operands for comparison operators if user desires
   
 ***** HIGH PRIORITY *****
-
-* Highlight operands for comparison operators if user desires
-* Finish VectorWrapper
 * Write wrappers for STL stacks + maps, and unsigned types
-* Make everything shutdown cleanly - the QT migration broke it
-* Consider writing a Viewable for matrices
-* Do some quick research into a popular C++ graph library
-* Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
-* Write some more demos, test the compatibility of our wrappers against more libraries
-		Hopefully we can figure out if there are any other cases when #defining primitives fails
-
-
+* Implement a scrollbar widget on the world panel (most likely involving QScrollArea or QScrollBar)
+	and handle window resizing
+* Add mouse over expand feature
+	- We can display 'thumbnail' views of large VOs by default and display the large versions 
+		when moused over
+	- Names/addresses of Viewables should only be shown when moused over
+		(this will speed up painting too)
+* Allow user to pause/resume/undo (dependent on ActionBuffer + history)
 
 
 ***** MEDIUM PRIORITY *****
-
+* Write a Viewable for matrices
 * Write VO_LinkedList and some sort of VO for a map type data structure
-* Provide more user functions to userFunctions.h:
-		- Control whether program debug breaks or pauses after every action (and pause duration)
-		- VO naming (so that VOs aren't just memory addresses
+* Do some quick research into a popular C++ graph library
+* Provide more user functions in userFunctions.h:
+		- VO naming (so that VOs aren't just memory addresses/IDs)
 		- Combining actions
-* Consider string algorithms
-* Compile a demo which uses Algovis in another compiler 
-		(to show how easy it is to use Algovis by simply including headers and copying a couple of libs/dlls)
 * UI Stuff:
-	 - Magnify feature for VOs???
 	 - Some sort of control panel with list of VOs???
 	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
 		arrays of arrays.
-* Speed up and control painting
+	 - Show action descriptions down the bottom?
 
+* Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
 
 ***** LOW PRIORITY *****
 
@@ -61,7 +50,7 @@ Currently in progress:
 	What we require is essentially function hooking which is often used for aspect-oriented programming type 
 	behaviour. Useful search keywords might include: 
 		{hooking hooks aop proxy intercept method calls...}
-* Decouple utilities-lib from boost-subset so that I can use it in my other projects
+* Decouple utilities-lib from boost-subset so that it can be used in other projects
 
 
 ***** GENERAL CODE TODO *****
@@ -71,6 +60,13 @@ Currently in progress:
 * Plug DS_Action memory leaks
 
 
+***** BEFORE CONFERENCE/PRESENTATION **********
+* Compile a demo which uses Algovis in another compiler 
+		(to show how easy it is to use Algovis by simply including headers and copying a couple of libs/dlls)
+* Test on uni computers
+* Write some more demos, test the compatibility of our wrappers against more libraries
+		Hopefully we can figure out if there are any other cases when #defining primitives fails
+
 
 ***** BUGS *****
 * Ambiguous < op when using vec.size_type
@@ -78,5 +74,6 @@ Currently in progress:
 
 **** THOUGHTS ****
 * How to deal with "unsigned char"
+* Consider string algorithms
 
 

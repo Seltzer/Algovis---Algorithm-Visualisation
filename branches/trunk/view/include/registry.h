@@ -55,10 +55,10 @@ namespace Algovis_Viewer
 		 *		attempt at porting the existing code which represented arrays as a void* plus 
 		 *		a vector<string>. This is enforced as a runtime constraint in the VO_Array ctor
 		 */
-		void RegisterArray(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements);
+		void RegisterArray(unsigned id, const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements);
 
 		// TODO: This shouldn't take a value, it should just note the existance of the variable. PrintableAssigned can initialise the value.
-		void RegisterSinglePrintable(const void* dsSinglePrintableAddress, const std::string& value);
+		void RegisterSinglePrintable(unsigned id, const void* dsSinglePrintableAddress, const std::string& value);
 
 		// Unimplemented
 		//void RegisterLinkedList(const void* dsLLAddress, ViewableObjectType elementType, std::vector<void*> elements) {}
@@ -89,8 +89,10 @@ namespace Algovis_Viewer
 		void TestMethod();
 
 		// Only public because actions need them
-		void Register(const void* dsAddress, ViewableObject* obj);
-		bool Deregister(const void* dsAddress);
+		void Register(ID id, const void* dsAddress, ViewableObject* obj);
+		bool Deregister(ID id, const void* dsAddress);
+
+
 
 		// Returns true if a data source object is registered (and hence has a ViewableObject equivalent)
 		bool IsRegistered(const void* dsAddress) const;
@@ -123,11 +125,11 @@ namespace Algovis_Viewer
 		boost::mutex bufferMutex;
 		ActionBuffer actionBuffer;
 		
-
-
-		// Mappings from data source types to viewable objects
-		std::map<const void*,VO_Array*> registeredArrays;
-		std::map<const void*,VO_SinglePrintable*> registeredSinglePrintables;
+		// Keeping track of Viewables
+		std::map<const void*,ID> idMapping;
+		std::map<ID,VO_Array*> registeredArrays;
+		std::map<ID,VO_SinglePrintable*> registeredSinglePrintables;
+		
 	};
 	#include "../src/registry.inl"
 

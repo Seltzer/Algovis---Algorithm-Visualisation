@@ -45,9 +45,11 @@ namespace Algovis_Viewer
 		// hack hack hack hack TODO
 		void SetSizeControlledByParentArray(bool);
 
+		ID GetId() { return id; }
+
 	protected:	
-		ViewableObject(const void* dsAddress, World* world); 
-		ViewableObject(QWidget* parent, const void* dsAddress, World* world); 
+		ViewableObject(ID id, const void* dsAddress, World* world); 
+		ViewableObject(ID id, const void* dsAddress, World* world, QWidget* parent); 
 
 		// Mouse drag/drop
 		virtual void mousePressEvent(QMouseEvent*);
@@ -59,8 +61,10 @@ namespace Algovis_Viewer
 		QPoint globalPositionBeforeDragging, localPositionBeforeDragging;
 
 		
-		World* world;
+		const ID id;
 		const void* dsAddress;
+		World* world;
+
 		QColor boundingBoxColour;
 
 		// hack hack hack hack TODO

@@ -21,6 +21,8 @@
 
 namespace Algovis_Viewer
 {
+	typedef unsigned ID;
+
 
 	/* ARBITRARY is a type we don't know how to draw (i.e. most user-defined types.
 	 * See the viewableObjects folder for implementations

@@ -14,11 +14,16 @@ namespace Algovis_Viewer
 {
 
 
-VO_SinglePrintable::VO_SinglePrintable(const void* dsAddress, World* world,
+VO_SinglePrintable::VO_SinglePrintable(ID id, const void* dsAddress, World* world,
 					const std::string& value, QWidget* parent)
-		: ViewableObject(parent, dsAddress, world), value(value), graphicalText(NULL)
+		: ViewableObject(id, dsAddress, world, parent), value(value), graphicalText(NULL)
 {
+}
 
+VO_SinglePrintable::~VO_SinglePrintable()
+{
+	//prt("~VO_SinglePrintable()");
+	destroy();
 }
 
 

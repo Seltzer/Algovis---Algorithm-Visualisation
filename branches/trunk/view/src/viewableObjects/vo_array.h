@@ -15,7 +15,7 @@ namespace Algovis_Viewer
 	{
 
 	public:
-		VO_Array(const void* dsAddress, World* world, ViewableObjectType elementType, 
+		VO_Array(ID id, const void* dsAddress, World* world, ViewableObjectType elementType, 
 					const std::vector<ViewableObject*>& elements, QWidget* parent = NULL);
 		~VO_Array();
 	

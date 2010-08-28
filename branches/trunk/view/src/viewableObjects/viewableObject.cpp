@@ -10,16 +10,14 @@ namespace Algovis_Viewer
 {
 
 
-
-ViewableObject::ViewableObject(const void* dsAddress, World* world) 
-	: dsAddress(dsAddress), world(world), mouseDraggingInitiated(false), 
+ViewableObject::ViewableObject(ID id, const void* dsAddress, World* world)
+	: id(id), dsAddress(dsAddress), world(world), mouseDraggingInitiated(false), 
 		boundingBoxColour(Qt::green), sizeControlledByParentArray(false)
 {
 }
 
-
-ViewableObject::ViewableObject(QWidget* parent, const void* dsAddress, World* world) 
-	: Component(parent, QPoint(5,5),QSize(200,200)),dsAddress(dsAddress), world(world), 
+ViewableObject::ViewableObject(ID id, const void* dsAddress, World* world, QWidget* parent)
+	: Component(parent, QPoint(5,5),QSize(200,200)),id(id), dsAddress(dsAddress), world(world), 
 		mouseDraggingInitiated(false),boundingBoxColour(Qt::green), sizeControlledByParentArray(false)
 {
 }
@@ -40,9 +38,7 @@ QPoint ViewableObject::GetPositionInWorld()
 bool ViewableObject::IsTopLevel()
 {
 	if (parentWidget())
-	{
 		return parentWidget() == (QWidget*) world;
-	}
 
 	return false;
 }

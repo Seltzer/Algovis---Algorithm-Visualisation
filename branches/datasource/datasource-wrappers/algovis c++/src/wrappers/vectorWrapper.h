@@ -55,17 +55,54 @@ public:
 	{
 		if (drawingEnabled)
 		{
-			Algovis_Viewer::Registry* reg = Algovis_Viewer::Registry::GetInstance();
-			reg->RegisterArray(this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
+			unsigned id = IdManager::GetInstance()->GetIdForConstruction(this);
+			Algovis_Viewer::Registry::GetInstance()->RegisterArray
+						(id, this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
 		}
 	};
 
 	explicit VectorWrapper<T, Alloc>(const allocator_type& a)
-		: value(a) {}
+		: value(a) 
+	{
+		if (drawingEnabled)
+		{
+			unsigned id = IdManager::GetInstance()->GetIdForConstruction(this);
+			Algovis_Viewer::Registry::GetInstance()->RegisterArray
+						(id, this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
+		}
+
+	}
 
 	explicit VectorWrapper<T, Alloc>(size_type n, const value_type& value = value_type(),
 										const allocator_type& a = allocator_type())
-		: value(n, value, a) {}
+		: value(n, value, a) 
+	{
+		if (drawingEnabled)
+		{
+			unsigned id = IdManager::GetInstance()->GetIdForConstruction(this);
+			Algovis_Viewer::Registry::GetInstance()->RegisterArray
+						(id, this, Algovis_Viewer::SINGLE_PRINTABLE, std::vector<void*>());
+		}
+
+	}
+
+	VectorWrapper(const VectorWrapper& other)
+		: value(other.value)
+	{
+		unsigned id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
+		
+		if (drawingEnabled)
+		{
+			std::vector<void*> elements;
+
+			for (std::vector<T>::iterator it = value.begin(); it < value.end(); it++)
+				elements.push_back(&(*it));
+
+			Algovis_Viewer::Registry::GetInstance()->RegisterArray(id, this, 
+								Algovis_Viewer::SINGLE_PRINTABLE,elements);
+		}
+	
+	}
 
 	
 	// TODO finish
@@ -77,8 +114,7 @@ public:
 
 	~VectorWrapper()
 	{
-		if (drawingEnabled)
-			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(this);
+		std::cout << "Inside ~VectorWrapper() for " << this << std::endl;
 	}
 
 
@@ -128,6 +164,10 @@ public:
 
 	inline void push_back (const T& x) 
 	{ 
+		std::vector<const void*> exceptions;
+		exceptions.push_back(&x);
+		Algovis::IdManager::GetInstance()->EnableTransplantMode(exceptions);
+
 		size_t oldCapacity = value.capacity();
 		value.push_back(x);
 
@@ -141,35 +181,17 @@ public:
 			}
 			else
 			{
+				prt("\tVector resize");
 				ReportVectorResizeToView();
 			}
 		}
+
+		Algovis::IdManager::GetInstance()->DisableTransplantMode();
 	}
 	inline void pop_back () { value.pop_back(); };
 
-	// Testing purposes - TODO: remove
-	inline void push_back_test() 
-	{ 
-		size_t oldCapacity = value.capacity();
-		value.push_back(2);
 
-		if (drawingEnabled)
-		{
-			// Determine whether the vector resized itself
-			if (value.capacity() == oldCapacity)
-			{
-				void* xAddress = &value[value.size()-1];
-				Algovis_Viewer::Registry::GetInstance()->AddElementToArray(this, xAddress, value.size() - 1);
-			}
-			else
-			{
-				ReportVectorResizeToView();
-			}
-		}
-	}
-
-
-
+	// Shouldn't be called
 	inline iterator insert (iterator position, const T& x)
 	{
 		iterator ret = value.insert(position, x);
@@ -186,6 +208,26 @@ public:
 	{
 		value.insert<InputIterator>(position, first, last);
 	}
+
+
+
+	// TODO This is a hack and it shouldn't use ReportVectorResizeToView
+	iterator erase(iterator position)
+	{
+		iterator iteratorToReturn = value.erase(position);
+		ReportVectorResizeToView();
+		return iteratorToReturn;
+	}
+
+	// TODO This is a hack and it shouldn't use ReportVectorResizeToView
+	iterator erase(iterator first, iterator last)
+	{
+		iterator iteratorToReturn = value.erase(first, last);
+		ReportVectorResizeToView();
+		return iteratorToReturn;
+	}
+	
+
 
 	void swap (VectorWrapper<T,Alloc>& vector) { value.swap(vector.AVGetValue()); }
 	

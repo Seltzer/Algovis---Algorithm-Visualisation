@@ -407,7 +407,7 @@ void DS_Deleted::Complete(bool displayed)
 	ViewableObject* voToBeDeleted = registry->GetRepresentation(dsSubject);
 	UL_ASSERT(voToBeDeleted);
 	
-	registry->Deregister(voToBeDeleted->GetDSAddress());
+	registry->Deregister(voToBeDeleted->GetId(), voToBeDeleted->GetDSAddress());
 	delete voToBeDeleted;
 }
 
@@ -415,14 +415,14 @@ void DS_Deleted::Complete(bool displayed)
 
 
 //////////////// DS_CreateArray
-DS_CreateArray::DS_CreateArray(World* world, 
+DS_CreateArray::DS_CreateArray(World* world, ID id, 
 	const void* dsArrayAddress, ViewableObjectType elementType, std::vector<void*> elements)
-		: DS_Action(world, true), dsArrayAddress(dsArrayAddress), elementType(elementType), elements(elements)
+		: DS_Action(world, true), id(id), dsArrayAddress(dsArrayAddress), elementType(elementType), elements(elements)
 {
 }
 
 DS_CreateArray::DS_CreateArray(const DS_CreateArray& other)
-	: DS_Action(other), dsArrayAddress(other.dsArrayAddress), 
+	: DS_Action(other), id(other.id),dsArrayAddress(other.dsArrayAddress), 
 		elementType(other.elementType), elements(other.elements)
 {
 }
@@ -436,6 +436,7 @@ void DS_CreateArray::Complete(bool displayed)
 {
 	Registry* registry = Registry::GetInstance();
 
+	// not with ViewableObject*
 	// Verify that array hasn't already been registered
 	UL_ASSERT(!registry->IsRegistered(dsArrayAddress));
 
@@ -452,7 +453,9 @@ void DS_CreateArray::Complete(bool displayed)
 	}
 
 
-	VO_Array* newArray = new VO_Array(dsArrayAddress, world, elementType, arrayElements);
+	VO_Array* newArray = new VO_Array(id, dsArrayAddress, world, elementType, arrayElements);
+	
+
 	newArray->move(world->GetArrayPosition());
 		
 	// TODO implement const sizeHint
@@ -463,7 +466,7 @@ void DS_CreateArray::Complete(bool displayed)
 	newArray->setVisible(true);
 	//newViewable->SetupLayout();
 
-	Registry::GetInstance()->Register(dsArrayAddress, newArray);
+	Registry::GetInstance()->Register(id, dsArrayAddress, newArray);
 	
 	// hrmmm
 	//world->setMinimumSize(world->sizeHint());
@@ -474,13 +477,13 @@ void DS_CreateArray::Complete(bool displayed)
 
 
 //////////////// DS_CreateSP
-DS_CreateSP::DS_CreateSP(World* world, const void* dsAddress, const std::string& value)
-		: DS_Action(world, true), dsAddress(dsAddress), value(value)
+DS_CreateSP::DS_CreateSP(World* world, ID id, const void* dsAddress, const std::string& value)
+		: DS_Action(world, true), id(id), dsAddress(dsAddress), value(value)
 {
 }
 
 DS_CreateSP::DS_CreateSP(const DS_CreateSP& other)
-	: DS_Action(other), dsAddress(other.dsAddress), value(other.value)
+	: DS_Action(other), id(other.id), dsAddress(other.dsAddress), value(other.value)
 {
 }
 
@@ -496,9 +499,8 @@ void DS_CreateSP::Complete(bool displayed)
 	// Verify that array hasn't already been registered
 	UL_ASSERT(!registry->IsRegistered(dsAddress));
 
-	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsAddress, world, value);
-
-	registry->Register(dsAddress, newSP);
+	VO_SinglePrintable* newSP = new VO_SinglePrintable(id,dsAddress, world, value);
+	registry->Register(id, dsAddress, newSP);
 
 	UL_ASSERT(registry->IsRegistered(dsAddress,SINGLE_PRINTABLE));
 

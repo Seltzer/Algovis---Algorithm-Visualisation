@@ -11,6 +11,7 @@ using namespace std;
 /* Populates a vector with 10 integers while instantiating as few IntWrappers as possible.
  *
  */
+/*
 void PopulateVectorInMinimalFashion(vector<int>& vec)
 {
 	vec.push_back_test(); util::PlatformSleep(0.5);
@@ -23,7 +24,7 @@ void PopulateVectorInMinimalFashion(vector<int>& vec)
 	vec.push_back_test(); util::PlatformSleep(0.5);
 	vec.push_back_test(); util::PlatformSleep(0.5);
 	vec.push_back_test(); util::PlatformSleep(0.5);
-}
+}*/
 
 
 void PopulateVectorWithRandomInts(vector<int>& vec, int size, REAL_INT lowerBound, REAL_INT upperBound)
@@ -64,6 +65,41 @@ void Vector_BubbleSortAscending(vector<int>& vec)
 }
 
 
+
+template<class T>
+vector<T> merge(vector<T>& v1, vector<T>& v2)
+{
+	if (v2.empty())
+		return vector<T>(v1);
+
+		
+
+	if (v1.empty())
+		return vector<T>(v2);
+
+	
+	vector<T> returnVec;
+	returnVec.reserve(20);
+
+
+	if (v1[0] < v2[0])
+	{
+		returnVec.push_back(v1[0]);
+
+		v1.erase(v1.begin());
+		vector<T> recursiveMerge = merge(v1,v2);
+		recursiveMerge.insert(recursiveMerge.begin(), returnVec[0]);
+		return recursiveMerge;
+	}
+
+	returnVec.push_back(v2[0]);
+
+	v2.erase(v2.begin());
+	vector<T> recursiveMerge = merge(v1,v2);
+	recursiveMerge.insert(recursiveMerge.begin(), returnVec[0]);
+
+	return recursiveMerge;
+}
 
 
 

@@ -144,7 +144,7 @@ namespace Algovis_Viewer
 	class DS_CreateArray : public DS_Action
 	{
 	public:
-		DS_CreateArray(World*, const void* dsArrayAddress, ViewableObjectType elementType, 
+		DS_CreateArray(World*, ID id, const void* dsArrayAddress, ViewableObjectType elementType, 
 				std::vector<void*> elements);
 		DS_CreateArray(const DS_CreateArray&);
 		virtual Action* Clone() const;
@@ -152,6 +152,7 @@ namespace Algovis_Viewer
 		virtual void Complete(bool displayed);
 
 	private:
+		const ID id;
 		const void* dsArrayAddress;
 		ViewableObjectType elementType;
 		std::vector<void*> elements;
@@ -163,13 +164,14 @@ namespace Algovis_Viewer
 	class DS_CreateSP : public DS_Action
 	{
 	public:
-		DS_CreateSP(World*, const void* dsAddress, const std::string& value);
+		DS_CreateSP(World*, const ID id, const void* dsAddress, const std::string& value);
 		DS_CreateSP(const DS_CreateSP&);
 		virtual Action* Clone() const;
 
 		virtual void Complete(bool displayed);
 
 	private:
+		const ID id;
 		const void* dsAddress;
 		std::string value;
 	};

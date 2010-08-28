@@ -95,21 +95,22 @@ void Registry::AddActionToBuffer(DS_Action* dsAction)
 
 
 void Registry::RegisterArray
-		(const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
+		(unsigned id, const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<void*>& elements)
 {
 	boost::unique_lock<boost::mutex> lock(bufferMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 2)
 		std::cout << "Registering array @ " << dsArrayAddress << std::endl;
 	#endif
+
 	
-	DS_CreateArray creationAction(world, dsArrayAddress, elementType, elements);
+	DS_CreateArray creationAction(world, id, dsArrayAddress, elementType, elements);
 	creationAction.SuppressAnimation();
 
 	AddActionToBuffer(&creationAction);
 }
 
 
-void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, const std::string& value)
+void Registry::RegisterSinglePrintable(unsigned id, const void* dsSinglePrintableAddress, const std::string& value)
 {
 	boost::unique_lock<boost::mutex> lock(bufferMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 3)
@@ -117,11 +118,11 @@ void Registry::RegisterSinglePrintable(const void* dsSinglePrintableAddress, con
 	#endif
 
 	// Create action
-	DS_CreateSP creationAction(world, dsSinglePrintableAddress, value);
+	DS_CreateSP creationAction(world, id, dsSinglePrintableAddress, value);
 	creationAction.SuppressAnimation();
 
-
 	AddActionToBuffer(&creationAction);
+
 }
 
 
@@ -131,6 +132,7 @@ bool Registry::DeregisterObject(const void* dsAddress)
 	#if (DEBUG_REGISTRATION_LEVEL >= 1)
 		cout << "Deregistering " << dsAddress << endl;
 	#endif
+
 
 	// Create event
 	DS_Deleted* deleteAction = new DS_Deleted(world, dsAddress);
@@ -167,7 +169,7 @@ void Registry::SwapElementsInArray(const void* dsArray, unsigned firstElementInd
 
 void Registry::ArrayResized(const void* dsArray, const std::vector<void*>& elements, unsigned newCapacity)
 {
-		boost::unique_lock<boost::mutex> lock(bufferMutex);
+	boost::unique_lock<boost::mutex> lock(bufferMutex);
 	#ifdef DEBUG_ARRAY_CHANGES
 		prt("Registering array resize");
 	#endif
@@ -200,8 +202,7 @@ void Registry::PrintableAssigned(const void* dsAssigned, const void* dsSource, c
 // TODO: This is really similar to above
 void Registry::PrintableModified(const void* dsModified, const void* dsSource, const std::string& newValue)
 {
-	UL_ASSERT(false);
-	//world->AcquireWriterLock();
+	// Don't expect this method to work atm
 
 	// TODO: This will not include itself as a source in the animation. As far as I know thats the only issue with using an assigned action
 	DS_Modified action(world, dsModified, dsSource, newValue, true);
@@ -224,25 +225,36 @@ void Registry::TestMethod()
 bool Registry::IsRegistered(const void* dsAddress) const
 {
 	util::ReaderLock<util::LockManager<1>,1> lock(*this);
-	bool isRegistered = (registeredArrays.count(dsAddress) > 0) || 
-						(registeredSinglePrintables.count(dsAddress) > 0);
-	return isRegistered;
+
+	//ID id = idMapping[dsAddress];
+
+	return idMapping.count(dsAddress) > 0;
+
+/*
+	bool isRegistered = (registeredArrays.count(id) > 0) || 
+						(registeredSinglePrintables.count(id) > 0);*/
+	//return isRegistered;
 }
 
 bool Registry::IsRegistered(const void* dsAddress, ViewableObjectType voType) const
 {
 	util::ReaderLock<util::LockManager<1>,1> lock(*this);
 
+	return idMapping.count(dsAddress) > 0;
+
+/*
 	bool isRegistered = false;
+
+	ID id = idMapping[dsAddress];
 
 	switch(voType)
 	{
 		case ARRAY:
-			isRegistered = registeredArrays.count(dsAddress) > 0;
+			isRegistered = registeredArrays.count(id) > 0;
 			break;
 
 		case SINGLE_PRINTABLE:
-			isRegistered = registeredSinglePrintables.count(dsAddress) > 0;
+			isRegistered = registeredSinglePrintables.count(id) > 0;
 			break;
 		default:
 			UL_ASSERT(false);
@@ -250,64 +262,99 @@ bool Registry::IsRegistered(const void* dsAddress, ViewableObjectType voType) co
 	}
 
 	UL_ASSERT(isRegistered == IsRegistered(dsAddress));
-	return isRegistered;
+	return isRegistered;*/
 }
 
 ViewableObject* Registry::GetRepresentation(const void* dsAddress)
 {
 	util::ReaderLock<util::LockManager<1>,1> lock(*this);
 
-	if (registeredArrays.count(dsAddress) > 0)
-		return (ViewableObject*) registeredArrays[dsAddress];
+	if (idMapping.count(dsAddress) == 0)
+	{
+		UL_ASSERT(false);
+		return NULL;
+	}
+		
 
-	if (registeredSinglePrintables.count(dsAddress) > 0)
-		return (ViewableObject*) registeredSinglePrintables[dsAddress];
+	
+	//UL_ASSERT(idMapping.count(dsAddress));
+	ID id = idMapping[dsAddress];
+	
+	if (registeredArrays.count(id) > 0)
+		return (ViewableObject*) registeredArrays[id];
+
+	if (registeredSinglePrintables.count(id) > 0)
+		return (ViewableObject*) registeredSinglePrintables[id];
 
 	UL_ASSERT(false);
 	return NULL;
 }
 
-void Registry::Register(const void* dsAddress, ViewableObject* obj)
+
+
+
+
+
+void Registry::Register(ID id, const void* dsAddress, ViewableObject* obj)
 {
 	util::WriterLock<util::LockManager<1>,1> lock(*this);
+
+	UL_ASSERT(dsAddress);
 	UL_ASSERT(obj);
+	
+	//UL_ASSERT(idMapping.count(dsAddress));
+	idMapping[dsAddress] = id;
+
+	
 	
 	switch(obj->GetType())
 	{
 		case ARRAY:
-			registeredArrays[dsAddress] = (VO_Array*)obj;
+			registeredArrays[id] = (VO_Array*)obj;
 			break;
 		case SINGLE_PRINTABLE:
-			registeredSinglePrintables[dsAddress] = (VO_SinglePrintable*) obj;
+			registeredSinglePrintables[id] = (VO_SinglePrintable*) obj;
 			break;
 		default:
 			UL_ASSERT(false);
 			break;
 
 	}
-	UL_ASSERT(IsRegistered(dsAddress));
 }
 
 
-bool Registry::Deregister(const void* dsAddress)
+bool Registry::Deregister(ID id, const void* dsAddress)
 {
 	util::WriterLock<util::LockManager<1>,1> lock(*this);
 
-	if (registeredArrays.count(dsAddress))
+
+	//UL_ASSERT(idMapping.count(dsAddress));
+	idMapping.erase(idMapping.find(dsAddress));
+
+	if (registeredArrays.count(id))
 	{
-		registeredArrays.erase(registeredArrays.find(dsAddress));
+		registeredArrays.erase(registeredArrays.find(id));
+		
 		return true;
 	}
-	else if (registeredSinglePrintables.count(dsAddress))
+	else if (registeredSinglePrintables.count(id))
 	{
-		registeredSinglePrintables.erase(registeredSinglePrintables.find(dsAddress));
+		registeredSinglePrintables.erase(registeredSinglePrintables.find(id));
 		return true;
 	}
 	else
 	{
+		UL_ASSERT(false);
 		return false;
 	}
 }
+
+
+
+
+
+
+
 
 
 }

@@ -6,6 +6,7 @@
 
 #include "registry.h"
 #include "userFunctions.h"
+#include "../idManager.h"
 
 
 /* Contains Wrapper and PrimitiveWrapper classes
@@ -28,13 +29,12 @@ namespace Algovis
 		// Use this for disambiguation, to ensure that a template type is indeed an Algovis::Wrapper
 		typedef Wrapper AssertIsWrapper;
 
-		Wrapper() {};
-		
+		Wrapper() {}
+	
 		virtual ~Wrapper()
 		{
 			//std::cout << "Destructor called - deregistering " << this << std::endl;
-			if (drawingEnabled)
-				Algovis_Viewer::Registry::GetInstance()->DeregisterObject(this);
+			IdManager::GetInstance()->ReportDestruction(this);
 		}
 	};
 
@@ -66,8 +66,11 @@ namespace Algovis
 		PrimitiveWrapper() 
 		{
 			//std::cout << "PrimitiveWrapper C1 called - registering " << this << " with value " << primitive << std::endl;
+			
+			unsigned id = IdManager::GetInstance()->GetIdForConstruction(this);
+
 			if (drawingEnabled)
-				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(this, GetStringRepresentation());
+				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(id, this, GetStringRepresentation());
 			// Do not record any assignment. This way, we can detect uninitialised values later on!
 		}
 
@@ -75,8 +78,11 @@ namespace Algovis
 			: primitive(initValue) 
 		{
 			//std::cout << "PrimitiveWrapper C2 called - registering " << this << " with value " << primitive << std::endl;
+			
+			unsigned id = IdManager::GetInstance()->GetIdForConstruction(this);
+
 			if (drawingEnabled)
-				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(this, GetStringRepresentation());
+				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(id, this, GetStringRepresentation());
 		
 			// Record the assignment from untracked value
 			// Ignore the fact that this takes the address of a stack value. All that matters is that there is
@@ -86,13 +92,15 @@ namespace Algovis
 		}
 
 		PrimitiveWrapper(const PrimitiveWrapper& other)
+			: primitive(other.primitive) 
 		{
-			primitive = other.primitive;
 			//std::cout << "PrimitiveType CC called" << std::endl;
+
+			unsigned id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
 		
 			if (drawingEnabled)
 			{
-				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(this, util::ToString<PrimitiveType>(primitive));
+				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(id, this, util::ToString<PrimitiveType>(primitive));
 				Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(this, &other, GetStringRepresentation());
 			}
 		}

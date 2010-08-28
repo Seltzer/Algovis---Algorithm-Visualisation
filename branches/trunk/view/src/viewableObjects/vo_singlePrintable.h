@@ -15,8 +15,10 @@ namespace Algovis_Viewer
 
 	public:
 
-		VO_SinglePrintable(const void* dsAddress, World* world,
+		VO_SinglePrintable(ID id, const void* dsAddress, World* world,
 							const std::string& value, QWidget* parent = NULL );
+
+		~VO_SinglePrintable();
 
 		virtual ViewableObjectType GetType() const { return SINGLE_PRINTABLE; }
 
