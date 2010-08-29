@@ -8,14 +8,8 @@
 // Our original demo with vector population, cumulative adding, bubblesorting
 void OriginalDemo();
 
-// This will allow us to test the destruction of various wrappers so that we can make
-// everything shutdown more gracefully
-void DeleteDemo();
 
-// A bit of sorting, and assigning values between multiple vectors
-void MultipleVectorDemo();
-
-// Same as above, but with the deletion of wrappers separated from QApplication/Displayer destruction
+// A bit of sorting, pointless assignment of values between multiple vectors and deletion at the end
 void MultipleVectorDemoWithDelete();
 
 void MultipleVectorWithoutExtraCrap();
@@ -24,10 +18,12 @@ void MultipleVectorWithoutExtraCrap();
 // vector resizing working properly
 void MergeSortDemo();
 
-
-
 // Kinda incomplete atm - for testing unconversions.h
 void UnconversionsDemo();
+
+
+void TestDemo();
+
 
 
 #endif

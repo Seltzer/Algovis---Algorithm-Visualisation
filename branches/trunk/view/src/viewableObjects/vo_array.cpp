@@ -21,50 +21,30 @@ namespace Algovis_Viewer
 
 VO_Array::VO_Array(ID id, const void* dsAddress, World* world, ViewableObjectType elementType, 
 					const std::vector<ViewableObject*>& elements, QWidget* parent)
-		: ViewableObject(id, dsAddress, world, parent), elementType(elementType)
+		: ViewableObjectContainer(id, dsAddress, world, parent), elementType(elementType)
 {
 	BOOST_FOREACH(ViewableObject* element, elements)
 		this->elements.push_back(element);	
-
 }
-
-
-
 
 VO_Array::~VO_Array()
 {
-	//prt("~VO_Array()");
-
-	BOOST_FOREACH(ViewableObject* element, elements)
-	{
-		element->setParent(NULL);
-		element->setVisible(false);
-	}
-	destroy(true,false);
-
-	/*
-	Registry* registry = Registry::GetInstance();
-
-	BOOST_FOREACH(ViewableObject* element, elements)
-	{
-		element->RemoveObserver(this);
-		registry->DeregisterObject(element);
-	}*/
 }
-
 
 void VO_Array::AddElement(ViewableObject* element, unsigned position)
 {
 	UL_ASSERT(elements.size() >= position);
+
+	ViewableObjectContainer::AddChild(element);
+
+	element->SetSizeControlledByParentArray(true);
 
 	if (position < elements.size())
 		elements[position] = element;
 	else 
 		elements.push_back(element);
 
-	elements[position]->setParent(this);
-	elements[position]->setVisible(true);
-
+	element->setVisible(true);
 	adjustSize();
 }
 
@@ -161,7 +141,15 @@ void VO_Array::paintEvent(QPaintEvent*)
 	painter.drawText(addressTextPosition, addressText);
 }
 
+void VO_Array::childDestroyed(QObject* obj)
+{
+	ViewableObjectContainer::RemoveChild((ViewableObject*)obj);
 
+	std::vector<ViewableObject*>::iterator it = std::find(elements.begin(), elements.end(),obj);
+
+	if (it != elements.end())
+		elements.erase(it);
+}
 
 
 

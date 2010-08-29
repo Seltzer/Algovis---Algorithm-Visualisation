@@ -34,6 +34,8 @@ namespace Algovis_Viewer
 		bool AnimationSuppressed();
 
 		// For preparation, such as acquiring drawing responsibility over Viewables etc.
+		// WARNING - don't make any non-GUI-thread-sensitive invocations on Viewables since
+		// this is generally called on the main thread
 		virtual void PrepareToPerform() {}
 		// Move the animation (if any) forward to the specified point (0->1 scale)
 		virtual void Perform(float progress, QPainter*) {}

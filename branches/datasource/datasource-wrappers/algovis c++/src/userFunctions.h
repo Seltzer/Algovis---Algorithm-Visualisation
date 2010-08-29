@@ -12,6 +12,7 @@ extern bool drawingEnabled;
  */
 void EnableDrawing(bool enabled);
 
+void Shutdown();
 
 void TestMethod();
 

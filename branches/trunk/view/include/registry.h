@@ -87,6 +87,10 @@ namespace Algovis_Viewer
 		void PrintableAssigned(ID dsAssigned, ID dsSource, const std::string& newValue);
 		void PrintableModified(ID dsModified, ID dsSource, const std::string& newValue);
 
+		// Pre-Condition: Operands are single printables - TODO remove this hack
+		void HighlightOperands(const std::vector<ID>& operands);
+
+
 		// Used to test out anything imaginable - declared here so that it can be called by the DLL user
 		void TestMethod();
 
@@ -114,6 +118,9 @@ namespace Algovis_Viewer
 		template<class T>
 		T* GetRepresentation(ID);
 
+		// TODO hack callback from Displayer
+		void DisplayerIsShuttingDown();
+
 	private:
 		// Members related to non-copyable singleton behaviour
 		static Registry* instance;
@@ -122,7 +129,9 @@ namespace Algovis_Viewer
 		Registry& operator=(const Registry&);
 		~Registry();
 
+		// Displayer stuff
 		World* world;
+		bool displayerShuttingDown;
 		
 		// ActionBuffer Stuff
 		ActionBuffer actionBuffer;

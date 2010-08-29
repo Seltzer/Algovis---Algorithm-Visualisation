@@ -23,8 +23,6 @@ VO_SinglePrintable::VO_SinglePrintable(ID id, const void* dsAddress, World* worl
 
 VO_SinglePrintable::~VO_SinglePrintable()
 {
-	//prt("~VO_SinglePrintable()");
-	destroy();
 }
 
 
@@ -46,40 +44,40 @@ void VO_SinglePrintable::paintEvent(QPaintEvent*)
 		return;
 
 	QPainter painter(this);
-
+	
+	// Draw value
+	painter.setPen(QColor(Qt::white));
 	DrawValue(QRect(graphicalTextPosition, graphicalTextPosition),&painter);
+
+	// Draw bounding box
+	painter.setPen(boundingBoxColour);
 	DrawWithoutValue(QRect(0,0,width() - 1, height() - 1), &painter);
 }
 
 void VO_SinglePrintable::DrawValue(QRect& desiredBoundingBox, QPainter* painter)
 {
-	painter->setPen(Qt::white);
 	painter->drawText(desiredBoundingBox.topLeft(), graphicalText);
 }
 
 void VO_SinglePrintable::DrawWithoutValue(QRect& desiredBoundingBox, QPainter* painter)
 {
 	// Draw bounding box
-	painter->setPen(boundingBoxColour);
 	painter->drawRect(desiredBoundingBox);
 }
 
 
 void VO_SinglePrintable::UpdateValue(const std::string& newValue)
 { 
-	//if (value != newValue) // Update should be displayed, with history, even if the same value is assigned!
+	value = newValue;
+		
+	if (sizeControlledByParentArray)
 	{
-		value = newValue;
-			
-		if (sizeControlledByParentArray)
-		{
-			VO_Array* parent = (VO_Array*) parentWidget();
-			parent->adjustSize();
-		}
-		else
-		{
-			adjustSize();
-		}
+		VO_Array* parent = (VO_Array*) parentWidget();
+		parent->adjustSize();
+	}
+	else
+	{
+		adjustSize();
 	}
 }
 

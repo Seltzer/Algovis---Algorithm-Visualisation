@@ -25,7 +25,7 @@ Registry* Registry::instance(NULL);
 ///////////////////////// Private methods
 
 Registry::Registry()
-	: actionBuffer(3)
+	: world(NULL), displayerShuttingDown(false), actionBuffer(3)
 { 
 	#if (DEBUG_GENERAL_LEVEL >= 2)
 		prt("REGISTRY CTOR");
@@ -37,17 +37,12 @@ Registry::Registry()
 
 Registry::~Registry()
 {
-	/*
-	typedef std::map<const void*,VO_Array*> ArrayMap;
-	typedef std::map<const void*,VO_SinglePrintable*> SPMap;
+	#if (DEBUG_GENERAL_LEVEL >= 2)
+		prt("REGISTRY DTOR");
+	#endif
 
-	// Delete arrays first, as their destruction currently relies on their child elements 
-	// being alive (since they deregister themselves from their elements as observers
-	BOOST_FOREACH(ArrayMap::value_type arrayPair, registeredArrays)
-		delete arrayPair.second;
-
-	BOOST_FOREACH(SPMap::value_type spPair, registeredSinglePrintables)
-		delete spPair.second;*/
+	displayerShuttingDown = true;
+	Displayer::DestroyInstance();
 }
 
 
@@ -73,13 +68,17 @@ void Registry::DestroyInstance()
 
 void Registry::AddActionToBuffer(DS_Action* dsAction)
 {
+	if (displayerShuttingDown)
+		return;
+
 	#if (DEBUG_ACTION_LEVEL >= 1)
 		prt("\tStarting Registry::AddActionToBuffer()");
 	#endif
 	
 	UL_ASSERT(dsAction);
 	actionBuffer.PushBack(dsAction);
-	
+
+
 	#if (DEBUG_ACTION_LEVEL >= 2)
 		prt("\tFinishing Registry::AddActionToBuffer()");
 	#endif
@@ -91,7 +90,7 @@ void Registry::RegisterArray
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 2)
-		std::cout << "Registering array @ " << dsArrayAddress << std::endl;
+		std::cout << "Registering array with ID " << id << std::endl;
 	#endif
 
 	
@@ -106,7 +105,7 @@ void Registry::RegisterSinglePrintable(unsigned id, const void* dsSinglePrintabl
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 3)
-		std::cout << "Registering SP with value " << value << " @ " << dsSinglePrintableAddress	<< std::endl;
+		std::cout << "Registering SP with value " << value << " and id " << id<< std::endl;
 	#endif
 
 	// Create action
@@ -174,6 +173,10 @@ void Registry::PrintableAssigned(ID dsAssigned, ID dsSource, const std::string& 
 		std::cout << "Registry::PrintableAssigned for " << dsAssigned << std::endl;
 	#endif
 
+	if (dsSource == INVALID)
+		cout << "Warning! dsSource for PrintableAssigned is = " << INVALID << endl;
+
+
 	DS_Assigned action(world, dsAssigned, dsSource, newValue, true);
 	AddActionToBuffer(&action);
 }
@@ -188,14 +191,11 @@ void Registry::PrintableModified(ID dsModified, ID dsSource, const std::string& 
 	AddActionToBuffer(&action);
 }
 
-void Registry::TestMethod()
+void Registry::HighlightOperands(const std::vector<ID>& operands)
 {
-	Displayer::GetInstance();
+	DS_HighlightOperands action(world, operands);
+	AddActionToBuffer(&action);
 }
-
-
-
-
 
 
 
@@ -234,6 +234,8 @@ void Registry::Register(ID id, ViewableObject* viewable)
 
 	UL_ASSERT(viewable);
 	UL_ASSERT(!IsRegistered(id));
+	UL_ASSERT(id != INVALID);
+	UL_ASSERT(id < INT_MAX);
 
 	registeredViewables[id] = viewable;
 }
@@ -250,9 +252,20 @@ bool Registry::Deregister(ID id)
 }
 
 
+void Registry::DisplayerIsShuttingDown()
+{
+	displayerShuttingDown = true;
+	world = NULL;
+}
 
 
 
+
+
+void Registry::TestMethod()
+{
+	Displayer::GetInstance();
+}
 
 
 

@@ -4,6 +4,7 @@
 #include "qt/qwidget.h"
 #include <QFrame>
 #include <QResizeEvent>
+#include <QCloseEvent>
 
 
 
@@ -13,6 +14,7 @@
 namespace Algovis_Viewer
 {
 	class Displayer;
+
 
 	class Component : public QWidget
 	{
@@ -42,15 +44,21 @@ namespace Algovis_Viewer
 
 	class MainFrame : public QFrame
 	{
+		Q_OBJECT
 	
 	public:
 		MainFrame(Displayer*);
+		~MainFrame();
 		
 	protected:
 		virtual void resizeEvent(QResizeEvent*);
+		virtual void closeEvent(QCloseEvent*);
 
 	private:
 		Displayer* displayer;
+
+	signals:
+		void shuttingDown();
 		
 	};
 

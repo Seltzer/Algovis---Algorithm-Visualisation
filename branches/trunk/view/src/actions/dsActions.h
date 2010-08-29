@@ -3,6 +3,7 @@
 
 #include <set>
 #include <QRect>
+#include <QColor>
 #include "utilities.h"
 #include "action.h"
 #include "../../include/common.h"
@@ -10,7 +11,7 @@
 
 
 // Contains ValueID struct and DS_Action, DS_CreateArray, DS_CreateSP, DS_AddressChanged, DS_Deleted,
-//							   DS_Assigned, DS_Modified and DS_AddElementToArray classes.
+//							   DS_Assigned, DS_Modified, DS_HighlightOperands and DS_AddElementToArray classes.
 namespace Algovis_Viewer
 {
 	class ViewableObject;
@@ -188,6 +189,25 @@ namespace Algovis_Viewer
 		// Animation stuff
 		QRect subjectDimensions;
 		std::vector<SourceData> sources;
+	};
+
+
+	class DS_HighlightOperands : public DS_Action
+	{
+
+	public:
+		DS_HighlightOperands(World*, std::vector<ID> operands);
+		DS_HighlightOperands(const DS_HighlightOperands&);
+		virtual Action* Clone() const;
+		virtual void PrepareToPerform();
+		virtual void Perform(float progress, QPainter*);
+		virtual void Complete(bool displayed);
+
+	private:
+		std::vector<ID> operands;
+		std::vector<VO_SinglePrintable*> operandPtrs;
+
+		QColor originalBBColour;
 	};
 
 

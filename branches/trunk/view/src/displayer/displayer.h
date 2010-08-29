@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QFont>
 #include <QResizeEvent>
+#include <QCloseEvent>
 
 
 class QApplication;
@@ -30,8 +31,7 @@ class Displayer : QObject
 public:
 	// Public static methods
 	static Displayer* GetInstance();
-	static void EnableDrawing(bool enabled) { Displayer::drawingEnabled = enabled; }
-	static bool DrawingEnabled() { return Displayer::drawingEnabled; }
+	static void DestroyInstance();
 	static const QFont& GetDefaultFont();
 
 	// Currently does nothing
@@ -40,10 +40,10 @@ public:
 	// hack used by Registry ctor to grab pointer to World (TODO: remove)
 	World* GetWorld();
 	
-	/* This method asynchronously passes the specified action to the actionAgent 
-	 * which performs and animates it.
-	 * 
-	 * This method now blocks if an action is already being performed by actionAgent.
+	/* This method passes the specified action to the actionAgent which asynchronously performs/animates it.
+	 * This method blocks until the actionAgent has finished performing its current action. 
+	 *
+	 * Throws an exception if the Displayer is shutting down
 	 *
 	 * NB: Uses parameter copy semantics (see devdocs)
 	 */
@@ -54,7 +54,6 @@ public:
 
 
 private:
-	static bool drawingEnabled;
 	static QFont* defaultFont;
 	
 	// Initialisation/Destruction
@@ -77,7 +76,9 @@ private:
 	QScrollArea* worldScrollArea;
 	QPushButton* skipActionButton;
 
-	
+private slots:
+	void userClosedWindow();
+
 
 
 };

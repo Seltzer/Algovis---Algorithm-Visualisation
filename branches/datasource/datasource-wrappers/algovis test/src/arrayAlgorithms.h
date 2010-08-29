@@ -11,20 +11,15 @@ using namespace std;
 /* Populates a vector with 10 integers while instantiating as few IntWrappers as possible.
  *
  */
-/*
+
 void PopulateVectorInMinimalFashion(vector<int>& vec)
 {
-	vec.push_back_test(); util::PlatformSleep(0.5);
-	vec.push_back_test(); util::PlatformSleep(0.5);
-	vec.push_back_test(); util::PlatformSleep(0.5);
-	vec.push_back_test(); util::PlatformSleep(0.5);
-	vec.push_back_test(); util::PlatformSleep(0.5);
-	vec.push_back_test(); util::PlatformSleep(0.5);
-	vec.push_back_test(); util::PlatformSleep(0.5);
-	vec.push_back_test(); util::PlatformSleep(0.5);
-	vec.push_back_test(); util::PlatformSleep(0.5);
-	vec.push_back_test(); util::PlatformSleep(0.5);
-}*/
+	vec.push_back_test();
+	vec.push_back_test();
+	vec.push_back_test();
+	vec.push_back_test();
+	vec.push_back_test();
+}
 
 
 void PopulateVectorWithRandomInts(vector<int>& vec, int size, REAL_INT lowerBound, REAL_INT upperBound)

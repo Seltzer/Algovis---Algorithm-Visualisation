@@ -11,7 +11,10 @@ void EnableDrawing(bool enabled)
 	drawingEnabled = enabled;
 }
 
-
+void Shutdown()
+{
+	Algovis_Viewer::Registry::DestroyInstance();
+}
 
 void TestMethod()
 {

@@ -2,26 +2,23 @@ Currently in progress:
 
 * Analyse dependencies between actions
 * Write a mergesort demo (dependent on VectorWrapper::erase being implemented)
-* Make everything shutdown cleanly - the QT migration broke it
-
+* Finish VectorWrapper and write wrappers for STL stacks + maps, and unsigned types
 
 
 ***** CRITICAL *****
-* Improve dsAssigned aesthetically - maybe display temp vars for clarity until we get the buffer working
-* Add a primitive position allocation algorithm to the Container class.
-* Speed up and control painting  
-* Add a singleton Settings class
-* Highlight operands for comparison operators if user desires
+* Improve DS_Assigned and DS_HighlightOperands
+* Add a proper position allocation algorithm to the Container class.
 
   
 ***** HIGH PRIORITY *****
-* Finish VectorWrapper and write wrappers for STL stacks + maps, and unsigned types
+
 * Add mouse over expand feature
 	- We can display 'thumbnail' views of large VOs by default and display the large versions 
 		when moused over
 	- Names/addresses of Viewables should only be shown when moused over
 		(this will speed up painting too)
 * Allow user to pause/resume/undo (dependent on ActionBuffer + history)
+* Speed up and control painting  
 
 
 ***** MEDIUM PRIORITY *****
@@ -55,7 +52,7 @@ Currently in progress:
 
 * Possibly start using smart pointers if things get nasty
 * Turn algovis c++ into a DLL
-* Plug DS_Action memory leaks
+
 
 
 ***** BEFORE CONFERENCE/PRESENTATION **********
@@ -68,6 +65,7 @@ Currently in progress:
 
 ***** BUGS *****
 * Ambiguous < op when using vec.size_type
+* Shutdown bugs when actions are occurring
 
 
 **** THOUGHTS ****

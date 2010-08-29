@@ -9,6 +9,8 @@
 
 namespace Algovis
 {
+	class Wrapper;
+
 
 	typedef unsigned ID;
 
@@ -19,12 +21,12 @@ namespace Algovis
 		static IdManager* GetInstance();
 		IdManager();
 
-		ID GetId(const void* wrapper);
+		ID GetId(const Wrapper* wrapper);
 
-		ID GetIdForConstruction(const void* wrapperAddress);
+		ID GetIdForConstruction(const Wrapper* wrapperAddress);
 		
 		// Assigns newWrapper with a new ID unless transplantMode is enabled
-		ID GetIdForCopyConstruction(const void* newWrapper, const void* originalWrapper);
+		ID GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper* originalWrapper);
 		
 		/* Enables transplant mode where copy constructed wrappers are allocated the same
 		 * ID as their original wrapper (essentially transplanting wrappers to different memory locations).
@@ -39,29 +41,29 @@ namespace Algovis
 		 * rule would be the element being pushed back as we don't want it to be allocated the same ID 
 		 * as its temp stack-allocated original.
 		 */
-		void EnableTransplantMode(std::vector<const void*>& exceptions);
+		void EnableTransplantMode(std::vector<const Wrapper*>& exceptions);
 	
 		// Post-Condition: transplantExceptions is cleared
 		void DisableTransplantMode();
 
 		// Post-Condition: If the wrapper wasn't a source of a transplant, it will be deregistered with the 
 		// Registry
-		void ReportDestruction(const void* wrapperAddress);
+		void ReportDestruction(const Wrapper* wrapperAddress);
 
 	private:
 		static IdManager* idMgrInstance;
 		
 		unsigned currentId;
-		std::map<const void*,ID> idMapping;
+		std::map<const Wrapper*,ID> idMapping;
 
 
 		bool transplantModeEnabled;
 
 		// Exceptions to transplant mode
-		std::vector<const void*> transplantExceptions;
+		std::vector<const Wrapper*> transplantExceptions;
 
 		// To keep track of wrappers which have been the source of a transplant, until they are deleted.
-		std::set<const void*> transplantedWrappers;
+		std::set<const Wrapper*> transplantedWrappers;
 
 	};
 

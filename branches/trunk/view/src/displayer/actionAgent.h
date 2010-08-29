@@ -21,7 +21,11 @@ namespace Algovis_Viewer
 	public:
 		ActionAgent(QWidget* parent, World* world, QPoint&, QSize&);
 
+		~ActionAgent();
+
 		// Blocks until the ActionAgent has finished animating/performing its current action (if any)
+		// TODO comment
+		
 		void PerformAndAnimateActionAsync(const Action*);
 
 		virtual void paintEvent(QPaintEvent*); 
@@ -41,6 +45,7 @@ namespace Algovis_Viewer
 		bool actionPending;
 		boost::condition_variable_any actionPendingCondVar;
 
+		bool shuttingDown;
 	};
 
 }

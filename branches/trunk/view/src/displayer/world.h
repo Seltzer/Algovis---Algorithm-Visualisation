@@ -17,15 +17,14 @@ namespace Algovis_Viewer
 
 	public:
 		World(QWidget* parent, QPoint&, QSize&, QColor& bgColour, QColor& borderColour, unsigned refreshRate = 100);
-
+		~World();
 		// QT Overloads
 		virtual QSize sizeHint() const;
 		
-		// hack until we get around to writing a position allocator
+		// TODO hack until we get around to writing a position allocator
 		QPoint GetArrayPosition();
 
 	private:
-		// QT MIGRATION
 		QColor bgColour, borderColour;
 		QTimer myTimer;
 		unsigned refreshRate;

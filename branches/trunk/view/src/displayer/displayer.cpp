@@ -8,6 +8,8 @@
 #include "utilities.h"
 
 #include "displayer.h"
+#include "../../include/registry.h"
+#include "../../include/common.h"
 #include "world.h"
 #include "../actions/action.h"
 #include "actionAgent.h"
@@ -24,7 +26,6 @@ namespace Algovis_Viewer
 Displayer* Displayer::displayerInstance(NULL);
 boost::mutex Displayer::creationMutex;
 QFont* Displayer::defaultFont(NULL);
-bool Displayer::drawingEnabled(true);
 
 
 
@@ -43,7 +44,19 @@ Displayer::Displayer()
 
 Displayer::~Displayer()
 {
-	delete app;
+	#if (DEBUG_GENERAL_LEVEL >= 2)
+		prt("DISPLAYER DTOR");
+	#endif
+
+	appFrame->deleteLater();
+	app->quit();
+	
+
+	// defaultFont should be nullified before being deleted to prevent a potential race condition
+	QFont* font = Displayer::defaultFont;
+	Displayer::defaultFont = NULL;
+	delete font;
+	
 	delete qtAppThread;
 }
 
@@ -58,21 +71,27 @@ Displayer* Displayer::GetInstance()
 	return Displayer::displayerInstance;
 }
 
+void Displayer::DestroyInstance()
+{
+	boost::unique_lock<boost::mutex> lock(creationMutex);
+
+	if (Displayer::displayerInstance)
+		delete Displayer::displayerInstance;
+}
+
 void Displayer::QtAppThread()
 {
 	int argc(0);
 	app = new QApplication(argc,NULL);
 	
-
     // Create the main frame
 	appFrame = new MainFrame(this);
-    appFrame->setWindowTitle("Algovis Viewer");
+	connect(appFrame, SIGNAL(shuttingDown()), this, SLOT(userClosedWindow()),Qt::ConnectionType::DirectConnection);
+	appFrame->setWindowTitle("Algovis Viewer");
 	QPalette palette = appFrame->palette();
 	palette.setColor(QPalette::Background, QColor(0, 0, 0));
 	appFrame->setPalette(palette);
 	appFrame->setAutoFillBackground(true);
-	
-
 	worldScrollArea = new QScrollArea(appFrame);
 	worldScrollArea->setGeometry(0,0,801,501);
 
@@ -163,7 +182,11 @@ void Displayer::ResizeWindow(const QSize& size)
 
 }
 
-
+void Displayer::userClosedWindow()
+{
+	Registry::GetInstance()->DisplayerIsShuttingDown();
+	delete this;
+}
 
 
 }

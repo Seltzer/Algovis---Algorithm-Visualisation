@@ -49,7 +49,7 @@ namespace Algovis
 		{
 			//std::cout << "PrimitiveWrapper C2 called - registering " << this << " with value " << primitive << std::endl;
 			ID id = IdManager::GetInstance()->GetIdForConstruction(this);
-			unsigned sourceId = IdManager::GetInstance()->GetId(&initValue);
+			ID sourceId = INVALID;
 
 			if (drawingEnabled)
 				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(id, this, GetStringRepresentation());
@@ -58,16 +58,16 @@ namespace Algovis
 			// Ignore the fact that this takes the address of a stack value. All that matters is that there is
 			// no wrapper at that address right now. Though it may be more helpful to take value by reference?
 			if (drawingEnabled)
-				Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id, sourceId, GetStringRepresentation());
+				Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id, INVALID, GetStringRepresentation());
 		}
 
 		PrimitiveWrapper(const PrimitiveWrapper& other)
 			: primitive(other.primitive) 
 		{
-			//std::cout << "PrimitiveType CC called" << std::endl;
 			ID id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
 			ID otherId = IdManager::GetInstance()->GetId(&other);
 
+			//std::cout << "PrimitiveType CC called id = " << id << ", otherId = " << otherId << std::endl;
 			if (drawingEnabled)
 			{
 				if (id == otherId)

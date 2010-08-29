@@ -27,7 +27,7 @@ IdManager::IdManager()
 }
 
 
-ID IdManager::GetId(const void* wrapper)
+ID IdManager::GetId(const Wrapper* wrapper)
 {
 	if (idMapping.count(wrapper))
 		return idMapping[wrapper];
@@ -35,13 +35,13 @@ ID IdManager::GetId(const void* wrapper)
 		return INVALID;
 }
 
-ID IdManager::GetIdForConstruction(const void* wrapperAddress)
+ID IdManager::GetIdForConstruction(const Wrapper* wrapperAddress)
 {
 	idMapping[wrapperAddress] = currentId;
 	return currentId++;
 }
 
-ID IdManager::GetIdForCopyConstruction(const void* newWrapper, const void* originalWrapper)
+ID IdManager::GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper* originalWrapper)
 {
 	if (!transplantModeEnabled)
 	{
@@ -69,7 +69,7 @@ ID IdManager::GetIdForCopyConstruction(const void* newWrapper, const void* origi
 	}
 }
 
-void IdManager::ReportDestruction(const void* wrapperAddress)
+void IdManager::ReportDestruction(const Wrapper* wrapperAddress)
 {
 	// Remove wrapper from id mapping
 	if (!idMapping.count(wrapperAddress))
@@ -97,7 +97,7 @@ void IdManager::ReportDestruction(const void* wrapperAddress)
 }
 
 
-void IdManager::EnableTransplantMode(std::vector<const void*>& exceptions)
+void IdManager::EnableTransplantMode(std::vector<const Wrapper*>& exceptions)
 {
 	transplantExceptions = exceptions;
 	transplantModeEnabled = true;

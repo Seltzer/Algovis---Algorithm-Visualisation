@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include "boost/foreach.hpp"
+#include <QPainter>
+#include <QColor>
 #include "dsactions.h"
 #include "../../include/registry.h"
 #include "../displayer/world.h"
@@ -178,10 +180,11 @@ void DS_Assigned::Perform(float progress, QPainter* painter)
 				y = source.dimensions.y() + lerp * (subjectDimensions.y() - source.dimensions.y());
 			}
 
+			painter->setPen(QColor(Qt::white));
 			source.source->DrawValue(QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
 		}
 	}
-
+		
 	//source->DrawWithoutValue(sourceDimensions, painter);
 	//subject->DrawWithoutValue(subjectDimensions, painter);
 
@@ -336,6 +339,7 @@ void DS_Modified::Perform(float progress, QPainter* painter)
 				y = source.dimensions.y() + lerp * (subjectDimensions.y() - source.dimensions.y());
 			}
 
+			painter->setPen(QColor(Qt::white));
 			source.source->DrawValue(QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
 		}
 	}
@@ -389,7 +393,7 @@ void DS_Deleted::Complete(bool displayed)
 	UL_ASSERT(voToBeDeleted);
 	
 	registry->Deregister(voToBeDeleted->GetId());
-	delete voToBeDeleted;
+	voToBeDeleted->deleteLater();
 }
 
 
@@ -439,9 +443,7 @@ void DS_CreateArray::Complete(bool displayed)
 
 	newArray->move(world->GetArrayPosition());
 	newArray->adjustSize();
-
-	//newArray->setMinimumSize(newArray->sizeHint());
-	// MIGRATION assume top level
+	// TODO assuming top level
 	newArray->setParent(world);
 	newArray->setVisible(true);
 
@@ -449,9 +451,6 @@ void DS_CreateArray::Complete(bool displayed)
 	world->adjustSize();
 
 	Registry::GetInstance()->Register(arrayId, newArray);
-	
-	// hrmmm
-	//world->setMinimumSize(world->sizeHint());
 }
 
 
@@ -484,7 +483,7 @@ void DS_CreateSP::Complete(bool displayed)
 	VO_SinglePrintable* newSP = new VO_SinglePrintable(id,dsAddress, world, value);
 	registry->Register(id, newSP);
 
-		// TODO hack
+	// TODO hack
 	world->adjustSize();
 
 
@@ -522,6 +521,64 @@ void DS_AddressChanged::Complete(bool displayed)
 	UL_ASSERT(viewable);
 
 	viewable->SetDSAddress(newAddress);
+}
+
+
+/////////////////// DS_HighlightOperands
+DS_HighlightOperands::DS_HighlightOperands(World* world, std::vector<ID> operands)
+	: DS_Action(world), operands(operands)
+{
+}
+
+DS_HighlightOperands::DS_HighlightOperands(const DS_HighlightOperands& other)
+	: DS_Action(other), operands(other.operands), operandPtrs(other.operandPtrs), 
+				originalBBColour(other.originalBBColour)
+{
+}
+
+Action* DS_HighlightOperands::Clone() const
+{
+	return new DS_HighlightOperands(*this);
+}
+	
+void DS_HighlightOperands::PrepareToPerform()
+{
+	Registry* reg = Registry::GetInstance();
+
+	BOOST_FOREACH(ID op, operands)
+	{
+		VO_SinglePrintable* vo = reg->GetRepresentation<VO_SinglePrintable>(op);
+		UL_ASSERT(vo);		
+		
+		// Who cares if this is called multiple times? It's a hack!
+		originalBBColour = vo->GetBoundingBoxColour();
+		operandPtrs.push_back(vo);
+	}
+
+}
+	
+void DS_HighlightOperands::Perform(float progress, QPainter*)
+{	
+	BOOST_FOREACH(VO_SinglePrintable* vo, operandPtrs)
+	{
+		int intensity = (int) (progress * 255);
+		vo->SetBoundingBoxColour(QColor(intensity, intensity, intensity));
+		
+		/*
+		painter->setPen(QColor(Qt::white));
+		QRect dim(vo->GetPositionInWorld(), vo->size());
+		vo->DrawValue(dim, painter);
+
+		int intensity = (int) (progress * 255);
+		painter->setPen(QColor(intensity, intensity, intensity));
+		vo->DrawWithoutValue(dim, painter);*/
+	}
+}
+
+void DS_HighlightOperands::Complete(bool displayed)
+{
+	BOOST_FOREACH(VO_SinglePrintable* vo, operandPtrs)
+		vo->SetBoundingBoxColour(originalBBColour);
 }
 
 
@@ -594,6 +651,7 @@ void DS_AddElementToArray::Perform(float progress, QPainter* painter)
 				y = source.dimensions.y() + lerp * (subjectDimensions.y() - source.dimensions.y());
 			}
 
+			painter->setPen(QColor(Qt::white));
 			source.source->DrawValue(QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
 		}
 	}
@@ -604,8 +662,6 @@ void DS_AddElementToArray::Complete(bool displayed)
 	Registry* registry = Registry::GetInstance();
 
 	voArray->AddElement(element, position);
-	voArray->adjustSize();
-	element->SetSizeControlledByParentArray(true);
 
 	if (displayed)
 	{

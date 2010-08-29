@@ -1,10 +1,8 @@
 #ifndef VIEWABLE_OBJECT_H_
 #define VIEWABLE_OBJECT_H_
 
-#include <set>
 #include "../displayer/components.h"
 #include "../../include/common.h"
-
 
 class QMouseEvent;
 
@@ -18,12 +16,13 @@ namespace Algovis_Viewer
 	class ViewableObject;
 
 
-
 	class ViewableObject : public Component
 	{
 
 	public:
 		virtual ~ViewableObject();
+		virtual ViewableObjectType GetType() const = 0;
+
 
 		// Optional method for drawing a VO's value at a specified absolute position with specified dimensions
 		virtual void DrawValue(QRect&, QPainter*) {}
@@ -37,21 +36,19 @@ namespace Algovis_Viewer
 		// Returns this VO's position relative to the World - undefined if VO hasn't been added to the World
 		QPoint GetPositionInWorld();
 
+		QColor GetBoundingBoxColour();
 		virtual void SetBoundingBoxColour(QColor&);
-
-		
-		virtual ViewableObjectType GetType() const = 0;
 	
-		// hack hack hack hack TODO
-		void SetSizeControlledByParentArray(bool);
-
 		ID GetId();
 		const void* GetDSAddress();
 		void SetDSAddress(const void*);
 
+		// hack hack hack hack TODO
+		void SetSizeControlledByParentArray(bool);
+
 	protected:	
-		ViewableObject(ID id, const void* dsAddress, World* world); 
-		ViewableObject(ID id, const void* dsAddress, World* world, QWidget* parent); 
+		ViewableObject(ID, const void* dsAddress, World*); 
+		ViewableObject(ID, const void* dsAddress, World*, QWidget* parent); 
 
 		// Mouse drag/drop
 		virtual void mousePressEvent(QMouseEvent*);
@@ -62,7 +59,6 @@ namespace Algovis_Viewer
 		bool mouseDraggingInitiated;
 		QPoint globalPositionBeforeDragging, localPositionBeforeDragging;
 
-		
 		const ID id;
 		const void* dsAddress;
 		World* world;

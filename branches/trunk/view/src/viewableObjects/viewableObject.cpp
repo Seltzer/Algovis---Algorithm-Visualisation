@@ -42,6 +42,10 @@ bool ViewableObject::IsTopLevel()
 	return false;
 }
 
+QColor ViewableObject::GetBoundingBoxColour()
+{
+	return boundingBoxColour;
+}
 
 void ViewableObject::SetBoundingBoxColour(QColor& boundingBoxColour)
 {

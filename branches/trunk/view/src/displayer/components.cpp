@@ -73,11 +73,20 @@ MainFrame::MainFrame(Displayer* disp)
 {
 }
 
+MainFrame::~MainFrame()
+{
+}
+
 void MainFrame::resizeEvent(QResizeEvent* evt)
 {
 	displayer->ResizeWindow(evt->size());
 }
 
+
+void MainFrame::closeEvent(QCloseEvent* evt)
+{
+	emit shuttingDown();
+}
 
 
 

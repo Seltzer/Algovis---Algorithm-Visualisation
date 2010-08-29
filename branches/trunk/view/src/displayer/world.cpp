@@ -16,11 +16,15 @@ World::World(QWidget* parent, QPoint& position, QSize& dimensions,
 	: Component(parent, position, dimensions), bgColour(bgColour), borderColour(borderColour), 
 			refreshRate(refreshRate), locationForNextArray(50,0)
 {
-	connect(&myTimer, SIGNAL(timeout()), this, SLOT(update()));
+	connect(&myTimer, SIGNAL(timeout()), this, SLOT(repaint()));
 	myTimer.setInterval(1.00f / refreshRate);
 	myTimer.start();
 }
 
+World::~World()
+{
+	myTimer.stop();
+}
 
 QSize World::sizeHint() const
 {

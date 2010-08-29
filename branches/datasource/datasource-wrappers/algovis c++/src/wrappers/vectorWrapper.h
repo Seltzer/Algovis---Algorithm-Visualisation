@@ -104,7 +104,6 @@ public:
 
 	~VectorWrapper()
 	{
-		std::cout << "Inside ~VectorWrapper() for " << this << std::endl;
 	}
 
 
@@ -154,7 +153,7 @@ public:
 
 	inline void push_back (const T& x) 
 	{ 
-		std::vector<const void*> exceptions;
+		std::vector<const Wrapper*> exceptions;
 		exceptions.push_back(&x);
 		Algovis::IdManager::GetInstance()->EnableTransplantMode(exceptions);
 
@@ -169,6 +168,20 @@ public:
 
 		Algovis::IdManager::GetInstance()->DisableTransplantMode();
 	}
+
+	// Pre-Conditions:
+	//		- vector has had space reserved beforehand
+	inline void push_back_test() 
+	{ 
+		value.push_back(2);
+
+		if (drawingEnabled)
+		{
+			ID newElementId = IdManager::GetInstance()->GetId(&value[value.size()-1]);
+			Algovis_Viewer::Registry::GetInstance()->AddElementToArray(Id(), newElementId, value.size() - 1);
+		}
+	}
+
 	inline void pop_back () { value.pop_back(); };
 
 
