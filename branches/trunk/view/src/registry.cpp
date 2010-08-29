@@ -154,7 +154,7 @@ void Registry::AddElementToArray(ID dsArray, ID dsElement, unsigned position)
 
 	// Create event
 	DS_AddElementToArray* addAction = new DS_AddElementToArray(world, dsArray, dsElement, position);
-	addAction->SuppressAnimation();
+	//addAction->SuppressAnimation(); // This has an animation now
 	
 	AddActionToBuffer(addAction);
 }

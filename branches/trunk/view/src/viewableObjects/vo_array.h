@@ -25,8 +25,6 @@ namespace Algovis_Viewer
 		virtual QSize sizeHint() const;
 		virtual void adjustSize();
 		virtual void paintEvent(QPaintEvent*);
-
-		
 				
 
 		unsigned GetSize() { return elements.size(); }

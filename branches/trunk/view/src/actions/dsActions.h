@@ -17,7 +17,6 @@ namespace Algovis_Viewer
 	class VO_SinglePrintable;
 	class VO_Array;
 
-
 	struct ValueID
 	{
 		ValueID(ID id, int time) : id(id), time(time) {}
@@ -31,7 +30,18 @@ namespace Algovis_Viewer
 		int time;
 	};
 
+	// Handy struct to represent where data for an action came from
+	struct SourceData {
+		QRect dimensions;
+		VO_SinglePrintable* source;
+		bool isSibling;
+	};
 
+	// Set up source data for animation using current state of world
+	SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject);
+
+	// Same as above but for entire history
+	std::vector<SourceData> historyToSources(const std::set<ValueID>& history, ViewableObject* subject);
 
 	//enum DS_ActionType { DAT_Insert, DAT_Erase, DAT_Assign, DAT_BeingDestroyed };
 
@@ -150,9 +160,7 @@ namespace Algovis_Viewer
 
 		// Animation stuff
 		QRect subjectDimensions;
-		QRect sourceDimensions;
-		VO_SinglePrintable* source;
-		bool sourceIsSibling;
+		std::vector<SourceData> sources;
 	};
 
 	// Action class for printable being modified. Depressingly similar to assigned (Nathan LOL'd at this)
@@ -163,7 +171,7 @@ namespace Algovis_Viewer
 		DS_Modified(const DS_Modified& other);
 		virtual Action* Clone() const;
 
-		void SetSource(VO_SinglePrintable* source);
+		void SetSource(VO_SinglePrintable* source); // TODO: Remove or properly analyse
 
 		virtual void PrepareToPerform();
 		virtual void Perform(float progress, QPainter*);
@@ -179,9 +187,7 @@ namespace Algovis_Viewer
 
 		// Animation stuff
 		QRect subjectDimensions;
-		QRect sourceDimensions;
-		VO_SinglePrintable* source;
-		bool sourceIsSibling;
+		std::vector<SourceData> sources;
 	};
 
 
@@ -193,11 +199,20 @@ namespace Algovis_Viewer
 		DS_AddElementToArray(const DS_AddElementToArray&);
 		virtual Action* Clone() const;
 
+		void PrepareToPerform();
+		void Perform(float progress, QPainter* painter);
 		virtual void Complete(bool displayed);
 
 	private:
 		ID dsArray, dsElement;
 		unsigned position;
+
+		VO_Array* voArray;
+		VO_SinglePrintable* element;
+		std::set<ValueID> history;
+
+		QRect subjectDimensions;
+		std::vector<SourceData> sources;
 	};
 	
 

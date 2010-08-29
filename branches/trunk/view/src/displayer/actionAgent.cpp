@@ -49,7 +49,7 @@ void ActionAgent::paintEvent(QPaintEvent*)
 				actionToBePerformed->Complete(true);
 				prt("\tCompleted action");		
 			#else			
-				actionToBePerformed->Complete(true);
+				actionToBePerformed->Complete(!actionToBePerformed->AnimationSuppressed());
 			#endif
 			
 			// Clean up action

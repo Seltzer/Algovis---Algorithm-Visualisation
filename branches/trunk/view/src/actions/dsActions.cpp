@@ -17,7 +17,41 @@ namespace Algovis_Viewer
 
 int time = 0; // TODO: Seriously?... Seriously guys.
 
+////////////////////// Utility functions ////////////////////////////
 
+SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject)
+{
+	Registry* registry = Registry::GetInstance();
+
+	SourceData sourceData;
+	sourceData.dimensions = QRect(0,0,0,0);
+	sourceData.source = NULL;
+	sourceData.isSibling = false;
+
+	if (registry->IsRegistered(id.id, SINGLE_PRINTABLE))
+	{
+		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(id.id);
+
+		if (source != NULL)
+		{
+			// TODO: Take time into account. Value may have changed.
+			sourceData.source = source;
+			sourceData.dimensions = QRect(source->GetPositionInWorld(), source->size());
+			sourceData.isSibling = source->parent() == subject->parent();
+		}
+	}
+	return sourceData;
+}
+
+std::vector<SourceData> historyToSources(const std::set<ValueID>& history, ViewableObject* subject)
+{
+	std::vector<SourceData> data;
+	for (std::set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
+	{
+		data.push_back(ValueIDToSourceData(*i, subject));
+	}
+	return data;
+}
 
 ////////////////////// DS_Action implementation ////////////////////////////
 
@@ -49,8 +83,7 @@ Action* DS_Action::Clone() const
 
 ////////////////////// DS_Assigned implementation ////////////////////////////
 DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string value, bool tracked)
-	: DS_Action(world), value(value), dsAssigned(dsAssigned), dsSource(dsSource), tracked(tracked),
-			sourceDimensions(0,0,0,0), source(NULL)
+	: DS_Action(world), value(value), dsAssigned(dsAssigned), dsSource(dsSource), tracked(tracked)
 {
 	//ViewableObject* viewable = (ViewableObject*)subject;
 	//subjects.insert(viewable); // May need to keep the original printable pointer?
@@ -58,8 +91,7 @@ DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string v
 
 DS_Assigned::DS_Assigned(const DS_Assigned& other)
 	: DS_Action(other), dsAssigned(other.dsAssigned), dsSource(other.dsSource), value(other.value),
-	subject(other.subject), history(other.history), sourceDimensions(other.sourceDimensions),
-	source(other.source), sourceIsSibling(other.sourceIsSibling)
+	subject(other.subject), history(other.history), sources(other.sources)
 {
 }
 
@@ -70,8 +102,8 @@ Action* DS_Assigned::Clone() const
 
 void DS_Assigned::SetSource(VO_SinglePrintable* source)
 {
-	this->source = source;
-	sourceIsSibling = source->parent() == subject->parent();
+	//this->source = source;
+	//sourceIsSibling = source->parent() == subject->parent();
 }
 
 
@@ -87,8 +119,7 @@ void DS_Assigned::PrepareToPerform()
 
 	if (registry->IsRegistered(dsSource, SINGLE_PRINTABLE))
 	{
-		source = registry->GetRepresentation<VO_SinglePrintable>(dsSource);
-		sourceIsSibling = source->parent() == subject->parent();
+		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(dsSource);
 		UL_ASSERT(source);
 		history = source->GetHistory();
 
@@ -116,38 +147,41 @@ void DS_Assigned::PrepareToPerform()
 	// Set subjectStart to have abs position
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
 
-	if (source != NULL)
-	{
-		sourceDimensions = QRect(source->GetPositionInWorld(), source->size());
-		
-	//	source->EnableDrawing(false);
-	}
-		
+	// TODO: There is only a point to this if animation is not supressed
+	sources = historyToSources(history, subject);
 }
 
 void DS_Assigned::Perform(float progress, QPainter* painter)
 {
-	if (source == NULL)
-		return;
+	//if (source == NULL)
+	//	return;
 
 	float x,y;
 
 	float lerp = 1 - (cos(progress * 3.14159265358) + 1) / 2;
 	
-	if (sourceIsSibling)
+	for (unsigned i = 0; i < sources.size(); i++)
 	{
-		// Assume source and subject have the same y for now
-		x = sourceDimensions.x() + lerp * (subjectDimensions.x() - sourceDimensions.x());
-		//y = sourceDimensions.y() - 5 * sin(3.14 * progress) * (subjectStart.y() - sourceDimensions.y());
-		y = sourceDimensions.y() - 30 * sin(3.14 * progress);
-	}
-	else
-	{
-		x = sourceDimensions.x() + lerp * (subjectDimensions.x() - sourceDimensions.x());
-		y = sourceDimensions.y() + lerp * (subjectDimensions.y() - sourceDimensions.y());
+		SourceData& source = sources[i];
+		if (source.source != NULL) // TODO: Need better value recording for untracked stuff
+		{
+			if (source.isSibling)
+			{
+				// Assume source and subject have the same y for now
+				x = source.dimensions.x() + lerp * (subjectDimensions.x() - source.dimensions.x());
+				//y = sourceDimensions.y() - 5 * sin(3.14 * progress) * (subjectStart.y() - sourceDimensions.y());
+				y = source.dimensions.y() - 30 * sin(3.14 * progress);
+			}
+			else
+			{
+				x = source.dimensions.x() + lerp * (subjectDimensions.x() - source.dimensions.x());
+				y = source.dimensions.y() + lerp * (subjectDimensions.y() - source.dimensions.y());
+			}
+
+			source.source->DrawValue(QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
+		}
 	}
 
-	source->DrawValue(QRect(QPoint(x,y),QSize(sourceDimensions.width(), sourceDimensions.height())),painter);
 	//source->DrawWithoutValue(sourceDimensions, painter);
 	//subject->DrawWithoutValue(subjectDimensions, painter);
 
@@ -197,16 +231,15 @@ void DS_Assigned::Complete(bool displayed)
 
 		++time;
 		subject->EnableDrawing(true);
-		if (source != NULL)
-			source->EnableDrawing(true);
+		//if (source != NULL)
+		//	source->EnableDrawing(true);
 	}
 }
 
 
 ////////////////////// DS_Modified implementation ////////////////////////////
 DS_Modified::DS_Modified(World* world, ID dsModified, ID dsSource, std::string value, bool tracked)
-	: DS_Action(world), value(value), dsModified(dsModified), dsSource(dsSource), tracked(tracked),
-			sourceDimensions(0,0,0,0), source(NULL)
+	: DS_Action(world), value(value), dsModified(dsModified), dsSource(dsSource), tracked(tracked)
 {
 	//ViewableObject* viewable = (ViewableObject*)subject;
 	//subjects.insert(viewable); // May need to keep the original printable pointer?
@@ -214,8 +247,7 @@ DS_Modified::DS_Modified(World* world, ID dsModified, ID dsSource, std::string v
 
 DS_Modified::DS_Modified(const DS_Modified& other)
 	: DS_Action(other), dsModified(other.dsModified), dsSource(other.dsSource), value(other.value),
-	subject(other.subject), history(other.history), sourceDimensions(other.sourceDimensions),
-	source(other.source), sourceIsSibling(other.sourceIsSibling)
+	subject(other.subject), history(other.history), sources(other.sources)
 {
 }
 
@@ -227,8 +259,8 @@ Action* DS_Modified::Clone() const
 
 void DS_Modified::SetSource(VO_SinglePrintable* source)
 {
-	this->source = source;
-	sourceIsSibling = source->parent() == subject->parent();
+	//this->source = source;
+	//sourceIsSibling = source->parent() == subject->parent();
 }
 
 
@@ -273,38 +305,40 @@ void DS_Modified::PrepareToPerform()
 	// Set subjectStart to have abs position
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
 
-	if (source != NULL)
-	{
-		sourceDimensions = QRect(source->GetPositionInWorld(), source->size());
-		
-	//	source->EnableDrawing(false);
-	}
-		
+	// Set up data for all the sources
+	sources = historyToSources(history, subject);
 }
 
 void DS_Modified::Perform(float progress, QPainter* painter)
 {
-	if (source == NULL)
-		return;
+	//if (source == NULL)
+	//	return;
 
 	float x,y;
 
 	float lerp = 1 - (cos(progress * 3.14159265358) + 1) / 2;
 	
-	if (sourceIsSibling)
+	for (unsigned i = 0; i < sources.size(); i++)
 	{
-		// Assume source and subject have the same y for now
-		x = sourceDimensions.x() + lerp * (subjectDimensions.x() - sourceDimensions.x());
-		//y = sourceDimensions.y() - 5 * sin(3.14 * progress) * (subjectStart.y() - sourceDimensions.y());
-		y = sourceDimensions.y() - 30 * sin(3.14 * progress);
-	}
-	else
-	{
-		x = sourceDimensions.x() + lerp * (subjectDimensions.x() - sourceDimensions.x());
-		y = sourceDimensions.y() + lerp * (subjectDimensions.y() - sourceDimensions.y());
-	}
+		SourceData& source = sources[i];
+		if (source.source != NULL)
+		{
+			if (source.isSibling)
+			{
+				// Assume source and subject have the same y for now
+				x = source.dimensions.x() + lerp * (subjectDimensions.x() - source.dimensions.x());
+				//y = sourceDimensions.y() - 5 * sin(3.14 * progress) * (subjectStart.y() - sourceDimensions.y());
+				y = source.dimensions.y() - 30 * sin(3.14 * progress);
+			}
+			else
+			{
+				x = source.dimensions.x() + lerp * (subjectDimensions.x() - source.dimensions.x());
+				y = source.dimensions.y() + lerp * (subjectDimensions.y() - source.dimensions.y());
+			}
 
-	source->DrawValue(QRect(QPoint(x,y),QSize(sourceDimensions.width(), sourceDimensions.height())),painter);
+			source.source->DrawValue(QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
+		}
+	}
 }
 
 void DS_Modified::Complete(bool displayed)
@@ -322,8 +356,8 @@ void DS_Modified::Complete(bool displayed)
 
 		++time;
 		subject->EnableDrawing(true);
-		if (source != NULL)
-			source->EnableDrawing(true);
+		//if (source != NULL)
+		//	source->EnableDrawing(true);
 	}
 }
 
@@ -455,6 +489,12 @@ void DS_CreateSP::Complete(bool displayed)
 
 
 	UL_ASSERT(registry->IsRegistered(id,SINGLE_PRINTABLE));
+
+	if (displayed)
+	{
+		newSP->ResetHistory(ValueID(newSP->GetId(), time));
+		++time;
+	}
 }
 
 
@@ -489,7 +529,7 @@ void DS_AddressChanged::Complete(bool displayed)
 //////////////// DS_AddElementToArray
 DS_AddElementToArray::DS_AddElementToArray
 		(World* world, ID dsArray, ID dsElement, unsigned position)
-			: DS_Action(world, true), dsArray(dsArray), dsElement(dsElement), position(position)
+			: DS_Action(world, false), dsArray(dsArray), dsElement(dsElement), position(position)
 {
 }
 
@@ -503,21 +543,75 @@ Action* DS_AddElementToArray::Clone() const
 	return new DS_AddElementToArray(*this);
 }
 
-void DS_AddElementToArray::Complete(bool displayed)
+void DS_AddElementToArray::PrepareToPerform()
 {
 	Registry* registry = Registry::GetInstance();
 
 	UL_ASSERT(registry->IsRegistered(dsArray,ARRAY));
 	UL_ASSERT(registry->IsRegistered(dsElement,SINGLE_PRINTABLE));
 
-	VO_Array* voArray = registry->GetRepresentation<VO_Array>(dsArray);
+	voArray = registry->GetRepresentation<VO_Array>(dsArray);
 	UL_ASSERT(position <= voArray->GetSize());
 
-	VO_SinglePrintable* element = registry->GetRepresentation<VO_SinglePrintable>(dsElement);
+	element = registry->GetRepresentation<VO_SinglePrintable>(dsElement);
+
+	history = element->GetHistory();
+
+	// TODO: Do not assume array is shown (and therefore this is not suppressed)
+
+	// Set subjectStart to have abs position
+	QRect arrayGeom = voArray->geometry();
+	subjectDimensions = QRect(arrayGeom.topRight(), element->size());
+
+	// Set up data for all the sources
+	sources = historyToSources(history, element);
+}
+
+void DS_AddElementToArray::Perform(float progress, QPainter* painter)
+{
+	//if (source == NULL)
+	//	return;
+
+	float x,y;
+
+	float lerp = 1 - (cos(progress * 3.14159265358) + 1) / 2;
+	
+	for (unsigned i = 0; i < sources.size(); i++)
+	{
+		SourceData& source = sources[i];
+		if (source.source != NULL)
+		{
+			if (source.isSibling)
+			{
+				// Assume source and subject have the same y for now
+				x = source.dimensions.x() + lerp * (subjectDimensions.x() - source.dimensions.x());
+				//y = sourceDimensions.y() - 5 * sin(3.14 * progress) * (subjectStart.y() - sourceDimensions.y());
+				y = source.dimensions.y() - 30 * sin(3.14 * progress);
+			}
+			else
+			{
+				x = source.dimensions.x() + lerp * (subjectDimensions.x() - source.dimensions.x());
+				y = source.dimensions.y() + lerp * (subjectDimensions.y() - source.dimensions.y());
+			}
+
+			source.source->DrawValue(QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
+		}
+	}
+}
+
+void DS_AddElementToArray::Complete(bool displayed)
+{
+	Registry* registry = Registry::GetInstance();
 
 	voArray->AddElement(element, position);
 	voArray->adjustSize();
 	element->SetSizeControlledByParentArray(true);
+
+	if (displayed)
+	{
+		element->ResetHistory(ValueID(element->GetId(), time));
+		++time;
+	}
 }
 
 	
