@@ -33,6 +33,8 @@ Registry::Registry()
 
 	world = Displayer::GetInstance()->GetWorld();
 	UL_ASSERT(world);
+
+	time = 0;
 }
 
 Registry::~Registry()

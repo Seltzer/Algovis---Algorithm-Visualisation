@@ -17,7 +17,6 @@ using namespace std;
 namespace Algovis_Viewer
 {
 
-int time = 0; // TODO: Seriously?... Seriously guys.
 
 ////////////////////// Utility functions ////////////////////////////
 
@@ -38,8 +37,11 @@ SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject)
 		{
 			// TODO: Take time into account. Value may have changed.
 			sourceData.source = source;
-			sourceData.dimensions = QRect(source->GetPositionInWorld(), source->size());
-			sourceData.isSibling = source->parent() == subject->parent();
+			if (sourceData.source->ModifiedTime() <= id.time) // If value has not been modified since it was accessed
+			{
+				sourceData.dimensions = QRect(source->GetPositionInWorld(), source->size());
+				sourceData.isSibling = source->parent() != NULL && source->parent() == subject->parent();
+			}
 		}
 	}
 	return sourceData;
@@ -229,10 +231,9 @@ void DS_Assigned::Complete(bool displayed)
 		// and will reset the current history to be the value we just displayed
 		// That way future things will have the just-displayed-element in their history, instead of everything
 		// that was used to produce is.
-		//int time = Algovis_Viewer::Registry::GetInstance()->GetTime();
+		int time = Algovis_Viewer::Registry::GetInstance()->CurrentTime();
 		subject->ResetHistory(ValueID(subject->GetId(), time));
 
-		++time;
 		subject->EnableDrawing(true);
 		//if (source != NULL)
 		//	source->EnableDrawing(true);
@@ -355,10 +356,9 @@ void DS_Modified::Complete(bool displayed)
 		// and will reset the current history to be the value we just displayed
 		// That way future things will have the just-displayed-element in their history, instead of everything
 		// that was used to produce is.
-		//int time = Algovis_Viewer::Registry::GetInstance()->GetTime();
+		int time = Registry::GetInstance()->CurrentTime();
 		subject->ResetHistory(ValueID(subject->GetId(), time));
 
-		++time;
 		subject->EnableDrawing(true);
 		//if (source != NULL)
 		//	source->EnableDrawing(true);
@@ -491,8 +491,8 @@ void DS_CreateSP::Complete(bool displayed)
 
 	if (displayed)
 	{
+		int time = Registry::GetInstance()->CurrentTime();
 		newSP->ResetHistory(ValueID(newSP->GetId(), time));
-		++time;
 	}
 }
 
@@ -617,7 +617,7 @@ void DS_AddElementToArray::PrepareToPerform()
 	// TODO: Do not assume array is shown (and therefore this is not suppressed)
 
 	// Set subjectStart to have abs position
-	QRect arrayGeom = voArray->geometry();
+	QRect arrayGeom = QRect(voArray->GetPositionInWorld(), voArray->size());
 	subjectDimensions = QRect(arrayGeom.topRight(), element->size());
 
 	// Set up data for all the sources
@@ -665,8 +665,8 @@ void DS_AddElementToArray::Complete(bool displayed)
 
 	if (displayed)
 	{
+		int time = Registry::GetInstance()->CurrentTime();
 		element->ResetHistory(ValueID(element->GetId(), time));
-		++time;
 	}
 }
 

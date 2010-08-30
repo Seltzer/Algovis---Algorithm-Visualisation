@@ -47,6 +47,7 @@ namespace Algovis_Viewer
 		void Modified(VO_SinglePrintable* source, const std::string& newValue);
 		void ModifiedUntracked(const void* dsAddress, const std::string& newValue);
 	
+		int ModifiedTime() { return modifiedTime; }
 
 	private:
 		std::string value;
@@ -58,6 +59,7 @@ namespace Algovis_Viewer
 		// address and time.
 		std::set<ValueID> history;
 
+		int modifiedTime;
 	};
 
 }

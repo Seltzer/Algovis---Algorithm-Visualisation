@@ -6,6 +6,7 @@
 #include "qt/qpainter.h"
 #include "qt/qfont.h"
 
+#include "../include/registry.h"
 
 // part of hack
 #include "vo_array.h"
@@ -16,7 +17,8 @@ namespace Algovis_Viewer
 
 VO_SinglePrintable::VO_SinglePrintable(ID id, const void* dsAddress, World* world,
 					const std::string& value, QWidget* parent)
-		: ViewableObject(id, dsAddress, world, parent), value(value), graphicalText(NULL)
+					: ViewableObject(id, dsAddress, world, parent), value(value), graphicalText(NULL),
+					modifiedTime(Registry::GetInstance()->CurrentTime())
 {
 }
 
@@ -79,6 +81,8 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue)
 	{
 		adjustSize();
 	}
+
+	modifiedTime = Registry::GetInstance()->CurrentTime();
 }
 
 

@@ -5,7 +5,7 @@
 #include "../actions/action.h"
 #include "world.h"
 
-
+#include "../include/registry.h"
 
 
 
@@ -87,6 +87,8 @@ void ActionAgent::paintEvent(QPaintEvent*)
 			#else			
 				actionToBePerformed->Complete(!actionToBePerformed->AnimationSuppressed());
 			#endif
+
+			Registry::GetInstance()->ActionCompleted();
 			
 			// Clean up action
 			delete actionToBePerformed;
