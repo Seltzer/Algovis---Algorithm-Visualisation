@@ -449,6 +449,22 @@
 					RelativePath=".\src\actions\dsActions.h"
 					>
 				</File>
+				<File
+					RelativePath=".\src\actions\dsArrayActions.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\actions\dsArrayActions.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\actions\dsPrintableActions.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\actions\dsPrintableActions.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

@@ -9,7 +9,8 @@
 #include "viewableObjects/vo_array.h"
 #include "viewableObjects/vo_singlePrintable.h"
 #include "actions/action.h"
-#include "actions/dsActions.h"
+#include "actions/dsArrayActions.h"
+#include "actions/dsPrintableActions.h"
 
 using namespace std;
 

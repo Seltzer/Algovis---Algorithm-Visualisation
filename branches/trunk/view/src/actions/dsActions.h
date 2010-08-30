@@ -10,8 +10,7 @@
 
 
 
-// Contains ValueID struct and DS_Action, DS_CreateArray, DS_CreateSP, DS_AddressChanged, DS_Deleted,
-//							   DS_Assigned, DS_Modified, DS_HighlightOperands and DS_AddElementToArray classes.
+// Contains ValueID struct and DS_Action, DS_Deleted and DS_CompositeAction classes.
 namespace Algovis_Viewer
 {
 	class ViewableObject;
@@ -69,57 +68,6 @@ namespace Algovis_Viewer
 
 
 
-	class DS_CreateArray : public DS_Action
-	{
-	public:
-		DS_CreateArray(World*, ID arrayId, const void* arrayAddress, 
-					ViewableObjectType elementType, std::vector<ID> elements);
-		DS_CreateArray(const DS_CreateArray&);
-		virtual Action* Clone() const;
-
-		virtual void Complete(bool displayed);
-
-	private:
-		const ID arrayId;
-		const void* arrayAddress;
-		ViewableObjectType elementType;
-		std::vector<ID> elements;
-	};
-
-
-
-
-	class DS_CreateSP : public DS_Action
-	{
-	public:
-		DS_CreateSP(World*, const ID id, const void* dsAddress, const std::string& value);
-		DS_CreateSP(const DS_CreateSP&);
-		virtual Action* Clone() const;
-
-		virtual void Complete(bool displayed);
-
-	private:
-		const ID id;
-		const void* dsAddress;
-		std::string value;
-	};
-
-
-	class DS_AddressChanged : public DS_Action
-	{
-	public:
-		DS_AddressChanged(World*, const ID id, const void* newAddress, const void* oldAddress);
-		DS_AddressChanged(const DS_AddressChanged&);
-
-		virtual Action* Clone() const;
-		virtual void Complete(bool displayed);
-
-	private:
-		const ID id;
-		const void* newAddress;
-		const void* oldAddress;
-	};
-
 	// Action class for deleting a VO (TODO add deletion animation?)
 	class DS_Deleted : public DS_Action
 	{
@@ -134,107 +82,24 @@ namespace Algovis_Viewer
 		const ID dsSubject;
 	};
 
-
-
-	// Action class for printable being assigned 
-	class DS_Assigned : public DS_Action
+	
+	class DS_CompositeAction : public DS_Action
 	{
 	public:
-		DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string value, bool tracked);
-		DS_Assigned(const DS_Assigned& other);
-		virtual Action* Clone() const;
-
-		void SetSource(VO_SinglePrintable* source);
-
-		virtual void PrepareToPerform();
-		virtual void Perform(float progress, QPainter*);
-		virtual void Complete(bool displayed);
-
-	protected:
-		ID dsAssigned;
-		ID dsSource;
-
-		std::string value;
-		VO_SinglePrintable* subject;
-		std::set<ValueID> history;
-		bool tracked;
-
-		// Animation stuff
-		QRect subjectDimensions;
-		std::vector<SourceData> sources;
-	};
-
-	// Action class for printable being modified. Depressingly similar to assigned (Nathan LOL'd at this)
-	class DS_Modified : public DS_Action
-	{
-	public:
-		DS_Modified(World* world, ID dsModified, ID dsSource, std::string value, bool tracked);
-		DS_Modified(const DS_Modified& other);
-		virtual Action* Clone() const;
-
-		void SetSource(VO_SinglePrintable* source); // TODO: Remove or properly analyse
-
-		virtual void PrepareToPerform();
-		virtual void Perform(float progress, QPainter*);
-		virtual void Complete(bool displayed);
-
-	protected:
-		ID dsModified, dsSource;
-
-		std::string value;
-		VO_SinglePrintable* subject;
-		std::set<ValueID> history;
-		bool tracked;
-
-		// Animation stuff
-		QRect subjectDimensions;
-		std::vector<SourceData> sources;
-	};
-
-
-	class DS_HighlightOperands : public DS_Action
-	{
-
-	public:
-		DS_HighlightOperands(World*, std::vector<ID> operands);
-		DS_HighlightOperands(const DS_HighlightOperands&);
-		virtual Action* Clone() const;
-		virtual void PrepareToPerform();
-		virtual void Perform(float progress, QPainter*);
-		virtual void Complete(bool displayed);
-
-	private:
-		std::vector<ID> operands;
-		std::vector<VO_SinglePrintable*> operandPtrs;
-
-		QColor originalBBColour;
-	};
-
-
-	// TODO implement animation?
-	class DS_AddElementToArray : public DS_Action
-	{
-	public:
-		DS_AddElementToArray(World*, ID dsArray, ID dsElement, unsigned position);
-		DS_AddElementToArray(const DS_AddElementToArray&);
+		DS_CompositeAction(World* world);
+		DS_CompositeAction(const DS_CompositeAction&);
+		~DS_CompositeAction();
 		virtual Action* Clone() const;
 
 		void PrepareToPerform();
 		void Perform(float progress, QPainter* painter);
 		virtual void Complete(bool displayed);
 
+		void AddAction(DS_Action* action);
+
 	private:
-		ID dsArray, dsElement;
-		unsigned position;
-
-		VO_Array* voArray;
-		VO_SinglePrintable* element;
-		std::set<ValueID> history;
-
-		QRect subjectDimensions;
-		std::vector<SourceData> sources;
+		std::vector<DS_Action*> subActions; // In order of excecution
 	};
-	
 
 }
 

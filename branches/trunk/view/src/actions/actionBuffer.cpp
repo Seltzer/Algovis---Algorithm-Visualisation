@@ -23,10 +23,13 @@ void ActionBuffer::PushBack(DS_Action* action)
 		// TODO: Delete action
 	}
 
-	// TODO: Collapse actions if appropriate.
-	Action* copy = action->Clone();
+	DS_Action* copy = (DS_Action*)action->Clone();
 
-	buffer.push_back((DS_Action*) copy);
+	// Collapse actions if appropriate
+	DS_CompositeAction* composite = new DS_CompositeAction(Displayer::GetInstance()->GetWorld());
+	composite->AddAction(copy);
+
+	buffer.push_back(composite);
 }
 
 }
