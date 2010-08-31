@@ -42,7 +42,6 @@ namespace Algovis
 			if (drawingEnabled && SettingsManager::GetInstance()->ConstructionReportingEnabled())
 			{
 				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(id, this, GetStringRepresentation());
-				
 				// Do not record any assignment. This way, we can detect uninitialised values later on!
 			}
 		}
@@ -70,17 +69,15 @@ namespace Algovis
 			: primitive(other.primitive) 
 		{
 			//std::cout << "PrimitiveType CC called id = " << id << ", otherId = " << otherId << std::endl;
+			ID otherId = IdManager::GetInstance()->GetId(&other);
 			ID id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
 			
 
 			if (drawingEnabled && SettingsManager::GetInstance()->CopyConstructionReportingEnabled())
 			{
-				ID otherId = IdManager::GetInstance()->GetId(&other);
-
-				if (otherId == INVALID_ID)
+				if (id == otherId)
 				{
-					// This wrapper is being copy constructed as the result of a transplant
-					// Tell the view that the memory address associated with id is changing
+					// This wrapper is being copy constructed as the result of a transplant - inform Registry
 					Algovis_Viewer::Registry::GetInstance()->AddressChanged(id, this);
 				}
 				else
@@ -100,47 +97,32 @@ namespace Algovis
 			{
 				primitive = other.primitive;
 
-
 				ID oldId = Id();
-				ID id = IdManager::GetInstance()->GetIdForCopyAssignment(this, &other);
 				ID otherId = IdManager::GetInstance()->GetId(&other);
-				
+				ID id = IdManager::GetInstance()->GetIdForCopyAssignment(this, &other);
+							
+				// what if both were invalid???
 				if (id == otherId)
 				{
-					// transplant
+					// I was transplanted from other so do nothing
 				}
 				else
 				{
 					if (id == oldId)
 					{
-						// This was a regular copy assignment, not a transplant... so alert Registry
+						// This was a regular copy assignment, so inform the Registry that my value has changed
 						if (drawingEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
-						{
-							Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id,otherId, 
-																				GetStringRepresentation());
-						}
+							Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id, otherId, 
+																			GetStringRepresentation());
 					}
 					else
 					{
-						// i was a transplant source
-						// governing body will register me
+						// I was an orphan have since been allocated a new id - inform Registry
+						if (drawingEnabled)
+							Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable
+									(id, this, GetStringRepresentation());
 					}
-
-
 				}
-
-				// what if both were invalid???
-
-				/*
-				if (id != otherId)
-				{
-					// This was a regular copy assignment, not a transplant... so alert Registry
-					if (drawingEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
-					{
-						Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id,otherId, 
-																				GetStringRepresentation());
-					}
-				}*/
 			}
 
 			return *this;

@@ -6,17 +6,16 @@
 #include "idManager.h"
 #include "settingsManager.h"
 
-
-
 using namespace std;
+
 
 
 namespace Algovis
 {
 
 
+//////////// Singleton / Initialisation Stuff
 IdManager* IdManager::idMgrInstance(NULL);
-
 
 IdManager* IdManager::GetInstance()
 {
@@ -24,7 +23,6 @@ IdManager* IdManager::GetInstance()
 		IdManager::idMgrInstance = new IdManager();
 
 	return IdManager::idMgrInstance;
-
 }
 
 void IdManager::DestroyInstance()
@@ -37,13 +35,16 @@ void IdManager::DestroyInstance()
 }
 	
 IdManager::IdManager()
-	: currentId(0), transplantModeEnabled(false)
+	: nextIdToAllocate(0), transplantModeEnabled(false)
 {
 	// Construct early
 	SettingsManager::GetInstance();
 }
 
 
+
+
+//////////////// Id Allocation
 ID IdManager::GetId(const Wrapper* wrapper)
 {
 	if (idMapping.count(wrapper))
@@ -52,249 +53,184 @@ ID IdManager::GetId(const Wrapper* wrapper)
 		return INVALID;
 }
 
-ID IdManager::GetIdForConstruction(const Wrapper* wrapperAddress)
+ID IdManager::GetIdForConstruction(const Wrapper* wrapper)
 {
-	idMapping[wrapperAddress] = currentId;
-
 	#if (ID_DEBUGGING_LEVEL >= 1)
-		cout << "Construction of newWrapper - allocated id " << currentId << endl;
+		cout << "Wrapper construction - being allocated id " << nextIdToAllocate << endl;
 	#endif
 
-	RemoveWrapperFromTransplantSources(wrapperAddress);
+	idMapping[wrapper] = nextIdToAllocate++;
+	RemoveFromOrphanList(wrapper);
 
-
-	return currentId++;
+	return idMapping[wrapper];
 }
 
 ID IdManager::GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper* originalWrapper)
 {
-	bool originalIsException = IsWrapperAnExceptionBySource(originalWrapper);
-	bool newIsException = IsWrapperAnExceptionByDest(newWrapper);	
-
 	#if (ID_DEBUGGING_LEVEL >= 1)
-		cout << "Copy construction of oldWrapper with id = " << idMapping[originalWrapper] << endl;
+		cout << "Copy construction of originalWrapper ID" << idMapping[originalWrapper] << endl;
 	#endif
 
-	// If originalWrapper is exception to current mode, then so is newWrapper
-	if (originalIsException)
-		modeExceptionsBySource.push_back(newWrapper);
+	
+	bool originalIsException = IsWrapperAnException(originalWrapper);
 
-
-	//RemoveWrapperFromTransplantSources(newWrapper);
-
-	// Figure out whether this should be a transplant or not
-	if ( (transplantModeEnabled && !originalIsException && !newIsException) || 
-		 (!transplantModeEnabled && (originalIsException || newIsException)) )
+	// Figure out whether transplant conditions are met
+	if ( (transplantModeEnabled && !originalIsException) || (!transplantModeEnabled && originalIsException) )
 	{
 		// Transplant
-		idMapping[newWrapper] = idMapping[originalWrapper];
-		transplantSources.insert(originalWrapper);
-		idMapping[originalWrapper] = INVALID_ID;
-
-		#if (ID_DEBUGGING_LEVEL >=2)
-			cout << "\tPerformed transplant - newWrapper id = " << idMapping[newWrapper] << endl;
-		#endif
-		
-		return idMapping[newWrapper];
+		TransplantWrapper(newWrapper, originalWrapper);
 	}
 	else
 	{
 		// Don't transplant
-		idMapping[newWrapper] = currentId;
+		idMapping[newWrapper] = nextIdToAllocate++;
 
 		#if (ID_DEBUGGING_LEVEL >=2)
 			cout << "\tRegular copy construction - newWrapper id = " << idMapping[newWrapper] << endl;
 		#endif
-
-		return currentId++;
 	}
+
+	// If originalWrapper is an exception to current mode, then so is newWrapper
+	if (originalIsException)
+		modeExceptions.push_back(idMapping[newWrapper]);
+
+
+	return idMapping[newWrapper];
 }
 
-ID IdManager::GetIdForCopyAssignment(const Wrapper* newWrapper, const Wrapper* originalWrapper)
+ID IdManager::GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* originalWrapper)
 {
-	UL_ASSERT(idMapping.count(newWrapper));
+	UL_ASSERT(idMapping.count(wrapper));
 	UL_ASSERT(idMapping.count(originalWrapper));
 
 	#if (ID_DEBUGGING_LEVEL >= 1)
-		cout << "Copy assignment to newWrapper with id = " << idMapping[newWrapper];
-		cout << " from originalWrapper with id = " << idMapping[originalWrapper] << endl;
+		cout << "Copy assignment to ID" << idMapping[wrapper] << "from ID" << idMapping[originalWrapper] << endl;
 	#endif
 
 
-	if (transplantSources.count(newWrapper))
-		RemoveWrapperFromTransplantSources(newWrapper);
+	bool originalIsException = IsWrapperAnException(originalWrapper);
 
-
-	bool originalIsException = IsWrapperAnExceptionBySource(originalWrapper);
-	bool newIsException = IsWrapperAnExceptionByDest(newWrapper);	
-
-	// If originalWrapper is exception to current mode, then so is newWrapper
-	if (originalIsException)
-		modeExceptionsBySource.push_back(newWrapper);
-
-	// Figure out whether this should be a transplant or not
-	if ( (transplantModeEnabled && !originalIsException && !newIsException) || 
-		 (!transplantModeEnabled && (originalIsException || newIsException)) )
+	// Figure out whether transplant conditions are met
+	if ( (transplantModeEnabled && !originalIsException) || (!transplantModeEnabled && originalIsException) )
 	{
 		// Transplant originalWrapper to newWrapper
+		TransplantWrapper(wrapper, originalWrapper);
 
-
-		// Allocate newWrapper the same id as originalWrapper
-		idMapping[newWrapper] = idMapping[originalWrapper];
-		
-		if (transplantSources.count(originalWrapper) == 0)
-			RemoveWrapperFromTransplantSources(newWrapper);
-
-		transplantSources.insert(originalWrapper);
-		idMapping[originalWrapper] = INVALID_ID;
-		
-		// TODO: what do we do with original ID of newWrapper - alert view that it no longer exists????
-		// In the case of a vector::erase-->Registry::RemoveElements, the Reg knows to remove 
-		// erased elements which have have IDs in this situation
-		
-		#if (ID_DEBUGGING_LEVEL >=2)
-			cout << "\toldWrapper transplanted to newWrapper" << endl;
-		#endif
-				
-		return idMapping[newWrapper];
+		// If originalWrapper is an exception to current mode, then so is newWrapper
+		if (originalIsException)
+			modeExceptions.push_back(idMapping[wrapper]);
 	}
 	else
 	{
-		// This is a regular copy assignment (not a transplant), so newWrapper should retain its current id
-		// (unless it was a transplant source)
-		
-		// New id
-		if (idMapping[newWrapper] == INVALID_ID)
+		// Non-transplant mode
+		if (IsOrphan(wrapper))
+		{
+			RemoveFromOrphanList(wrapper);
+			GetIdForConstruction(wrapper);
+
+			#if (ID_DEBUGGING_LEVEL >=2)
+				cout << "\twrapper was an orphan but was allocated a new ID" << idMapping[wrapper] << endl;
+			#endif
+		}
+		else
 		{
 			#if (ID_DEBUGGING_LEVEL >=2)
-				cout << "\tnewWrapper got a new id (weird copy assignment)" << endl;
+				cout << "\tRegular copy assignment - ID" << idMapping[wrapper] << "retained its id" << endl;
 			#endif
-
-			if (transplantSources.count(originalWrapper) == 0)
-				RemoveWrapperFromTransplantSources(newWrapper);
-
-			return GetIdForConstruction(newWrapper);
 		}
-		
-		#if (ID_DEBUGGING_LEVEL >=2)
-			cout << "\tnewWrapper retained its id (regular copy assignment)" << endl;
-		#endif
-
-
-		return idMapping[newWrapper];
 	}
+
+
+	// If originalWrapper is an exception to current mode, then so is newWrapper
+	if (originalIsException)
+		modeExceptions.push_back(idMapping[wrapper]);
+
+	return idMapping[wrapper];
 }
 
-void IdManager::ReportDestruction(const Wrapper* wrapperAddress)
-{
-	if (!idMapping.count(wrapperAddress))
-		UL_ASSERT(false);
 
-	ID id = idMapping[wrapperAddress];
+void IdManager::ReportDestruction(const Wrapper* wrapper)
+{
+	UL_ASSERT(idMapping.count(wrapper));
 
 	#if (ID_DEBUGGING_LEVEL >= 1)
-		cout << "Performing destruction of wrapper with id = " << id << endl;
+		cout << "Performing destruction of wrapper with id = " << idMapping[wrapper] << endl;
 	#endif
 
 
 	// Remove wrapper from id mapping
-	idMapping.erase(idMapping.find(wrapperAddress));
+	ID id = idMapping[wrapper];
+	idMapping.erase(idMapping.find(wrapper));
 		
-
-	if (transplantSources.count(wrapperAddress) > 0)
+	if (orphanedWrappers.count(wrapper) > 0)
 	{
-		// Wrapper has been transplanted in the past so don't report its destruction to the Registry
-		transplantSources.erase(transplantSources.find(wrapperAddress));
+		// Orphans die quietly - don't report destruction to the Registry
+		RemoveFromOrphanList(wrapper);	
 	}
 	else
 	{
-		// Wrapper was not the source of a transplant, so deregister it with the Registry
+		// Wrapper is not an orphan, so deregister it with the Registry
 		if (drawingEnabled && SettingsManager::GetInstance()->DestructionReportingEnabled())
 			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(id);
 	}
 }
 
 
-void IdManager::EnableTransplantMode(
-		std::vector<const Wrapper*>& transplantModeExceptionsBySource,
-		std::vector<const Wrapper*>& transplantModeExceptionsByDest)
+//////////// Modes
+void IdManager::EnableTransplantMode(bool enabled, ID modeException)
 {
-	modeExceptionsBySource = transplantModeExceptionsBySource;
-	modeExceptionsByDestination = transplantModeExceptionsByDest;
-	transplantModeEnabled = true;
+	modeExceptions.clear();
+	modeExceptions.push_back(modeException);
+	transplantModeEnabled = enabled;
 }
 
-void IdManager::EnableTransplantMode(std::vector<const ID> modeExceptionsBySourceId)
+void IdManager::EnableTransplantMode(bool enabled, vector<const ID> modeExceptions)
 {
-	this->modeExceptionsBySourceId = modeExceptionsBySourceId;
-	modeExceptionsBySource.clear();
-	modeExceptionsByDestination.clear();
-	transplantModeEnabled = true;
+	this->modeExceptions = modeExceptions;
+	transplantModeEnabled = enabled;
 }
 
-void IdManager::DisableTransplantMode(
-				std::vector<const Wrapper*>& nonTransplantModeExceptionsBySource,
-				std::vector<const Wrapper*>& nonTransplantModeExceptionsByDest)
+void IdManager::PurgeModeExceptions()
 {
-	modeExceptionsBySourceId.clear();
-	modeExceptionsBySource = nonTransplantModeExceptionsBySource;
-	modeExceptionsByDestination = nonTransplantModeExceptionsByDest;
-	transplantModeEnabled = false;
+	modeExceptions.clear();
 }
 
-
-void IdManager::DisableTransplantMode(std::vector<const ID> modeExceptionsBySourceId)
+bool IdManager::IsWrapperAnException(const Wrapper* wrapper)
 {
-	this->modeExceptionsBySourceId = modeExceptionsBySourceId;
-	modeExceptionsBySource.clear();
-	modeExceptionsByDestination.clear();
-	transplantModeEnabled = false;
-}
-
-void IdManager::EnableTransplantMode(const Wrapper* transplantModeException)
-{
-	modeExceptionsBySourceId.clear();
-	modeExceptionsBySource.clear();
-	modeExceptionsBySource.push_back(transplantModeException);
-	modeExceptionsByDestination.clear();
-	transplantModeEnabled = true;
-}
-
-void IdManager::DisableTransplantMode(const Wrapper* nonTransplantModeException)
-{
-	modeExceptionsBySourceId.clear();
-	modeExceptionsBySource.clear();
-	modeExceptionsBySource.push_back(nonTransplantModeException);
-	modeExceptionsByDestination.clear();
-	transplantModeEnabled = false;
-}
-
-
-
-
-bool IdManager::IsWrapperAnExceptionBySource(const Wrapper* wrapper)
-{
-	bool exceptionByAddress = find(modeExceptionsBySource.begin(), modeExceptionsBySource.end(), wrapper) != modeExceptionsBySource.end();
-	
 	if (idMapping.count(wrapper) == 0)
-		return exceptionByAddress;
+		return false;
 
-	bool exceptionById = find(modeExceptionsBySourceId.begin(), modeExceptionsBySourceId.end(), idMapping[wrapper]) != modeExceptionsBySourceId.end();
-
-
-	return exceptionByAddress || exceptionById;
-}
-
-bool IdManager::IsWrapperAnExceptionByDest(const Wrapper* wrapper)
-{
-	return find(modeExceptionsByDestination.begin(), modeExceptionsByDestination.end(), wrapper) != modeExceptionsByDestination.end();
+	return (modeExceptions.end() != find(modeExceptions.begin(), modeExceptions.end(), idMapping[wrapper]));
 }
 
 
-void IdManager::RemoveWrapperFromTransplantSources(const Wrapper* wrapper)
+
+void IdManager::TransplantWrapper(const Wrapper* newWrapper, const Wrapper* originalWrapper)
 {
-	if (transplantSources.count(wrapper))
-		transplantSources.erase(transplantSources.find(wrapper));
+	// Make sure that originalWrapper hasn't already been transplanted
+	UL_ASSERT(orphanedWrappers.count(originalWrapper) == 0);
+	UL_ASSERT(idMapping[originalWrapper] != ORPHAN_ID);
+
+	#if (ID_DEBUGGING_LEVEL >=2)
+		cout << "\tNew wrapper being transplanted from original ID" << idMapping[originalWrapper] << endl;
+	#endif
+
+	RemoveFromOrphanList(newWrapper);
+	idMapping[newWrapper] = idMapping[originalWrapper];
+	orphanedWrappers.insert(originalWrapper);
+	idMapping[originalWrapper] = ORPHAN_ID;
+}
+
+
+bool IdManager::IsOrphan(const Wrapper* wrapper)
+{
+	return orphanedWrappers.count(wrapper) > 0;
+}
+
+void IdManager::RemoveFromOrphanList(const Wrapper* wrapper)
+{
+	if (IsOrphan(wrapper))
+		orphanedWrappers.erase(orphanedWrappers.find(wrapper));
 
 }
 

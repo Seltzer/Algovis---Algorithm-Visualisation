@@ -33,25 +33,13 @@ VO_Array::~VO_Array()
 
 void VO_Array::AddElement(ViewableObject* element, unsigned position)
 {
-	prt("VO_Array::AddElement");
 	UL_ASSERT(elements.size() >= position);
 
 	ViewableObjectContainer::AddChild(element);
-
 	element->SetSizeControlledByParentArray(true);
-
-	cout << "size of elements = " << elements.size();
-	if (position < elements.size())
-	{
-		// Get iterator to element at position
-		vector<ViewableObject*>::iterator it = elements.begin() + position;
-		elements.insert(it,element);
-		cout << "size of elements = " << elements.size();
-	}
-	else 
-		elements.push_back(element);
-
 	element->setVisible(true);
+
+	elements.insert(elements.begin() + position,element);
 	adjustSize();
 }
 

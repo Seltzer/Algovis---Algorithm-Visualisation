@@ -1,8 +1,9 @@
 Currently in progress:
 
 * Analyse dependencies between actions
-* Finish VectorWrapper and write a mergesort demo (dependent on VectorWrapper::erase being implemented)
+* Write mergesort demo
 * Write wrappers for STL stacks + maps, and unsigned types
+* Write a Viewable for matrices
 * Remove SINGLE_PRINTABLE hackery
 * Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
 
@@ -12,21 +13,19 @@ Currently in progress:
 
 * Improve DS_Assigned and DS_HighlightOperands
 * Add a proper position allocation algorithm to the Container class.
-
+* Allow user to pause/resume/undo (dependent on ActionBuffer + history)
+  
   
 ***** HIGH PRIORITY *****
-
 * Add mouse over expand feature
 	- We can display 'thumbnail' views of large VOs by default and display the large versions 
 		when moused over
 	- Names/addresses of Viewables should only be shown when moused over
 		(this will speed up painting too)
-* Allow user to pause/resume/undo (dependent on ActionBuffer + history)
 * Speed up and control painting  
 
 
 ***** MEDIUM PRIORITY *****
-* Write a Viewable for matrices
 * Write VO_LinkedList and some sort of VO for a map type data structure
 * Do some quick research into a popular C++ graph library
 * Provide more user functions in userFunctions.h:
@@ -39,7 +38,7 @@ Currently in progress:
 		arrays of arrays.
 	 - Show action descriptions down the bottom?
 	 - Improve window resizing and implement snap to current action feature
-	 - suppress all from now on, desuppress
+	 - suppress all from now on feature
 * Implement stats for arrays
 
 

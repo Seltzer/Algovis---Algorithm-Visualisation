@@ -90,7 +90,7 @@ void Registry::AddActionToBuffer(DS_Action* dsAction)
 
 
 void Registry::RegisterArray
-		(unsigned id, const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<ID>& elements)
+		(ID id, const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<ID>& elements)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 2)
@@ -105,7 +105,7 @@ void Registry::RegisterArray
 }
 
 
-void Registry::RegisterSinglePrintable(unsigned id, const void* dsSinglePrintableAddress, const std::string& value)
+void Registry::RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddress, const std::string& value)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 3)

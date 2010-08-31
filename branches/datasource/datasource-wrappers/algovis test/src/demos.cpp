@@ -117,13 +117,21 @@ void MergeSortDemo()
 
 	// Populate
 	vector<int> c1, c2;
-	PopulateVectorWithRandomInts(c1, 5, 0, 9);
-	PopulateVectorWithRandomInts(c2, 5, 0, 9);
+	c1.push_back(1);
+	c1.push_back(2);
+	c1.push_back(3);
+	c1.push_back(4);
+	c2.push_back(1);
+	c2.push_back(1);
+	c2.push_back(3);
+	c2.push_back(4);
+
 
 
 	prt("HAIHAIHAIHAIHAI");
+	getchar();
 
-	merge(c1,c2);
+	vector<int> result = merge(c1,c2);
 
 
 	prt("Press any key to leave MergeSortDemo");
@@ -206,34 +214,27 @@ void DoRandomStuffWithAVectorDemo()
 {
 	EnableDrawing(true);
 	{
-		// Populate
 		vector<int> c1;
-	
-		c1.reserve(200);
 		
 		
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
+		c1.erase(c1.begin());
+		c1.insert(c1.begin(), 10, 13);
 
-		getchar();
-
-		c1.erase(c1.begin(), c1.begin() + 2);
-		c1.erase(c1.begin(), c1.begin() + 1);
-		c1.erase(c1.begin(), c1.begin() + 1);
-
-		getchar();
-
+		c1.erase(c1.begin() + 5, c1.begin() + 8);
+		
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
 
-		getchar();
+		c1.resize(3);
 
-		c1.erase(c1.end()-1);
-		c1.erase(c1.end()-1);
+		c1.insert(c1.begin(), 10, 14);
+		c1[0] = c1[1] + c1[2];		
 
-		getchar();
-
+		c1.erase(c1.begin()+2, c1.end());
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
 
-		c1[0] = c1[1] + c1[2];
+		c1.erase(c1.begin(), c1.end());
+
 
 		prt("Press any key to delete all viewables");
 		getchar();
@@ -252,20 +253,19 @@ void TestDemo()
 
 	// Populate
 	vector<int> c1;
-	c1.reserve(200);
+	//c1.reserve(200);
 	
 	
 	PopulateVectorWithRandomInts(c1, 5, 0, 9);
 	getchar();
 
+	c1.insert(c1.begin(), 10, 13);
 
-	c1.insert(c1.begin(), 2, 13);
 
-	//int a = 8;
-	//c1.resize(a,2);
-	//c1.resize(8,2);
-	//c1.resize(5);
-	//c1.resize(4);
+	prt("press a key");
+	getchar();
+
+	vector<int> c2 = c1;
 
 
 

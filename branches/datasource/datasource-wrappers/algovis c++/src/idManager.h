@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 
+
 /* For debugging events which aren't covered by the others below
  * 
  * 0 = Off
@@ -13,113 +14,91 @@
  */
 #define ID_DEBUGGING_LEVEL 0
 
+#define ORPHAN_ID -100
+
 
 namespace Algovis
 {
 	class Wrapper;
 
+	typedef int ID;
 
-	typedef unsigned ID;
 
 	
-	#define INVALID_ID 100000
-
-
-	// This class also manages settings for reporting (e.g. don't report copy constructions to view)
+	/* IdManager class
+	 *
+	 * This is used to allocate IDs to wrappers which come into existence in various ways. 
+	 * Constructors/copy constructors/copy assignment operators/destructors all behave in differing ways
+	 * depending on whether transplant mode is enabled or not, and whether the source/destination has
+	 * previously been transplanted
+	 *
+	 * Note: Orphaned wrapper = one which has been transplanted in the past, but not yet deleted
+	 *
+	 * If an orphaned wrapper is assigned a new value, it will be given a new id, as if it were copy-constructed
+	 * afresh
+	 */
 	class IdManager
 	{
-
+		
 	public:
 		static IdManager* GetInstance();
 		static void DestroyInstance();
-		IdManager();
+		
 
 		ID GetId(const Wrapper* wrapper);
 
-		ID GetIdForConstruction(const Wrapper* wrapperAddress);
+		// Assigns the wrapper with a new ID
+		ID GetIdForConstruction(const Wrapper*);
 		
-		// Assigns newWrapper with a new ID unless transplantMode is enabled
+		// Assigns newWrapper with a new ID unless transplant conditions are met
+		// in which case newWrapper is given the same ID as originalWrapper (which becomes an orphan)
 		ID GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper* originalWrapper);
 
-		// Assigns newWrapper with a new ID unless transplantMode is enabled
-		ID GetIdForCopyAssignment(const Wrapper* newWrapper, const Wrapper* originalWrapper);
-
-
-		/* COMMENT IS OBSOLETE
-		 * 
-		 * Enables transplant mode where copy constructed wrappers are allocated the same
-		 * ID as their original wrapper (essentially transplanting wrappers to different memory locations).
-		 * This rule applies unless the original wrapper is one of the specified exceptions
-		 * or was copy constructed from one of the exceptions.
-		 *
-		 * Note that since the View doesn't need to know about the transplant, when the originalWrapper
-		 * is destructed, it will be done so quietly, without calling Registry::Deregister
-		 *
-		 * Currently used for vector resizing so that the IDs of the pre-resize elements propagate to 
-		 * their copy-constructed versions. In the case of vector::push_back, the exception to this
-		 * rule would be the element being pushed back as we don't want it to be allocated the same ID 
-		 * as its temp stack-allocated original.
+		/* There are 3 cases:
+		 *		1.) wrapper keeps its current ID (this is a regular copy-assignment)
+		 *		2.) wrapper is given the same ID as originalWrapper (originalWrapper is transplanted)
+		 *					This happens if transplant conditions are met.
+		 *		3.) wrapper is an orphan, and will be allocated a new id as if it were copy-constructed
+		 *					under non-transplant conditions.
 		 */
-		void EnableTransplantMode(
-				std::vector<const Wrapper*>& transplantModeExceptionsBySource = std::vector<const Wrapper*>(),
-				std::vector<const Wrapper*>& transplantModeExceptionsByDest = std::vector<const Wrapper*>()
-				);
-
-		void EnableTransplantMode(std::vector<const ID> modeExceptionsBySourceId);
-
-
-
-		void DisableTransplantMode(
-				std::vector<const Wrapper*>& nonTransplantModeExceptionsBySource = std::vector<const Wrapper*>(),
-				std::vector<const Wrapper*>& nonTransplantModeExceptionsByDest = std::vector<const Wrapper*>());
-
-		void DisableTransplantMode(std::vector<const ID> modeExceptionsBySourceId);
-
-		// Convenience overloads for modes with one exception (where wrapper is a source)
-		void EnableTransplantMode(const Wrapper* transplantModeException);
-		void DisableTransplantMode(const Wrapper* nonTransplantModeException);
-
-
-		// obsolete
-		// Normal mode where no copy-construction is treated as a transplant unless it's in the inclusions
-		// Post-Condition: transplantExceptions is cleared
-		void EnableExclusiveTransplantMode(std::vector<const Wrapper*>& inclusions);
+		ID GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* originalWrapper);
 	
-		
-		// Post-Condition: If the wrapper wasn't a source of a transplant, it will be deregistered with the 
-		// Registry
+		// Note: If the wrapper isn't an orphan, if displayEnabled,  it will be deregistered with the Registry
 		void ReportDestruction(const Wrapper* wrapperAddress);
+		
 
 
-		void EnableDestructionReporting(bool enabled);
-		bool DestructionReportingEnabled();
+
+		void EnableTransplantMode(bool enabled, ID modeException);
+
+		void EnableTransplantMode(
+					bool enabled, 
+					std::vector<const ID> modeExceptions = std::vector<const ID>());
+
+		void PurgeModeExceptions();	
 
 
 	private:
 		static IdManager* idMgrInstance;
+		IdManager();
 		
-		unsigned currentId;
+		ID nextIdToAllocate;
 		std::map<const Wrapper*,ID> idMapping;
 
 
 		bool transplantModeEnabled;
 
 		// Exceptions to the current mode
-		std::vector<const Wrapper*> modeExceptionsBySource, modeExceptionsByDestination;
-		std::vector<const ID> modeExceptionsBySourceId;
-
-
-		bool IsWrapperAnExceptionBySource(const Wrapper*);
-		bool IsWrapperAnExceptionByDest(const Wrapper*);
+		std::vector<const ID> modeExceptions;
+		bool IsWrapperAnException(const Wrapper*);
 		
 
-		// To keep track of wrappers which have been the source of a transplant, until they are deleted.
-		std::set<const Wrapper*> transplantSources;
-		void RemoveWrapperFromTransplantSources(const Wrapper*);
+		void TransplantWrapper(const Wrapper* newWrapper, const Wrapper* originalWrapper);
 
-
-		// Specific settings
-		bool destructionReportingEnabled;
+		// To keep track of orphaned wrappers until they are deleted
+		std::set<const Wrapper*> orphanedWrappers;
+		void RemoveFromOrphanList(const Wrapper*);
+		bool IsOrphan(const Wrapper*);
 
 	};
 

@@ -67,8 +67,6 @@ vector<T> merge(vector<T>& v1, vector<T>& v2)
 	if (v2.empty())
 		return vector<T>(v1);
 
-		
-
 	if (v1.empty())
 		return vector<T>(v2);
 
@@ -79,23 +77,22 @@ vector<T> merge(vector<T>& v1, vector<T>& v2)
 
 	if (v1[0] < v2[0])
 	{
-		returnVec.push_back(v1[0]);
-
+		T elt = v1[0];
 		v1.erase(v1.begin());
-		vector<T> recursiveMerge = merge(v1,v2);
-		recursiveMerge.insert(recursiveMerge.begin(), returnVec[0]);
-		return recursiveMerge;
+
+		vector<T> returnVec = merge(v1,v2);
+		returnVec.insert(returnVec.begin(), elt);
+		return returnVec;
 	}
 	
 	if (v1[0] > v2[0])
 	{
-		returnVec.push_back(v2[0]);
-
+		T elt = v2[0];
 		v2.erase(v2.begin());
-		vector<T> recursiveMerge = merge(v1,v2);
-		recursiveMerge.insert(recursiveMerge.begin(), returnVec[0]);
-			
-		return recursiveMerge;
+
+		vector<T> returnVec = merge(v1,v2);
+		returnVec.insert(returnVec.begin(), elt);
+		return returnVec;
 	}
 
 }

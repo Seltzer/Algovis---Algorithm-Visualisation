@@ -1,9 +1,8 @@
-////
-
 #include "utilities.h"
 #include "conversions.h"
 #undef double
 #undef char
+
 #include <cxxtest/TestSuite.h>
 
 #include "charWrapperTests.h"
@@ -11,9 +10,6 @@
 #include "FloatWrapperTests.h"
 #include "doubleWrapperTests.h"
 #include "VectorWrapperTests.h"
-
-// Don't want id debugging info
-#define ID_DEBUGGING_LEVEL 0
 
 
 

@@ -8,16 +8,16 @@
 
 #include "demos.h"
 
-using namespace std;
 
 
 REAL_INT wmain()
 {
 	//MultipleVectorWithoutExtraCrap();
-	MultipleVectorDemoWithDelete();
+	//MultipleVectorDemoWithDelete();
 	//MergeSortDemo();
-	//TestDemo();
-	//DoRandomStuffWithAVectorDemo();
+	DoRandomStuffWithAVectorDemo();
+//	TestDemo();
+	
 	//Shutdown();
 
 	return 0;

@@ -70,13 +70,10 @@ std::vector<ViewableObject*> ConvertIdsToViewablePtrs(const std::vector<ID>& ids
 std::vector<ViewableObject*> ConvertIdsToViewablePtrs(
 									const std::vector<ID>& ids, ViewableObjectType expectedType)
 {
-	prt("\tInside ConvertIdsToViewablePtrs");
-
 	std::vector<ViewableObject*> viewablePtrs;
 
 	BOOST_FOREACH(ID id, ids)
 	{
-		printf("\t id = %d", id);
 		UL_ASSERT(Registry::GetInstance()->IsRegistered(id, expectedType));
 
 		ViewableObject* voPtr = Registry::GetInstance()->GetRepresentation(id);

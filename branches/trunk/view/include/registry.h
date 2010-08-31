@@ -59,7 +59,8 @@ namespace Algovis_Viewer
 		 *		attempt at porting the existing code which represented arrays as a void* plus 
 		 *		a vector<string>. This is enforced as a runtime constraint in the VO_Array ctor
 		 */
-		void RegisterArray(ID id, const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<ID>& elements);
+		void RegisterArray(ID id, const void* dsArrayAddress, ViewableObjectType elementType, 
+									const std::vector<ID>& elements = std::vector<ID>());
 
 		// TODO: This shouldn't take a value, it should just note the existance of the variable. PrintableAssigned can initialise the value.
 		void RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddress, const std::string& value);
@@ -83,8 +84,8 @@ namespace Algovis_Viewer
 		 */
 		void AddElementToArray(ID dsArray, ID dsElement, unsigned position);
 	
+		// Currently just calls the above action elements.size() times
 		void AddElementsToArray(ID dsArray, const std::vector<ID>& elements, unsigned startIndex);
-
 
 		// Note: this isn't tested as it isn't needed for a std::vector
 		// When a std::vector has elements removed, they are destructed and therefore, removed

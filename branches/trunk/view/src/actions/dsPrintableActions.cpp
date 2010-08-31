@@ -37,7 +37,7 @@ void DS_CreateSP::Complete(bool displayed)
 {
 	Registry* registry = Registry::GetInstance();
 
-	// Verify that array hasn't already been registered
+	// Verify that SP hasn't already been registered
 	UL_ASSERT(!registry->IsRegistered(id));
 
 	VO_SinglePrintable* newSP = new VO_SinglePrintable(id,dsAddress, world, value);

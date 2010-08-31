@@ -45,4 +45,10 @@ public:
  void runTest() { suite_AlgoVisTestSuite.testCharWrapper(); }
 } testDescription_AlgoVisTestSuite_testCharWrapper;
 
+static class TestDescription_AlgoVisTestSuite_testVectorWrapper : public CxxTest::RealTestDescription {
+public:
+ TestDescription_AlgoVisTestSuite_testVectorWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 65, "testVectorWrapper" ) {}
+ void runTest() { suite_AlgoVisTestSuite.testVectorWrapper(); }
+} testDescription_AlgoVisTestSuite_testVectorWrapper;
+
 #include <cxxtest/Root.cpp>
