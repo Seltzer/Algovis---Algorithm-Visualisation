@@ -2,6 +2,7 @@
 
 #include "utilities.h"
 #include "registry.h"
+#include "idManager.h"
 
 
 bool drawingEnabled = false;
@@ -14,6 +15,7 @@ void EnableDrawing(bool enabled)
 void Shutdown()
 {
 	Algovis_Viewer::Registry::DestroyInstance();
+	Algovis::IdManager::DestroyInstance();
 }
 
 void TestMethod()

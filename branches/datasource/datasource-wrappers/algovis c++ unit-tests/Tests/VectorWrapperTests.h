@@ -46,6 +46,12 @@ void testVectorBasics()
 
 }
 
+
+void testVectorBasics2()
+{
+	TS_ASSERT(true);
+}
+
 void testAdvancedVector()
 {
 	// Populate

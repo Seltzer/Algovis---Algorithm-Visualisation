@@ -33,14 +33,21 @@ VO_Array::~VO_Array()
 
 void VO_Array::AddElement(ViewableObject* element, unsigned position)
 {
+	prt("VO_Array::AddElement");
 	UL_ASSERT(elements.size() >= position);
 
 	ViewableObjectContainer::AddChild(element);
 
 	element->SetSizeControlledByParentArray(true);
 
+	cout << "size of elements = " << elements.size();
 	if (position < elements.size())
-		elements[position] = element;
+	{
+		// Get iterator to element at position
+		vector<ViewableObject*>::iterator it = elements.begin() + position;
+		elements.insert(it,element);
+		cout << "size of elements = " << elements.size();
+	}
 	else 
 		elements.push_back(element);
 
@@ -52,6 +59,34 @@ void VO_Array::PushElementToBack(ViewableObject* element)
 {
 	AddElement(element, elements.size());
 }
+
+void VO_Array::RemoveElements(std::vector<ViewableObject*> elementsToRemove, unsigned startIndex, unsigned endIndex)
+{
+	UL_ASSERT(elementsToRemove.size() == endIndex - startIndex + 1);
+	UL_ASSERT(endIndex >= startIndex);
+
+	vector<ViewableObject*>::iterator start = elements.begin() + startIndex;
+	vector<ViewableObject*>::iterator end = elements.begin() + endIndex;
+
+	UL_ASSERT(end < elements.end());
+	UL_ASSERT(*start == elementsToRemove[0]);
+	UL_ASSERT(*end == elementsToRemove[elementsToRemove.size() - 1]);
+		
+	// end+1 since erase(first,last) is inclusive of first but exclusive of last
+	elements.erase(start,end + 1);
+
+	BOOST_FOREACH(ViewableObject* viewable, elementsToRemove)
+	{
+		Registry::GetInstance()->Deregister(viewable->GetId());
+		viewable->deleteLater();
+	}
+	
+
+	adjustSize();
+}
+
+
+
 
 void VO_Array::ClearArray()
 {

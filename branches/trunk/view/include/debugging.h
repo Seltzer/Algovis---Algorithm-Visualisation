@@ -11,7 +11,7 @@ namespace Algovis_Viewer
 	 * 1 = Basic general debugging
 	 * 2 = Same as 1, plus Registry/Displayer construction/destruction and DllMain invocations
 	 */
-	#define DEBUG_GENERAL_LEVEL 1
+	#define DEBUG_GENERAL_LEVEL 0
 
 
 	/* 0 = Off

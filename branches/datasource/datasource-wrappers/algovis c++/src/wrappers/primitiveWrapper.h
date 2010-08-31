@@ -39,9 +39,12 @@ namespace Algovis
 			//std::cout << "PrimitiveWrapper C1 called - registering " << this << " with value " << primitive << std::endl;
 			ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
-			if (drawingEnabled)
+			if (drawingEnabled && SettingsManager::GetInstance()->ConstructionReportingEnabled())
+			{
 				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(id, this, GetStringRepresentation());
-			// Do not record any assignment. This way, we can detect uninitialised values later on!
+				
+				// Do not record any assignment. This way, we can detect uninitialised values later on!
+			}
 		}
 
 		PrimitiveWrapper(PrimitiveType initValue)
@@ -49,28 +52,32 @@ namespace Algovis
 		{
 			//std::cout << "PrimitiveWrapper C2 called - registering " << this << " with value " << primitive << std::endl;
 			ID id = IdManager::GetInstance()->GetIdForConstruction(this);
-			ID sourceId = INVALID;
 
-			if (drawingEnabled)
+			if (drawingEnabled && SettingsManager::GetInstance()->ConstructionReportingEnabled())
+			{
+				ID sourceId = INVALID;
+
 				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(id, this, GetStringRepresentation());
-		
-			// Record the assignment from untracked value
-			// Ignore the fact that this takes the address of a stack value. All that matters is that there is
-			// no wrapper at that address right now. Though it may be more helpful to take value by reference?
-			if (drawingEnabled)
+
+				// Record the assignment from untracked value
+				// Ignore the fact that this takes the address of a stack value. All that matters is that there is
+				// no wrapper at that address right now. Though it may be more helpful to take value by reference?
 				Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id, INVALID, GetStringRepresentation());
+			}
 		}
 
 		PrimitiveWrapper(const PrimitiveWrapper& other)
 			: primitive(other.primitive) 
 		{
-			ID id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
-			ID otherId = IdManager::GetInstance()->GetId(&other);
-
 			//std::cout << "PrimitiveType CC called id = " << id << ", otherId = " << otherId << std::endl;
-			if (drawingEnabled)
+			ID id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
+			
+
+			if (drawingEnabled && SettingsManager::GetInstance()->CopyConstructionReportingEnabled())
 			{
-				if (id == otherId)
+				ID otherId = IdManager::GetInstance()->GetId(&other);
+
+				if (otherId == INVALID_ID)
 				{
 					// This wrapper is being copy constructed as the result of a transplant
 					// Tell the view that the memory address associated with id is changing
@@ -88,14 +95,52 @@ namespace Algovis
 
 		PrimitiveWrapper& operator=(const PrimitiveWrapper& other)
 		{
-			//std::cout << "PrimitiveType CAO called" << std::endl;
+			//std::cout << "PrimitiveType CAO called " << std::endl;
 			if (this != &other)
 			{
 				primitive = other.primitive;
-				ID otherId = IdManager::GetInstance()->GetId(&other);
 
-				if (drawingEnabled)
-					Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(Id(), otherId, GetStringRepresentation());
+
+				ID oldId = Id();
+				ID id = IdManager::GetInstance()->GetIdForCopyAssignment(this, &other);
+				ID otherId = IdManager::GetInstance()->GetId(&other);
+				
+				if (id == otherId)
+				{
+					// transplant
+				}
+				else
+				{
+					if (id == oldId)
+					{
+						// This was a regular copy assignment, not a transplant... so alert Registry
+						if (drawingEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
+						{
+							Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id,otherId, 
+																				GetStringRepresentation());
+						}
+					}
+					else
+					{
+						// i was a transplant source
+						// governing body will register me
+					}
+
+
+				}
+
+				// what if both were invalid???
+
+				/*
+				if (id != otherId)
+				{
+					// This was a regular copy assignment, not a transplant... so alert Registry
+					if (drawingEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
+					{
+						Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id,otherId, 
+																				GetStringRepresentation());
+					}
+				}*/
 			}
 
 			return *this;

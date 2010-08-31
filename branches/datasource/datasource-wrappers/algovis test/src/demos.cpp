@@ -202,19 +202,73 @@ void MultipleVectorWithoutExtraCrap()
 	getchar();
 }
 
-
-void TestDemo()
+void DoRandomStuffWithAVectorDemo()
 {
 	EnableDrawing(true);
 	{
 		// Populate
-		vector<int> c1, c2, c3, c4, c5, c6;
+		vector<int> c1;
 	
 		c1.reserve(200);
-		PopulateVectorWithRandomInts(c1, 50, 0, 9);
+		
+		
+		PopulateVectorWithRandomInts(c1, 5, 0, 9);
+
+		getchar();
+
+		c1.erase(c1.begin(), c1.begin() + 2);
+		c1.erase(c1.begin(), c1.begin() + 1);
+		c1.erase(c1.begin(), c1.begin() + 1);
+
+		getchar();
+
+		PopulateVectorWithRandomInts(c1, 5, 0, 9);
+
+		getchar();
+
+		c1.erase(c1.end()-1);
+		c1.erase(c1.end()-1);
+
+		getchar();
+
+		PopulateVectorWithRandomInts(c1, 5, 0, 9);
+
+		c1[0] = c1[1] + c1[2];
+
 		prt("Press any key to delete all viewables");
 		getchar();
 	}
+
+	prt("Press any key to leave DoRandomStuffWithAVectorDemo");
+	getchar();
+
+
+}
+
+
+void TestDemo()
+{
+	EnableDrawing(true);
+
+	// Populate
+	vector<int> c1;
+	c1.reserve(200);
+	
+	
+	PopulateVectorWithRandomInts(c1, 5, 0, 9);
+	getchar();
+
+
+	c1.insert(c1.begin(), 2, 13);
+
+	//int a = 8;
+	//c1.resize(a,2);
+	//c1.resize(8,2);
+	//c1.resize(5);
+	//c1.resize(4);
+
+
+
 
 	prt("Press any key to leave TestDemo");
 	getchar();

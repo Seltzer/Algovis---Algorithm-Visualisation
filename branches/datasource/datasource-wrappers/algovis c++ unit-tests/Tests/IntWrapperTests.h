@@ -9,6 +9,7 @@ void testIntWrapper(int* intValue)
 
 	// ... Comparing an IntWrapper with an integer constant
 	TS_ASSERT_LESS_THAN(2, a);
+
 	TS_ASSERT(a > 2);
 	TS_ASSERT_DIFFERS(a,2);
 	TS_ASSERT_DIFFERS(2,a);

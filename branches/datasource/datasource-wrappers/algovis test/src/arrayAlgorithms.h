@@ -86,14 +86,18 @@ vector<T> merge(vector<T>& v1, vector<T>& v2)
 		recursiveMerge.insert(recursiveMerge.begin(), returnVec[0]);
 		return recursiveMerge;
 	}
+	
+	if (v1[0] > v2[0])
+	{
+		returnVec.push_back(v2[0]);
 
-	returnVec.push_back(v2[0]);
+		v2.erase(v2.begin());
+		vector<T> recursiveMerge = merge(v1,v2);
+		recursiveMerge.insert(recursiveMerge.begin(), returnVec[0]);
+			
+		return recursiveMerge;
+	}
 
-	v2.erase(v2.begin());
-	vector<T> recursiveMerge = merge(v1,v2);
-	recursiveMerge.insert(recursiveMerge.begin(), returnVec[0]);
-
-	return recursiveMerge;
 }
 
 

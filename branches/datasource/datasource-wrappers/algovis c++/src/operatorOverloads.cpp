@@ -90,13 +90,16 @@ namespace Algovis
 // TODO temporary
 bool operator >(const IntWrapper& op1, const IntWrapper& op2)
 {
-	ID id1 = IdManager::GetInstance()->GetId(&op1);
-	ID id2 = IdManager::GetInstance()->GetId(&op2);
-	std::vector<ID> ops;
-	ops.push_back(id1);
-	ops.push_back(id2);
-
-	Algovis_Viewer::Registry::GetInstance()->HighlightOperands(ops);
+	if (drawingEnabled)
+	{
+		ID id1 = IdManager::GetInstance()->GetId(&op1);
+		ID id2 = IdManager::GetInstance()->GetId(&op2);
+		std::vector<ID> ops;
+		ops.push_back(id1);
+		ops.push_back(id2);
+	
+		Algovis_Viewer::Registry::GetInstance()->HighlightOperands(ops);
+	}
 	return (op1.AVGetValue() > op2.AVGetValue());
 }
 

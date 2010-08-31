@@ -12,6 +12,10 @@
 #include "doubleWrapperTests.h"
 #include "VectorWrapperTests.h"
 
+// Don't want id debugging info
+#define ID_DEBUGGING_LEVEL 0
+
+
 
 
 class AlgoVisTestSuite : public CxxTest::TestSuite 
@@ -60,6 +64,13 @@ class AlgoVisTestSuite : public CxxTest::TestSuite
 		void testCharWrapper()
 		{
 			::testCharWrapper(charValue);
+		}
+
+		void testVectorWrapper()
+		{
+			::testVectorBasics();
+			//::testVectorBasics2();
+			::testAdvancedVector();
 		}
 
 };

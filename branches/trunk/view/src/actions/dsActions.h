@@ -40,6 +40,16 @@ namespace Algovis_Viewer
 	// Set up source data for animation using current state of world
 	SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject);
 
+	// Lightweight method for converting a list of IDs to VO pointers
+	// 
+	// Will throw an assertion if, for any specified ID, there isn't a Viewable with that ID.
+	std::vector<ViewableObject*> ConvertIdsToViewablePtrs(const std::vector<ID>&);
+
+	// Overload of the above which throws an assertion if any of the Viewables specified by ID aren't 
+	// of the specified type
+	std::vector<ViewableObject*> ConvertIdsToViewablePtrs(const std::vector<ID>&, ViewableObjectType expectedType);
+				
+
 	// Same as above but for entire history
 	std::vector<SourceData> historyToSources(const std::set<ValueID>& history, ViewableObject* subject);
 

@@ -82,8 +82,19 @@ namespace Algovis_Viewer
 		 *		- 0 <= position <= array capacity
 		 */
 		void AddElementToArray(ID dsArray, ID dsElement, unsigned position);
+	
+		void AddElementsToArray(ID dsArray, const std::vector<ID>& elements, unsigned startIndex);
+
+
+		// Note: this isn't tested as it isn't needed for a std::vector
+		// When a std::vector has elements removed, they are destructed and therefore, removed
+		// from the array automatically
+		void RemoveElementsFromArray(ID dsArray, const std::vector<ID>& elements, 
+										unsigned startIndex, unsigned endIndex);
 
 		//void ClearArray(const void* dsArray);
+
+
 
 		// The following functions are all that is needed to trace the history of a primitive
 		// TODO dsSource can be invalid

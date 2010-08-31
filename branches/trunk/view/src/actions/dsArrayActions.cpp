@@ -65,7 +65,7 @@ void DS_CreateArray::Complete(bool displayed)
 	newArray->setParent(world);
 	newArray->setVisible(true);
 
-	// TODO hack
+	// TODO hack TODOTODOTODOTODOTODOTODOTODOTODO
 	world->adjustSize();
 
 	Registry::GetInstance()->Register(arrayId, newArray);
@@ -157,6 +157,53 @@ void DS_AddElementToArray::Complete(bool displayed)
 		element->ResetHistory(ValueID(element->GetId(), time));
 	}
 }
+
+
+
+//////////////// DS_RemoveElementsFromArray
+DS_RemoveElementsFromArray::DS_RemoveElementsFromArray(World* world, const ID arrayId, 
+								const std::vector<ID>& elements, unsigned startIndex, unsigned endIndex)
+						: DS_Action(world), arrayId(arrayId), 
+								elements(elements), startIndex(startIndex), endIndex(endIndex)
+{
+}
+
+DS_RemoveElementsFromArray::DS_RemoveElementsFromArray(const DS_RemoveElementsFromArray& other)
+	: DS_Action(other), arrayId(other.arrayId), elements(other.elements), dsArray(other.dsArray),
+		startIndex(other.startIndex), endIndex(other.endIndex)
+{
+}
+
+Action* DS_RemoveElementsFromArray::Clone() const
+{
+	return new DS_RemoveElementsFromArray(*this);
+}
+
+void DS_RemoveElementsFromArray::PrepareToPerform()
+{
+	UL_ASSERT(endIndex >= startIndex);
+	UL_ASSERT(elements.size() == endIndex - startIndex + 1);
+
+	dsArray = Registry::GetInstance()->GetRepresentation<VO_Array>(arrayId);
+	UL_ASSERT(dsArray);
+
+	// Don't grab pointers until we actually perform the action
+}
+
+
+void DS_RemoveElementsFromArray::Complete(bool displayed)
+{
+	// TODO hack
+	std::vector<ViewableObject*> elementPtrs = ConvertIdsToViewablePtrs(elements,SINGLE_PRINTABLE);
+	
+	
+	dsArray->RemoveElements(elementPtrs, startIndex, endIndex);
+	//if (displayed)
+		// TODO
+}
+
+
+
 
 //////////////// DS_AddressChanged
 DS_AddressChanged::DS_AddressChanged(World* world, const ID id, const void* newAddress, const void* oldAddress)

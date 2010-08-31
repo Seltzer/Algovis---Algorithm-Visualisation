@@ -1,11 +1,15 @@
 Currently in progress:
 
 * Analyse dependencies between actions
-* Write a mergesort demo (dependent on VectorWrapper::erase being implemented)
-* Finish VectorWrapper and write wrappers for STL stacks + maps, and unsigned types
+* Finish VectorWrapper and write a mergesort demo (dependent on VectorWrapper::erase being implemented)
+* Write wrappers for STL stacks + maps, and unsigned types
+* Remove SINGLE_PRINTABLE hackery
+* Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
+
 
 
 ***** CRITICAL *****
+
 * Improve DS_Assigned and DS_HighlightOperands
 * Add a proper position allocation algorithm to the Container class.
 
@@ -28,13 +32,15 @@ Currently in progress:
 * Provide more user functions in userFunctions.h:
 		- VO naming (so that VOs aren't just memory addresses/IDs)
 		- Combining actions
+		- Settings such as 'highlight operands'
 * UI Stuff:
 	 - Some sort of control panel with list of VOs???
 	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
 		arrays of arrays.
 	 - Show action descriptions down the bottom?
 	 - Improve window resizing and implement snap to current action feature
-* Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
+	 - suppress all from now on, desuppress
+* Implement stats for arrays
 
 
 ***** LOW PRIORITY *****
@@ -71,5 +77,6 @@ Currently in progress:
 **** THOUGHTS ****
 * How to deal with "unsigned char"
 * Consider string algorithms
+* Flushing buffer
 
 

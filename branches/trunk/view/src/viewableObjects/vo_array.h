@@ -31,6 +31,8 @@ namespace Algovis_Viewer
 
 		void AddElement(ViewableObject*, unsigned position);
 		void PushElementToBack(ViewableObject*);
+		
+		void RemoveElements(std::vector<ViewableObject*> elementsToRemove, unsigned startIndex, unsigned endIndex);
 		void ClearArray();
 
 		// Not currently implemented by any DS

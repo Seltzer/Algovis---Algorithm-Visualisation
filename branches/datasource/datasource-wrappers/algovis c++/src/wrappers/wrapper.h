@@ -7,6 +7,7 @@
 #include "registry.h"
 #include "userFunctions.h"
 #include "../idManager.h"
+#include "../settingsManager.h"
 
 
 namespace Algovis
@@ -37,7 +38,10 @@ namespace Algovis
 	protected:
 		ID Id()
 		{
-			return IdManager::GetInstance()->GetId(this);
+			if (drawingEnabled)
+				return IdManager::GetInstance()->GetId(this);
+			else
+				return INVALID;
 		}
 	};
 

@@ -39,6 +39,8 @@ namespace Algovis_Viewer
 
 	private:
 		ID dsArray, dsElement;
+		
+		// Insert elements before this position
 		unsigned position;
 
 		VO_Array* voArray;
@@ -48,6 +50,29 @@ namespace Algovis_Viewer
 		QRect subjectDimensions;
 		std::vector<SourceData> sources;
 	};
+
+	class DS_RemoveElementsFromArray : public DS_Action
+	{
+	public:
+		DS_RemoveElementsFromArray(World*, const ID arrayId, const std::vector<ID>& elements, 
+										unsigned startIndex, unsigned endIndex);
+		DS_RemoveElementsFromArray(const DS_RemoveElementsFromArray&);
+		virtual Action* Clone() const;
+
+		virtual void PrepareToPerform();
+		virtual void Complete(bool displayed);
+		
+	private:
+		const ID arrayId;
+		const std::vector<ID> elements;
+		
+		VO_Array* dsArray;
+		
+		const unsigned startIndex, endIndex;
+	};
+
+
+
 
 	class DS_AddressChanged : public DS_Action
 	{

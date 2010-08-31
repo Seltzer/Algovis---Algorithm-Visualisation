@@ -80,6 +80,7 @@ void Registry::AddActionToBuffer(DS_Action* dsAction)
 	
 	UL_ASSERT(dsAction);
 	actionBuffer.PushBack(dsAction);
+	//Displayer::GetInstance()->PerformAndAnimateActionAsync(dsAction);
 
 
 	#if (DEBUG_ACTION_LEVEL >= 2)
@@ -150,8 +151,12 @@ bool Registry::DeregisterObject(ID id)
 
 void Registry::AddElementToArray(ID dsArray, ID dsElement, unsigned position)
 {
+	#ifdef DEBUG_ARRAY_CHANGES
+		cout << "Adding element with ID " << dsElement << " to array with ID " << dsArray << endl;
+	#endif
+
 	boost::unique_lock<boost::mutex> lock(registryMutex);
-	//cout << "Inside Registry::AddElementToArray - adding dsElement @ " << dsElement << endl;
+	cout << "Inside Registry::AddElementToArray - adding dsElement @ " << dsElement << endl;
 
 
 	// Create event
@@ -159,6 +164,35 @@ void Registry::AddElementToArray(ID dsArray, ID dsElement, unsigned position)
 	//addAction->SuppressAnimation(); // This has an animation now
 	
 	AddActionToBuffer(addAction);
+}
+
+
+void Registry::AddElementsToArray(ID dsArray, const std::vector<ID>& elements, unsigned startIndex)
+{
+	#ifdef DEBUG_ARRAY_CHANGES
+		cout << "Adding " elements.size() << " elements to array with ID " << dsArray << endl;
+	#endif
+
+	// commented out to prevent recursive acquisition when we call AddElementToArray
+	//boost::unique_lock<boost::mutex> lock(registryMutex);
+
+	// For now, just call AddElementsToArray elements.size() times
+	
+	// Later on, we could possibly make this a CompositeAction containing AddElementToArray actions
+	// which all are animated at the same time???
+	unsigned index = startIndex;
+
+	BOOST_FOREACH(ID element, elements)
+		AddElementToArray(dsArray, element, index++);
+}
+
+void Registry::RemoveElementsFromArray(ID dsArray, const std::vector<ID>& elements, 
+											unsigned startIndex, unsigned endIndex)
+{
+	DS_RemoveElementsFromArray* removeAction = 
+				new DS_RemoveElementsFromArray(world, dsArray, elements, startIndex, endIndex);
+
+	AddActionToBuffer(removeAction);
 }
 
 /*
