@@ -55,7 +55,7 @@ namespace Algovis_Viewer
 	class DS_Action : public Action
 	{
 	protected:
-		std::set<ViewableObject*> subjects;
+		//std::set<ViewableObject*> subjects;
 		//DS_ActionType actionType;
 		//std::string value;
 		//std::set<ValueID> history;
@@ -70,11 +70,18 @@ namespace Algovis_Viewer
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
-		std::set<ViewableObject*> GetSubjects() { return subjects; }
-
 		virtual Action* Clone() const;
 	};
 
+
+	class DS_DataFlowAction : public DS_Action
+	{
+	public:
+		DS_DataFlowAction(World* world, bool animationSuppressed = false)
+			: DS_Action(world, animationSuppressed) {}
+		virtual std::set<ID> GetSubjects() { return std::set<ID>(); }
+		virtual std::vector<SourceID> GetSources() { return std::vector<SourceID>(); }
+	};
 
 
 	// Action class for deleting a VO (TODO add deletion animation?)
@@ -104,10 +111,10 @@ namespace Algovis_Viewer
 		void Perform(float progress, QPainter* painter);
 		virtual void Complete(bool displayed);
 
-		void AddAction(DS_Action* action);
+		void AddAction(Action* action);
 
 	private:
-		std::vector<DS_Action*> subActions; // In order of excecution
+		std::vector<Action*> subActions; // In order of excecution
 	};
 
 }

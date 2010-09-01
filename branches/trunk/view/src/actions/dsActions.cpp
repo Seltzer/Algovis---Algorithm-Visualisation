@@ -124,12 +124,12 @@ DS_Action::DS_Action(World* world, bool suppressAnimation)
 
 
 DS_Action::DS_Action(World* world, std::set<ViewableObject*> subjects, bool suppressAnimation)
-	: Action(world, suppressAnimation), subjects(subjects)
+	: Action(world, suppressAnimation)
 {
 }
 
 DS_Action::DS_Action(const DS_Action& other)
-	: Action(other), subjects(other.subjects)
+	: Action(other)
 {
 	UL_ASSERT(world);
 }
@@ -185,7 +185,7 @@ DS_CompositeAction::DS_CompositeAction(const DS_CompositeAction& other)
 	: DS_Action(other)
 {
 	for (unsigned i = 0; i < other.subActions.size(); i++)
-		subActions.push_back((DS_Action*)other.subActions[i]->Clone());
+		subActions.push_back(other.subActions[i]->Clone());
 }
 
 DS_CompositeAction::~DS_CompositeAction()
@@ -221,9 +221,9 @@ void DS_CompositeAction::Complete(bool displayed)
 }
 
 
-void DS_CompositeAction::AddAction(DS_Action* action)
+void DS_CompositeAction::AddAction(Action* action)
 {
-	subActions.push_back((DS_Action*)action->Clone()); // Cast ok, guaranteed to be a DS_Action
+	subActions.push_back(action->Clone()); // Cast ok, guaranteed to be a DS_Action
 	if (!action->AnimationSuppressed())
 		suppressAnimation = false;
 }

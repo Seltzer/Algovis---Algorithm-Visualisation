@@ -74,12 +74,12 @@ void DS_CreateArray::Complete(bool displayed)
 //////////////// DS_AddElementToArray
 DS_AddElementToArray::DS_AddElementToArray
 		(World* world, ID dsArray, ID dsElement, unsigned position)
-			: DS_Action(world, false), dsArray(dsArray), dsElement(dsElement), position(position)
+			: DS_DataFlowAction(world, false), dsArray(dsArray), dsElement(dsElement), position(position)
 {
 }
 
 DS_AddElementToArray::DS_AddElementToArray(const DS_AddElementToArray& other)
-		: DS_Action(other), dsArray(other.dsArray), dsElement(other.dsElement), position(other.position),
+		: DS_DataFlowAction(other), dsArray(other.dsArray), dsElement(other.dsElement), position(other.position),
 		sourceIDs(other.sourceIDs), value(other.value)
 {
 }
@@ -188,13 +188,13 @@ void DS_AddElementToArray::Complete(bool displayed)
 //////////////// DS_RemoveElementsFromArray
 DS_RemoveElementsFromArray::DS_RemoveElementsFromArray(World* world, const ID arrayId, 
 								const std::vector<ID>& elements, unsigned startIndex, unsigned endIndex)
-						: DS_Action(world), arrayId(arrayId), 
+						: DS_DataFlowAction(world), arrayId(arrayId), 
 								elements(elements), startIndex(startIndex), endIndex(endIndex)
 {
 }
 
 DS_RemoveElementsFromArray::DS_RemoveElementsFromArray(const DS_RemoveElementsFromArray& other)
-	: DS_Action(other), arrayId(other.arrayId), elements(other.elements), dsArray(other.dsArray),
+	: DS_DataFlowAction(other), arrayId(other.arrayId), elements(other.elements), dsArray(other.dsArray),
 		startIndex(other.startIndex), endIndex(other.endIndex)
 {
 }

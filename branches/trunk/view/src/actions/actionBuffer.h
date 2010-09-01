@@ -9,7 +9,7 @@
 namespace Algovis_Viewer
 {
 
-	class DS_Action;
+	class Action;
 	class DS_CompositeAction;
 
 
@@ -23,7 +23,7 @@ namespace Algovis_Viewer
 		ActionBuffer(unsigned capacity);
 
 		// Param copy semantics
-		void PushBack(DS_Action*);
+		void PushBack(Action*);
 
 		bool Full()
 		{
@@ -31,7 +31,10 @@ namespace Algovis_Viewer
 		}
 
 	private:
-		std::deque<DS_Action*> buffer;
+		bool CanCombine(Action* tested, Action* other, int otherTime);
+		bool DesireCombine(Action* tested, Action* other, int otherTime);
+
+		std::deque<Action*> buffer;
 		unsigned bufferCapacity;
 		DS_CompositeAction* currentComposite;
 

@@ -26,12 +26,15 @@ namespace Algovis_Viewer
 	};
 
 	// TODO implement animation?
-	class DS_AddElementToArray : public DS_Action
+	class DS_AddElementToArray : public DS_DataFlowAction
 	{
 	public:
 		DS_AddElementToArray(World*, ID dsArray, ID dsElement, unsigned position);
 		DS_AddElementToArray(const DS_AddElementToArray&);
 		virtual Action* Clone() const;
+
+		virtual std::set<ID> GetSubjects() { std::set<ID> r; r.insert(dsElement); return r; }
+		virtual std::vector<SourceID> GetSources() { return sourceIDs; }
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
@@ -54,13 +57,15 @@ namespace Algovis_Viewer
 		std::vector<SourceData> sources;
 	};
 
-	class DS_RemoveElementsFromArray : public DS_Action
+	class DS_RemoveElementsFromArray : public DS_DataFlowAction
 	{
 	public:
 		DS_RemoveElementsFromArray(World*, const ID arrayId, const std::vector<ID>& elements, 
 										unsigned startIndex, unsigned endIndex);
 		DS_RemoveElementsFromArray(const DS_RemoveElementsFromArray&);
 		virtual Action* Clone() const;
+
+		virtual std::set<ID> GetSubjects() { return std::set<ID>(elements.begin(), elements.end()); }
 
 		virtual void PrepareToPerform();
 		virtual void Complete(bool displayed);

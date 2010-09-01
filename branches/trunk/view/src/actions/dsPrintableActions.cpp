@@ -65,14 +65,14 @@ void DS_CreateSP::UpdateHistory(HistoryManager& historyManager)
 
 ////////////////////// DS_Assigned implementation ////////////////////////////
 DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string value, bool tracked)
-	: DS_Action(world), value(value), dsAssigned(dsAssigned), dsSource(dsSource), tracked(tracked)
+	: DS_DataFlowAction(world), value(value), dsAssigned(dsAssigned), dsSource(dsSource), tracked(tracked)
 {
 	//ViewableObject* viewable = (ViewableObject*)subject;
 	//subjects.insert(viewable); // May need to keep the original printable pointer?
 }
 
 DS_Assigned::DS_Assigned(const DS_Assigned& other)
-	: DS_Action(other), dsAssigned(other.dsAssigned), dsSource(other.dsSource), value(other.value),
+	: DS_DataFlowAction(other), dsAssigned(other.dsAssigned), dsSource(other.dsSource), value(other.value),
 	subject(other.subject), sourceIDs(other.sourceIDs), sources(other.sources)
 {
 }
@@ -208,14 +208,14 @@ void DS_Assigned::Complete(bool displayed)
 
 ////////////////////// DS_Modified implementation ////////////////////////////
 DS_Modified::DS_Modified(World* world, ID dsModified, ID dsSource, std::string value, bool tracked)
-	: DS_Action(world), value(value), dsModified(dsModified), dsSource(dsSource), tracked(tracked)
+	: DS_DataFlowAction(world), value(value), dsModified(dsModified), dsSource(dsSource), tracked(tracked)
 {
 	//ViewableObject* viewable = (ViewableObject*)subject;
 	//subjects.insert(viewable); // May need to keep the original printable pointer?
 }
 
 DS_Modified::DS_Modified(const DS_Modified& other)
-	: DS_Action(other), dsModified(other.dsModified), dsSource(other.dsSource), value(other.value),
+	: DS_DataFlowAction(other), dsModified(other.dsModified), dsSource(other.dsSource), value(other.value),
 	subject(other.subject), sourceIDs(other.sourceIDs), sources(other.sources)
 {
 }

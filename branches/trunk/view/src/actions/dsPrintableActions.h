@@ -26,7 +26,7 @@ namespace Algovis_Viewer
 
 
 	// Action class for printable being assigned 
-	class DS_Assigned : public DS_Action
+	class DS_Assigned : public DS_DataFlowAction
 	{
 	public:
 		DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string value, bool tracked);
@@ -34,6 +34,9 @@ namespace Algovis_Viewer
 		virtual Action* Clone() const;
 
 		//void SetSource(VO_SinglePrintable* source);
+
+		virtual std::set<ID> GetSubjects() { std::set<ID> r; r.insert(dsAssigned); return r; }
+		virtual std::vector<SourceID> GetSources() { return sourceIDs; }
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
@@ -56,7 +59,7 @@ namespace Algovis_Viewer
 	};
 
 	// Action class for printable being modified. Depressingly similar to assigned (Nathan LOL'd at this)
-	class DS_Modified : public DS_Action
+	class DS_Modified : public DS_DataFlowAction
 	{
 	public:
 		DS_Modified(World* world, ID dsModified, ID dsSource, std::string value, bool tracked);
@@ -64,6 +67,9 @@ namespace Algovis_Viewer
 		virtual Action* Clone() const;
 
 		//void SetSource(VO_SinglePrintable* source); // TODO: Remove or properly analyse
+
+		virtual std::set<ID> GetSubjects() { std::set<ID> r; r.insert(dsModified); return r; }
+		virtual std::vector<SourceID> GetSources() { return sourceIDs; }
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
