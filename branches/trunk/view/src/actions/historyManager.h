@@ -26,6 +26,7 @@ namespace Algovis_Viewer
 		bool visible;
 		std::set<ValueID> history;
 		std::string value; // Well... It seemed neccessary
+		int modifiedTime;
 	};
 
 	class HistoryManager
@@ -40,6 +41,7 @@ namespace Algovis_Viewer
 		void ResetHistory(ID id);
 		void SetValue(ID id, std::string value);
 		std::string GetValue(ID id);
+		int GetModifiedTime(ID id);
 
 		int GetTime();
 		void ActionProcessed();

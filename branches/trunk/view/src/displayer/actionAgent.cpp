@@ -93,8 +93,6 @@ void ActionAgent::paintEvent(QPaintEvent*)
 				actionToBePerformed->Complete(!actionToBePerformed->AnimationSuppressed());
 			#endif
 
-			Registry::GetInstance()->ActionCompleted();
-			
 			// Clean up action
 			delete actionToBePerformed;
 			actionToBePerformed = NULL;

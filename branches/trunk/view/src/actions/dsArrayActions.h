@@ -47,7 +47,7 @@ namespace Algovis_Viewer
 
 		VO_Array* voArray;
 		VO_SinglePrintable* element;
-		std::set<ValueID> history;
+		std::vector<SourceID> sourceIDs;
 		std::string value;
 
 		QRect subjectDimensions;

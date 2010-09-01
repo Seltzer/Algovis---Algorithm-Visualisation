@@ -46,10 +46,6 @@ namespace Algovis_Viewer
 		// Singleton methods
 		static Registry* GetInstance();
 		static void DestroyInstance();
-
-		int CurrentTime() { return time; }
-
-		void ActionCompleted() { ++time; }
 		
 		/* PRE-CONDITIONS:
 		 *	- All elements in the array have been registered 
@@ -155,9 +151,6 @@ namespace Algovis_Viewer
 		// Registered viewables
 		std::map<ID, ViewableObject*> registeredViewables;
 		boost::mutex registryMutex;
-
-		// Global time (action count)
-		int time;
 	};
 	#include "../src/registry.inl"
 

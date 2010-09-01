@@ -47,7 +47,7 @@ namespace Algovis_Viewer
 
 		std::string value;
 		VO_SinglePrintable* subject;
-		std::set<ValueID> history;
+		std::vector<SourceID> sourceIDs;
 		bool tracked;
 
 		// Animation stuff
@@ -76,7 +76,7 @@ namespace Algovis_Viewer
 
 		std::string value;
 		VO_SinglePrintable* subject;
-		std::set<ValueID> history;
+		std::vector<SourceID> sourceIDs;
 		bool tracked;
 
 		// Animation stuff

@@ -80,7 +80,7 @@ DS_AddElementToArray::DS_AddElementToArray
 
 DS_AddElementToArray::DS_AddElementToArray(const DS_AddElementToArray& other)
 		: DS_Action(other), dsArray(other.dsArray), dsElement(other.dsElement), position(other.position),
-		history(other.history), value(other.value)
+		sourceIDs(other.sourceIDs), value(other.value)
 {
 }
 
@@ -91,13 +91,15 @@ Action* DS_AddElementToArray::Clone() const
 
 void DS_AddElementToArray::UpdateHistory(HistoryManager& historyManager)
 {
-	history = historyManager.GetHistory(dsElement);
+	std::set<ValueID> history = historyManager.GetHistory(dsElement);
 
 	// TODO: This assumes all arrays are displayed.
 	suppressAnimation = false;
 	historyManager.SetVisible(dsElement, true);
 	historyManager.ResetHistory(dsElement);
 	value = historyManager.GetValue(dsElement);
+
+	sourceIDs = HistoryToSourceIDs(history, historyManager);
 
 	DS_Action::UpdateHistory(historyManager);
 }
@@ -132,7 +134,7 @@ void DS_AddElementToArray::PrepareToPerform()
 	subjectDimensions = QRect(arrayGeom.topRight(), element->size());
 
 	// Set up data for all the sources
-	sources = historyToSources(history, element);
+	sources = SourceIDsToSources(sourceIDs, element);
 }
 
 void DS_AddElementToArray::Perform(float progress, QPainter* painter)

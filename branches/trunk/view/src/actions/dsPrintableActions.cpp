@@ -73,7 +73,7 @@ DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string v
 
 DS_Assigned::DS_Assigned(const DS_Assigned& other)
 	: DS_Action(other), dsAssigned(other.dsAssigned), dsSource(other.dsSource), value(other.value),
-	subject(other.subject), history(other.history), sources(other.sources)
+	subject(other.subject), sourceIDs(other.sourceIDs), sources(other.sources)
 {
 }
 
@@ -90,6 +90,7 @@ Action* DS_Assigned::Clone() const
 
 void DS_Assigned::UpdateHistory(HistoryManager& historyManager)
 {
+	std::set<ValueID> history;
 	if (dsSource != INVALID)
 		history = historyManager.GetHistory(dsSource);
 	if (historyManager.IsVisible(dsAssigned))
@@ -108,6 +109,8 @@ void DS_Assigned::UpdateHistory(HistoryManager& historyManager)
 
 	historyManager.SetValue(dsAssigned, value);
 
+	sourceIDs = HistoryToSourceIDs(history, historyManager);
+
 	DS_Action::UpdateHistory(historyManager);
 }
 
@@ -122,38 +125,11 @@ void DS_Assigned::PrepareToPerform()
 	subject = registry->GetRepresentation<VO_SinglePrintable>(dsAssigned);
 	UL_ASSERT(subject);
 
-	/*if (registry->IsRegistered(dsSource, SINGLE_PRINTABLE))
-	{
-		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(dsSource);
-		UL_ASSERT(source);
-		history = source->GetHistory();
-
-		// TODO: Currently we only want an animation for assignments to SPs which are owned by an array
-		if (subject->parent())
-		{
-			if (typeid(*subject->parent()) != typeid(VO_Array))
-				suppressAnimation = true;
-		}
-		else
-			suppressAnimation = true;
-	}
-	else
-	{
-		// The only history we have is that the value was untracked, so chuck in an element to represent that
-		history.clear();
-		// Time -1 denotes elements that aren't actually tracked (TODO: That sucks)
-		// dsSource or dsAssigned??? check repository TODO
-		history.insert(ValueID(dsAssigned, -1)); 
-
-		suppressAnimation = true;
-
-	}*/
-
 	// Set subjectStart to have abs position
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
 
 	// TODO: There is only a point to this if animation is not supressed
-	sources = historyToSources(history, subject);
+	sources = SourceIDsToSources(sourceIDs, subject);
 }
 
 void DS_Assigned::Perform(float progress, QPainter* painter)
@@ -240,7 +216,7 @@ DS_Modified::DS_Modified(World* world, ID dsModified, ID dsSource, std::string v
 
 DS_Modified::DS_Modified(const DS_Modified& other)
 	: DS_Action(other), dsModified(other.dsModified), dsSource(other.dsSource), value(other.value),
-	subject(other.subject), history(other.history), sources(other.sources)
+	subject(other.subject), sourceIDs(other.sourceIDs), sources(other.sources)
 {
 }
 
@@ -259,7 +235,7 @@ Action* DS_Modified::Clone() const
 void DS_Modified::UpdateHistory(HistoryManager& historyManager)
 {
 	// Combine the two histories
-	history = historyManager.GetHistory(dsModified);
+	std::set<ValueID> history = historyManager.GetHistory(dsModified);
 	if (dsSource != INVALID)
 	{
 		std::set<ValueID> otherHistory = historyManager.GetHistory(dsSource);
@@ -279,6 +255,8 @@ void DS_Modified::UpdateHistory(HistoryManager& historyManager)
 
 	historyManager.SetValue(dsModified, value);
 
+	sourceIDs = HistoryToSourceIDs(history, historyManager);
+
 	DS_Action::UpdateHistory(historyManager);
 }
 
@@ -296,7 +274,7 @@ void DS_Modified::PrepareToPerform()
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
 
 	// Set up data for all the sources
-	sources = historyToSources(history, subject);
+	sources = SourceIDsToSources(sourceIDs, subject);
 }
 
 void DS_Modified::Perform(float progress, QPainter* painter)

@@ -15,6 +15,7 @@ void HistoryManager::AddRecord(ID id)
 {
 	HistoryData h;
 	h.visible = false;
+	h.modifiedTime = time;
 	data[id] = h;
 }
 
@@ -40,6 +41,7 @@ void HistoryManager::SetHistory(ID id, std::set<ValueID> history)
 {
 	UL_ASSERT(data.find(id) != data.end());
 	data[id].history = history;
+	data[id].modifiedTime = time;
 }
 
 void HistoryManager::ResetHistory(ID id)
@@ -60,6 +62,12 @@ std::string HistoryManager::GetValue(ID id)
 {
 	UL_ASSERT(data.find(id) != data.end());
 	return data[id].value;
+}
+
+int HistoryManager::GetModifiedTime(ID id)
+{
+	UL_ASSERT(data.find(id) != data.end());
+	return data[id].modifiedTime;
 }
 
 int HistoryManager::GetTime()

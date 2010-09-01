@@ -16,15 +16,26 @@ namespace Algovis_Viewer
 	class VO_SinglePrintable;
 	class VO_Array;
 
-	// Handy struct to represent where data for an action came from
+	// Handy struct to represent a source in an animation
+	struct SourceID {
+		SourceID(ValueID vid, bool locationKnown)
+			: vid(vid), locationKnown(locationKnown) {}
+		ValueID vid;
+		bool locationKnown;
+	};
+
+	// Handy struct to represent data needed to animate a source
 	struct SourceData {
 		QRect dimensions;
 		VO_SinglePrintable* source;
 		bool isSibling;
 	};
 
+	SourceID ValueIDToSourceID(ValueID id, HistoryManager& manager);
+	std::vector<SourceID> HistoryToSourceIDs(const std::set<ValueID>& history, HistoryManager& manager);
+
 	// Set up source data for animation using current state of world
-	SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject);
+	SourceData SourceIDToSourceData(SourceID id, ViewableObject* subject);
 
 	// Lightweight method for converting a list of IDs to VO pointers
 	// 
@@ -37,7 +48,7 @@ namespace Algovis_Viewer
 				
 
 	// Same as above but for entire history
-	std::vector<SourceData> historyToSources(const std::set<ValueID>& history, ViewableObject* subject);
+	std::vector<SourceData> SourceIDsToSources(const std::vector<SourceID>& sourceIDs, ViewableObject* subject);
 
 	//enum DS_ActionType { DAT_Insert, DAT_Erase, DAT_Assign, DAT_BeingDestroyed };
 

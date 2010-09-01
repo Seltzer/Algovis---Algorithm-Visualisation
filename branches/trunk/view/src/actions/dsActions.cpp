@@ -20,7 +20,26 @@ namespace Algovis_Viewer
 
 ////////////////////// Utility functions ////////////////////////////
 
-SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject)
+SourceID ValueIDToSourceID(ValueID id, HistoryManager& manager)
+{
+	SourceID sid(id, false);
+	if (id.id != INVALID)
+		sid.locationKnown = manager.GetModifiedTime(id.id) <= id.time; // If value has not been modified since it was accessed
+
+	return sid;
+}
+
+std::vector<SourceID> HistoryToSourceIDs(const std::set<ValueID>& history, HistoryManager& manager)
+{
+	std::vector<SourceID> data;
+	for (std::set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
+	{
+		data.push_back(ValueIDToSourceID(*i, manager));
+	}
+	return data;
+}
+
+SourceData SourceIDToSourceData(SourceID id, ViewableObject* subject)
 {
 	Registry* registry = Registry::GetInstance();
 
@@ -29,15 +48,14 @@ SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject)
 	sourceData.source = NULL;
 	sourceData.isSibling = false;
 
-	if (registry->IsRegistered(id.id, SINGLE_PRINTABLE))
+	if (registry->IsRegistered(id.vid.id, SINGLE_PRINTABLE))
 	{
-		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(id.id);
+		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(id.vid.id);
 
 		if (source != NULL)
 		{
-			// TODO: Take time into account. Value may have changed.
 			sourceData.source = source;
-			if (sourceData.source->ModifiedTime() <= id.time) // If value has not been modified since it was accessed
+			if (id.locationKnown)
 			{
 				sourceData.dimensions = QRect(source->GetPositionInWorld(), source->size());
 				sourceData.isSibling = source->parent() != NULL && source->parent() == subject->parent();
@@ -86,12 +104,12 @@ std::vector<ViewableObject*> ConvertIdsToViewablePtrs(
 }
 
 
-std::vector<SourceData> historyToSources(const std::set<ValueID>& history, ViewableObject* subject)
+std::vector<SourceData> SourceIDsToSources(const std::vector<SourceID>& history, ViewableObject* subject)
 {
 	std::vector<SourceData> data;
-	for (std::set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
+	for (std::vector<SourceID>::const_iterator i = history.begin(); i != history.end(); i++)
 	{
-		data.push_back(ValueIDToSourceData(*i, subject));
+		data.push_back(SourceIDToSourceData(*i, subject));
 	}
 	return data;
 }
