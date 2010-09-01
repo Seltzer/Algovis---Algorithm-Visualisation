@@ -43,6 +43,7 @@ namespace Algovis_Viewer
 
 		boost::mutex performActionMutex;
 		bool actionPending;
+		bool actionPrepared;
 		boost::condition_variable_any actionPendingCondVar;
 
 		bool shuttingDown;

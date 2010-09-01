@@ -116,6 +116,10 @@ DS_Action::DS_Action(const DS_Action& other)
 	UL_ASSERT(world);
 }
 
+void DS_Action::UpdateHistory(HistoryManager& historyManager)
+{
+	historyManager.ActionProcessed();
+}
 
 Action* DS_Action::Clone() const
 {
@@ -149,11 +153,7 @@ void DS_Deleted::Complete(bool displayed)
 {
 	Registry* registry = Registry::GetInstance();
 
-	ViewableObject* voToBeDeleted = registry->GetRepresentation(dsSubject);
-	UL_ASSERT(voToBeDeleted);
-	
-	registry->Deregister(voToBeDeleted->GetId());
-	voToBeDeleted->deleteLater();
+
 }
 
 
@@ -183,12 +183,10 @@ Action* DS_CompositeAction::Clone() const
 
 void DS_CompositeAction::PrepareToPerform()
 {
-	suppressAnimation = true; // Assume suppressed unless a sub animation is not suppressed after preparation
 	for (unsigned i = 0; i < subActions.size(); i++)
 	{
-		subActions[i]->PrepareToPerform();
 		if (!subActions[i]->AnimationSuppressed())
-			suppressAnimation = false;
+			subActions[i]->PrepareToPerform();
 	}
 }
 

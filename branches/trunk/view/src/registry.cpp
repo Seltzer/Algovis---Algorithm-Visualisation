@@ -99,7 +99,7 @@ void Registry::RegisterArray
 
 	
 	DS_CreateArray creationAction(world, id, dsArrayAddress, elementType, elements);
-	creationAction.SuppressAnimation();
+	//creationAction.SuppressAnimation();
 
 	AddActionToBuffer(&creationAction);
 }
@@ -114,7 +114,7 @@ void Registry::RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddre
 
 	// Create action
 	DS_CreateSP creationAction(world, id, dsSinglePrintableAddress, value);
-	creationAction.SuppressAnimation();
+	creationAction.SuppressAnimation(); // Single printable creations are currently never displayed
 
 	AddActionToBuffer(&creationAction);
 
@@ -124,9 +124,7 @@ void Registry::AddressChanged(ID id, const void* newAddress)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 
-	UL_ASSERT(IsRegistered(id));
-	const void* oldAddress = registeredViewables[id]->GetDSAddress();
-	DS_AddressChanged action(world,id,newAddress,oldAddress);
+	DS_AddressChanged action(world,id,newAddress);
 
 	AddActionToBuffer(&action);
 }

@@ -14,7 +14,9 @@ namespace Algovis_Viewer
 		DS_CreateSP(const DS_CreateSP&);
 		virtual Action* Clone() const;
 
-		virtual void Complete(bool displayed);
+		virtual void UpdateHistory(HistoryManager& historyManager);
+
+		//virtual void Complete(bool displayed);
 
 	private:
 		const ID id;
@@ -31,7 +33,9 @@ namespace Algovis_Viewer
 		DS_Assigned(const DS_Assigned& other);
 		virtual Action* Clone() const;
 
-		void SetSource(VO_SinglePrintable* source);
+		//void SetSource(VO_SinglePrintable* source);
+
+		virtual void UpdateHistory(HistoryManager& historyManager);
 
 		virtual void PrepareToPerform();
 		virtual void Perform(float progress, QPainter*);
@@ -59,7 +63,9 @@ namespace Algovis_Viewer
 		DS_Modified(const DS_Modified& other);
 		virtual Action* Clone() const;
 
-		void SetSource(VO_SinglePrintable* source); // TODO: Remove or properly analyse
+		//void SetSource(VO_SinglePrintable* source); // TODO: Remove or properly analyse
+
+		virtual void UpdateHistory(HistoryManager& historyManager);
 
 		virtual void PrepareToPerform();
 		virtual void Perform(float progress, QPainter*);

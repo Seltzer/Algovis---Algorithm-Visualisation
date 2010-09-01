@@ -13,9 +13,9 @@
 REAL_INT wmain()
 {
 	//MultipleVectorWithoutExtraCrap();
-	//MultipleVectorDemoWithDelete();
+	MultipleVectorDemoWithDelete();
 	//MergeSortDemo();
-	DoRandomStuffWithAVectorDemo();
+	//DoRandomStuffWithAVectorDemo();
 //	TestDemo();
 	
 	//Shutdown();

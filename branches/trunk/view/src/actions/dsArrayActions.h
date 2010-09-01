@@ -33,6 +33,8 @@ namespace Algovis_Viewer
 		DS_AddElementToArray(const DS_AddElementToArray&);
 		virtual Action* Clone() const;
 
+		virtual void UpdateHistory(HistoryManager& historyManager);
+
 		void PrepareToPerform();
 		void Perform(float progress, QPainter* painter);
 		virtual void Complete(bool displayed);
@@ -46,6 +48,7 @@ namespace Algovis_Viewer
 		VO_Array* voArray;
 		VO_SinglePrintable* element;
 		std::set<ValueID> history;
+		std::string value;
 
 		QRect subjectDimensions;
 		std::vector<SourceData> sources;
@@ -77,7 +80,7 @@ namespace Algovis_Viewer
 	class DS_AddressChanged : public DS_Action
 	{
 	public:
-		DS_AddressChanged(World*, const ID id, const void* newAddress, const void* oldAddress);
+		DS_AddressChanged(World*, const ID id, const void* newAddress);
 		DS_AddressChanged(const DS_AddressChanged&);
 
 		virtual Action* Clone() const;
@@ -86,7 +89,6 @@ namespace Algovis_Viewer
 	private:
 		const ID id;
 		const void* newAddress;
-		const void* oldAddress;
 	};
 
 }

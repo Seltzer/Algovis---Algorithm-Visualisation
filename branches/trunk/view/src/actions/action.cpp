@@ -15,22 +15,13 @@ Action::Action(World* world, bool suppressAnimation)
 }
 
 Action::Action(const Action& other)
-	: world(other.world), subActions(other.subActions), suppressAnimation(other.suppressAnimation)
+	: world(other.world), suppressAnimation(other.suppressAnimation)
 {
 }
 
 
 Action::~Action()
 {
-	BOOST_FOREACH(Action* subAction, subActions)
-		delete subAction;
-}
-
-void Action::AddSubAction(Action& subAction)
-{
-	Action* subActionCopy = subAction.Clone();
-
-	subActions.push_back(subActionCopy);
 }
 
 void Action::SuppressAnimation()

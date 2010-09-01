@@ -86,20 +86,20 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue)
 }
 
 
-void VO_SinglePrintable::ResetHistory(ValueID drawnValue)
+/*void VO_SinglePrintable::ResetHistory(ValueID drawnValue)
 {
 	history.clear();
 	history.insert(drawnValue);
-}
+}*/
 
-void VO_SinglePrintable::Assigned(std::set<ValueID> history, const std::string& newValue)
+/*void VO_SinglePrintable::Assigned(std::set<ValueID> history, const std::string& newValue)
 {
 	// This printable now has the same history as the one it was assigned from
 	// This is true because history only includes items that have been displayed
-	this->history = history;
+	//this->history = history;
 
 	UpdateValue(newValue);
-}
+}*/
 
 
 

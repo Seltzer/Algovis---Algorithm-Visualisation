@@ -68,8 +68,8 @@ void ActionAgent::PerformAndAnimateActionAsync(const Action* newAction)
 
 	duration = 0;
 	actionToBePerformed = newAction->Clone();
-	actionToBePerformed->PrepareToPerform();
 	actionPending = true;
+	actionPrepared = false;
 }
 
 
@@ -77,6 +77,11 @@ void ActionAgent::paintEvent(QPaintEvent*)
 {
 	if (actionPending)
 	{
+		if (!actionPrepared)
+		{
+			actionToBePerformed->PrepareToPerform();
+			actionPrepared = true;
+		}
 		// Animation for the action is suppressed or animation has finished
 		if (actionToBePerformed->AnimationSuppressed() || ++duration > 60)
 		{

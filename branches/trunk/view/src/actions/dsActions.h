@@ -9,26 +9,12 @@
 #include "../../include/common.h"
 
 
-
 // Contains ValueID struct and DS_Action, DS_Deleted and DS_CompositeAction classes.
 namespace Algovis_Viewer
 {
 	class ViewableObject;
 	class VO_SinglePrintable;
 	class VO_Array;
-
-	struct ValueID
-	{
-		ValueID(ID id, int time) : id(id), time(time) {}
-		bool operator<(const ValueID& rhs) const
-		{
-			if (time == rhs.time)
-				return id < rhs.id;
-			return time < rhs.time;
-		}
-		ID id;
-		int time;
-	};
 
 	// Handy struct to represent where data for an action came from
 	struct SourceData {
@@ -70,6 +56,8 @@ namespace Algovis_Viewer
 		/*DS_Action(DS_ActionType type, ViewableObject* subject, std::string value, std::set<ValueID> history)
 			: actionType(type), subject(subject), value(value), history(history)
 		{ }*/
+
+		virtual void UpdateHistory(HistoryManager& historyManager);
 
 		std::set<ViewableObject*> GetSubjects() { return subjects; }
 

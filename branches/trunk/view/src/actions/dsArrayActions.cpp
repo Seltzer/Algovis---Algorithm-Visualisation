@@ -20,7 +20,7 @@ namespace Algovis_Viewer
 //////////////// DS_CreateArray
 DS_CreateArray::DS_CreateArray(World* world, ID arrayId, const void* arrayAddress, 
 								ViewableObjectType elementType, std::vector<ID> elements)
-		: DS_Action(world, true), arrayId(arrayId), arrayAddress(arrayAddress), 
+		: DS_Action(world, false), arrayId(arrayId), arrayAddress(arrayAddress), 
 				elementType(elementType), elements(elements)
 {
 }
@@ -79,7 +79,8 @@ DS_AddElementToArray::DS_AddElementToArray
 }
 
 DS_AddElementToArray::DS_AddElementToArray(const DS_AddElementToArray& other)
-		: DS_Action(other), dsArray(other.dsArray), dsElement(other.dsElement), position(other.position)
+		: DS_Action(other), dsArray(other.dsArray), dsElement(other.dsElement), position(other.position),
+		history(other.history), value(other.value)
 {
 }
 
@@ -88,19 +89,41 @@ Action* DS_AddElementToArray::Clone() const
 	return new DS_AddElementToArray(*this);
 }
 
+void DS_AddElementToArray::UpdateHistory(HistoryManager& historyManager)
+{
+	history = historyManager.GetHistory(dsElement);
+
+	// TODO: This assumes all arrays are displayed.
+	suppressAnimation = false;
+	historyManager.SetVisible(dsElement, true);
+	historyManager.ResetHistory(dsElement);
+	value = historyManager.GetValue(dsElement);
+
+	DS_Action::UpdateHistory(historyManager);
+}
+
 void DS_AddElementToArray::PrepareToPerform()
 {
 	Registry* registry = Registry::GetInstance();
 
 	UL_ASSERT(registry->IsRegistered(dsArray,ARRAY));
+	
+	// Create single printable stuff moved to hear as view no longer cares about most creations
+	UL_ASSERT(!registry->IsRegistered(dsElement));
+
+	// TODO: dunno about address atm.
+	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsElement, 0, world, value);
+	registry->Register(dsElement, newSP);
+
+	// TODO hack
+	world->adjustSize();
+
 	UL_ASSERT(registry->IsRegistered(dsElement,SINGLE_PRINTABLE));
 
 	voArray = registry->GetRepresentation<VO_Array>(dsArray);
 	UL_ASSERT(position <= voArray->GetSize());
 
 	element = registry->GetRepresentation<VO_SinglePrintable>(dsElement);
-
-	history = element->GetHistory();
 
 	// TODO: Do not assume array is shown (and therefore this is not suppressed)
 
@@ -151,11 +174,11 @@ void DS_AddElementToArray::Complete(bool displayed)
 
 	voArray->AddElement(element, position);
 
-	if (displayed)
+	/*if (displayed)
 	{
 		int time = Registry::GetInstance()->CurrentTime();
 		element->ResetHistory(ValueID(element->GetId(), time));
-	}
+	}*/
 }
 
 
@@ -198,21 +221,29 @@ void DS_RemoveElementsFromArray::Complete(bool displayed)
 	
 	
 	dsArray->RemoveElements(elementPtrs, startIndex, endIndex);
-	//if (displayed)
-		// TODO
+
+	// View only concerns itself with elements in arrays, so delete upon removal
+	for (unsigned i = 0; i < elementPtrs.size(); i++)
+	{
+		ViewableObject* voToBeDeleted = elementPtrs[i];
+		UL_ASSERT(voToBeDeleted);
+		
+		Registry::GetInstance()->Deregister(voToBeDeleted->GetId());
+		voToBeDeleted->deleteLater();
+	}
 }
 
 
 
 
 //////////////// DS_AddressChanged
-DS_AddressChanged::DS_AddressChanged(World* world, const ID id, const void* newAddress, const void* oldAddress)
-	: DS_Action(world, true), id(id), newAddress(newAddress), oldAddress(oldAddress)
+DS_AddressChanged::DS_AddressChanged(World* world, const ID id, const void* newAddress)
+	: DS_Action(world, true), id(id), newAddress(newAddress)
 {
 }
 
 DS_AddressChanged::DS_AddressChanged(const DS_AddressChanged& other)
-	: DS_Action(other), id(other.id), newAddress(other.newAddress), oldAddress(other.oldAddress)
+	: DS_Action(other), id(other.id), newAddress(other.newAddress)
 {
 }
 
@@ -225,7 +256,12 @@ Action* DS_AddressChanged::Clone() const
 
 void DS_AddressChanged::Complete(bool displayed)
 {
-	ViewableObject* viewable = Registry::GetInstance()->GetRepresentation(id);
+	Registry* registry = Registry::GetInstance();
+
+	UL_ASSERT(registry->IsRegistered(id));
+	const void* oldAddress = registry->GetRepresentation(id)->GetDSAddress();
+
+	ViewableObject* viewable = registry->GetRepresentation(id);
 	UL_ASSERT(viewable);
 
 	viewable->SetDSAddress(newAddress);

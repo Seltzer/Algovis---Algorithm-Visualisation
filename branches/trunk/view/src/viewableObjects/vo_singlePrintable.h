@@ -35,17 +35,17 @@ namespace Algovis_Viewer
 
 		std::string GetValue() { return value; }
 
-		std::set<ValueID> GetHistory() { return history; }
+		//std::set<ValueID> GetHistory() { return history; }
 
 		void UpdateValue(const std::string& newValue);
 
 		// This is called when the value has been drawn, and therefore any usage of this printable
 		// should consider that drawn value it's history.
-		void ResetHistory(ValueID drawnValue);
-		void Assigned(std::set<ValueID> history, const std::string& newValue);
+		//void ResetHistory(ValueID drawnValue);
+		//void Assigned(std::set<ValueID> history, const std::string& newValue);
 		// TODO combine Modified and ModifiedUntracked
-		void Modified(VO_SinglePrintable* source, const std::string& newValue);
-		void ModifiedUntracked(const void* dsAddress, const std::string& newValue);
+		//void Modified(VO_SinglePrintable* source, const std::string& newValue);
+		//void ModifiedUntracked(const void* dsAddress, const std::string& newValue);
 	
 		int ModifiedTime() { return modifiedTime; }
 
@@ -57,7 +57,7 @@ namespace Algovis_Viewer
 		// Keep track of the displayed values which have contributed to the current value.
 		// If the value has just been displayed, then this is a single element set with the current
 		// address and time.
-		std::set<ValueID> history;
+		//std::set<ValueID> history;
 
 		int modifiedTime;
 	};

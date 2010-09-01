@@ -4,11 +4,13 @@
 #include <vector>
 #include <deque>
 
+#include "historyManager.h"
 
 namespace Algovis_Viewer
 {
 
 	class DS_Action;
+	class DS_CompositeAction;
 
 
 	// This buffer is in charge of buffering actions and firing them off to the view when appropriate.
@@ -31,6 +33,9 @@ namespace Algovis_Viewer
 	private:
 		std::deque<DS_Action*> buffer;
 		unsigned bufferCapacity;
+		DS_CompositeAction* currentComposite;
+
+		HistoryManager historyManager;
 	};
 
 

@@ -8,7 +8,7 @@ namespace Algovis_Viewer
 
 
 ActionBuffer::ActionBuffer(unsigned capacity)
-	: bufferCapacity(capacity)
+	: bufferCapacity(capacity), currentComposite(NULL)
 {
 }
 
@@ -23,13 +23,14 @@ void ActionBuffer::PushBack(DS_Action* action)
 		// TODO: Delete action
 	}
 
-	DS_Action* copy = (DS_Action*)action->Clone();
+	DS_Action* copy = (DS_Action*)action->Clone(); // Make a copy to protect original from UpdateHistory side effects (is there a point?)
 
-	// Collapse actions if appropriate
-	DS_CompositeAction* composite = new DS_CompositeAction(Displayer::GetInstance()->GetWorld());
-	composite->AddAction(copy);
+	copy->UpdateHistory(historyManager);
 
-	buffer.push_back(composite);
+	if (!copy->AnimationSuppressed())
+		buffer.push_back(copy);
+
+	//delete copy; // Composite does it's own copying.
 }
 
 }

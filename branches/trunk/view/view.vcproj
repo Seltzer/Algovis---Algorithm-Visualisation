@@ -465,6 +465,14 @@
 					RelativePath=".\src\actions\dsPrintableActions.h"
 					>
 				</File>
+				<File
+					RelativePath=".\src\actions\historyManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\actions\historyManager.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

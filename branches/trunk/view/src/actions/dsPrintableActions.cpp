@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QColor>
 #include "dsactions.h"
+#include "historyManager.h"
 #include "../../include/registry.h"
 #include "../displayer/world.h"
 #include "../viewableObjects/vo_singlePrintable.h"
@@ -33,7 +34,17 @@ Action* DS_CreateSP::Clone() const
 	return new DS_CreateSP(*this);
 }
 
-void DS_CreateSP::Complete(bool displayed)
+void DS_CreateSP::UpdateHistory(HistoryManager& historyManager)
+{
+	historyManager.AddRecord(id);
+	// It is very much debatable what the history should be.
+	historyManager.ResetHistory(id);
+	historyManager.SetValue(id, value);
+
+	DS_Action::UpdateHistory(historyManager);
+}
+
+/*void DS_CreateSP::Complete(bool displayed)
 {
 	Registry* registry = Registry::GetInstance();
 
@@ -49,12 +60,7 @@ void DS_CreateSP::Complete(bool displayed)
 
 	UL_ASSERT(registry->IsRegistered(id,SINGLE_PRINTABLE));
 
-	if (displayed)
-	{
-		int time = Registry::GetInstance()->CurrentTime();
-		newSP->ResetHistory(ValueID(newSP->GetId(), time));
-	}
-}
+}*/
 
 
 ////////////////////// DS_Assigned implementation ////////////////////////////
@@ -76,10 +82,33 @@ Action* DS_Assigned::Clone() const
 	return new DS_Assigned(*this); 
 }
 
-void DS_Assigned::SetSource(VO_SinglePrintable* source)
+/*void DS_Assigned::SetSource(VO_SinglePrintable* source)
 {
 	//this->source = source;
 	//sourceIsSibling = source->parent() == subject->parent();
+}*/
+
+void DS_Assigned::UpdateHistory(HistoryManager& historyManager)
+{
+	if (dsSource != INVALID)
+		history = historyManager.GetHistory(dsSource);
+	if (historyManager.IsVisible(dsAssigned))
+	{
+		suppressAnimation = false;
+		historyManager.ResetHistory(dsAssigned);
+	}
+	else
+	{
+		suppressAnimation = true;
+		if (dsSource != INVALID)
+			historyManager.SetHistory(dsAssigned, history);
+		else
+			historyManager.ResetHistory(dsAssigned); // I don't know... seemed like a good idea at the time
+	}
+
+	historyManager.SetValue(dsAssigned, value);
+
+	DS_Action::UpdateHistory(historyManager);
 }
 
 
@@ -93,7 +122,7 @@ void DS_Assigned::PrepareToPerform()
 	subject = registry->GetRepresentation<VO_SinglePrintable>(dsAssigned);
 	UL_ASSERT(subject);
 
-	if (registry->IsRegistered(dsSource, SINGLE_PRINTABLE))
+	/*if (registry->IsRegistered(dsSource, SINGLE_PRINTABLE))
 	{
 		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(dsSource);
 		UL_ASSERT(source);
@@ -118,7 +147,7 @@ void DS_Assigned::PrepareToPerform()
 
 		suppressAnimation = true;
 
-	}
+	}*/
 
 	// Set subjectStart to have abs position
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
@@ -195,21 +224,7 @@ void DS_Assigned::Perform(float progress, QPainter* painter)
 
 void DS_Assigned::Complete(bool displayed)
 {
-	subject->Assigned(history, value);
-	
-	if (displayed)
-	{
-		// As we have completed this animation and presumably displayed the history
-		// and will reset the current history to be the value we just displayed
-		// That way future things will have the just-displayed-element in their history, instead of everything
-		// that was used to produce is.
-		int time = Algovis_Viewer::Registry::GetInstance()->CurrentTime();
-		subject->ResetHistory(ValueID(subject->GetId(), time));
-
-		subject->EnableDrawing(true);
-		//if (source != NULL)
-		//	source->EnableDrawing(true);
-	}
+	subject->UpdateValue(value);
 }
 
 
@@ -235,12 +250,37 @@ Action* DS_Modified::Clone() const
 	return new DS_Modified(*this);
 }
 
-void DS_Modified::SetSource(VO_SinglePrintable* source)
+/*void DS_Modified::SetSource(VO_SinglePrintable* source)
 {
 	//this->source = source;
 	//sourceIsSibling = source->parent() == subject->parent();
-}
+}*/
 
+void DS_Modified::UpdateHistory(HistoryManager& historyManager)
+{
+	// Combine the two histories
+	history = historyManager.GetHistory(dsModified);
+	if (dsSource != INVALID)
+	{
+		std::set<ValueID> otherHistory = historyManager.GetHistory(dsSource);
+		history.insert(otherHistory.begin(), otherHistory.end());
+	}
+		
+	if (historyManager.IsVisible(dsModified))
+	{
+		suppressAnimation = false;
+		historyManager.ResetHistory(dsModified);
+	}
+	else
+	{
+		suppressAnimation = true;
+		historyManager.SetHistory(dsModified, history);
+	}
+
+	historyManager.SetValue(dsModified, value);
+
+	DS_Action::UpdateHistory(historyManager);
+}
 
 void DS_Modified::PrepareToPerform()
 {
@@ -251,34 +291,6 @@ void DS_Modified::PrepareToPerform()
 	UL_ASSERT(registry->IsRegistered(dsModified, SINGLE_PRINTABLE));
 	subject = registry->GetRepresentation<VO_SinglePrintable>(dsModified);
 	UL_ASSERT(subject);
-
-	if (registry->IsRegistered(dsSource, SINGLE_PRINTABLE))
-	{
-		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(dsSource);
-		UL_ASSERT(source);
-		history = subject->GetHistory();
-		history.insert(source->GetHistory().begin(), source->GetHistory().end());
-
-		// TODO: Currently we only want an animation for assignments to SPs which are owned by an array
-		if (subject->parent())
-		{
-			if (typeid(*subject->parent()) != typeid(VO_Array))
-				suppressAnimation = true;
-		}
-		else
-			suppressAnimation = true;
-	}
-	else
-	{
-		// The only history we have is that the value was untracked, so chuck in an element to represent that
-		history = subject->GetHistory();
-		// Time -1 denotes elements that aren't actually tracked (TODO: That sucks)
-		// dsSource or dsAssigned??? check repository TODO
-		history.insert(ValueID(dsModified, -1)); 
-
-		suppressAnimation = true;
-
-	}
 
 	// Set subjectStart to have abs position
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
@@ -322,21 +334,7 @@ void DS_Modified::Perform(float progress, QPainter* painter)
 
 void DS_Modified::Complete(bool displayed)
 {
-	subject->Assigned(history, value);
-	
-	if (displayed)
-	{
-		// As we have completed this animation and presumably displayed the history
-		// and will reset the current history to be the value we just displayed
-		// That way future things will have the just-displayed-element in their history, instead of everything
-		// that was used to produce is.
-		int time = Registry::GetInstance()->CurrentTime();
-		subject->ResetHistory(ValueID(subject->GetId(), time));
-
-		subject->EnableDrawing(true);
-		//if (source != NULL)
-		//	source->EnableDrawing(true);
-	}
+	subject->UpdateValue(value);
 }
 
 /////////////////// DS_HighlightOperands

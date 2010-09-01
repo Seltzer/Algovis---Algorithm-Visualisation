@@ -2,7 +2,7 @@
 #define ACTION_H
 
 #include <vector>
-
+#include "historyManager.h"
 
 class QPainter;
 
@@ -25,13 +25,12 @@ namespace Algovis_Viewer
 		Action(const Action&);
 		virtual Action* Clone() const = 0;
 		virtual ~Action();
-		
-		// Uses parameter copy semantics (see devdocs)
-		void AddSubAction(Action& subAction);
 
 		// Allows animation to be disabled for an action
 		void SuppressAnimation();
 		bool AnimationSuppressed();
+
+		virtual void UpdateHistory(HistoryManager& historyManager) = 0;
 
 		// For preparation, such as acquiring drawing responsibility over Viewables etc.
 		// WARNING - don't make any non-GUI-thread-sensitive invocations on Viewables since
@@ -47,7 +46,6 @@ namespace Algovis_Viewer
 
 	protected:
 		World* world;
-		std::vector<Action*> subActions;
 
 		bool suppressAnimation;
 
