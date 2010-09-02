@@ -1,6 +1,8 @@
 #ifndef VIEWABLE_OBJECT_H_
 #define VIEWABLE_OBJECT_H_
 
+#include <string>
+#include <QMenu>
 #include "../displayer/components.h"
 #include "../../include/common.h"
 
@@ -18,6 +20,7 @@ namespace Algovis_Viewer
 
 	class ViewableObject : public Component
 	{
+		Q_OBJECT
 
 	public:
 		virtual ~ViewableObject();
@@ -34,12 +37,8 @@ namespace Algovis_Viewer
 		// TODO obsolete
 		bool IsTopLevel();
 
-
 		bool HasParentViewable() const;
 		void SetParentViewable(ViewableObjectContainer*);
-
-
-
 
 		// Returns this VO's position relative to the World - undefined if VO hasn't been added to the World
 		QPoint GetPositionInWorld();
@@ -50,6 +49,8 @@ namespace Algovis_Viewer
 		ID GetId();
 		const void* GetDSAddress();
 		void SetDSAddress(const void*);
+
+		void SetTitle(const std::string&);
 
 		void SetSizeDictatedByParent(bool);
 
@@ -66,9 +67,12 @@ namespace Algovis_Viewer
 		bool mouseDraggingInitiated;
 		QPoint globalPositionBeforeDragging, localPositionBeforeDragging;
 
+		// ID / dsAddress / title
 		const ID id;
 		const void* dsAddress;
-		World* world;
+		std::string titleString;
+		bool userHasSetTitleBefore;
+
 
 		QColor boundingBoxColour;
 
@@ -78,6 +82,12 @@ namespace Algovis_Viewer
 
 		bool hasParentViewable;
 		ViewableObjectContainer* parentViewable;
+
+		World* world;
+
+	public slots:
+		virtual void spawnContextMenu(const QPoint&);
+		virtual void setTitleSlot();
 
 	};
 

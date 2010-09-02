@@ -1,7 +1,10 @@
 #include <QObject>
+#include <QLineEdit>
+#include <Qt/qinputdialog.h>
 #include "QtGui/qevent.h"
 #include "utilities.h"
 #include "viewableObject.h"
+#include "viewableObjectContainer.h"
 
 
 
@@ -10,16 +13,24 @@ namespace Algovis_Viewer
 
 
 ViewableObject::ViewableObject(ID id, const void* dsAddress, World* world)
-	: id(id), dsAddress(dsAddress), world(world), mouseDraggingInitiated(false), 
-		boundingBoxColour(Qt::green), sizeDictatedByParent(false), hasParentViewable(false)
+	: id(id), world(world), mouseDraggingInitiated(false), 
+		userHasSetTitleBefore(false), boundingBoxColour(Qt::green), sizeDictatedByParent(false), hasParentViewable(false)
 {
+	SetDSAddress(dsAddress);
+	setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+	connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), 
+					SLOT(spawnContextMenu(const QPoint&)), Qt::DirectConnection);
 }
 
 ViewableObject::ViewableObject(ID id, const void* dsAddress, World* world, QWidget* parent)
-	: Component(parent, QPoint(5,5),QSize(200,200)),id(id), dsAddress(dsAddress), world(world), 
-		mouseDraggingInitiated(false),boundingBoxColour(Qt::green), 
+	: Component(parent, QPoint(5,5),QSize(200,200)),id(id), world(world), 
+		mouseDraggingInitiated(false), userHasSetTitleBefore(false), boundingBoxColour(Qt::green), 
 		sizeDictatedByParent(false), hasParentViewable(false)
 {
+	SetDSAddress(dsAddress);
+	setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+	connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), 
+					SLOT(spawnContextMenu(const QPoint&)), Qt::DirectConnection);
 }
 
 
@@ -68,6 +79,10 @@ void ViewableObject::mousePressEvent(QMouseEvent* evt)
 			evt->ignore();
 		}
 	}
+	else
+	{
+		evt->ignore();
+	}
 }
 
 void ViewableObject::mouseReleaseEvent(QMouseEvent* evt)
@@ -78,6 +93,10 @@ void ViewableObject::mouseReleaseEvent(QMouseEvent* evt)
 			mouseDraggingInitiated = false;
 		else
 			evt->ignore();
+	}
+	else
+	{
+		evt->ignore();
 	}
 }
 	
@@ -124,6 +143,39 @@ void ViewableObject::wheelEvent(QWheelEvent* evt)
 }
 
 
+
+void ViewableObject::spawnContextMenu(const QPoint& point)
+{
+	if (hasParentViewable)
+	{
+		QPoint translatedPoint = point + pos();
+		parentViewable->spawnContextMenu(translatedPoint);
+	}
+	else
+	{
+		QMenu *menu = new QMenu;
+		menu->addAction(tr("Set Title"), this, SLOT(setTitleSlot()));
+		menu->exec(mapToGlobal(point));
+	}
+}
+
+void ViewableObject::setTitleSlot()
+{
+	bool okPressed;
+
+	QString text = QInputDialog::getText(this, "Algovis", "Set title for viewable", QLineEdit::Normal,
+								QString(titleString.c_str()),&okPressed);
+    
+	if (okPressed && !text.isEmpty()) 
+	{
+		if (!text.endsWith(":"))
+			text.append(":");
+
+		SetTitle(text.toStdString());
+	}
+}
+
+
 void ViewableObject::SetSizeDictatedByParent(bool sizeDictatedByParent)
 {
 	this->sizeDictatedByParent = sizeDictatedByParent;
@@ -143,6 +195,16 @@ const void* ViewableObject::GetDSAddress()
 void ViewableObject::SetDSAddress(const void* newAddress)
 {
 	dsAddress = newAddress;
+
+	if (!userHasSetTitleBefore)
+		SetTitle(util::ToString<const void*>(dsAddress).append(":"));
+}
+
+void ViewableObject::SetTitle(const std::string& newTitle)
+{
+	userHasSetTitleBefore = true;
+	titleString = newTitle;
+
 	adjustSize();
 }
 

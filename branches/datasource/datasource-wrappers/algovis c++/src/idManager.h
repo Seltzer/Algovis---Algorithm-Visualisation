@@ -21,8 +21,26 @@ namespace Algovis
 {
 	class Wrapper;
 
+
 	typedef int ID;
 
+
+	struct CopyConstructionInfo
+	{
+		enum Result { NORMAL_CC, TRANSPLANT};
+		Result result;
+
+		ID newId, otherId;
+	};
+
+
+	struct CopyAssignmentInfo
+	{
+		enum Result { NORMAL_ASSIGNMENT, TRANSPLANT, ORPHAN_REBIRTH };
+		Result result;
+
+		ID otherId, oldId, newId;
+	};
 
 	
 	/* IdManager class
@@ -52,7 +70,7 @@ namespace Algovis
 		
 		// Assigns newWrapper with a new ID unless transplant conditions are met
 		// in which case newWrapper is given the same ID as originalWrapper (which becomes an orphan)
-		ID GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper* originalWrapper);
+		CopyConstructionInfo GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper* originalWrapper);
 
 		/* There are 3 cases:
 		 *		1.) wrapper keeps its current ID (this is a regular copy-assignment)
@@ -61,7 +79,7 @@ namespace Algovis
 		 *		3.) wrapper is an orphan, and will be allocated a new id as if it were copy-constructed
 		 *					under non-transplant conditions.
 		 */
-		ID GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* originalWrapper);
+		CopyAssignmentInfo GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* originalWrapper);
 	
 		// Note: If the wrapper isn't an orphan, if displayEnabled,  it will be deregistered with the Registry
 		void ReportDestruction(const Wrapper* wrapperAddress);

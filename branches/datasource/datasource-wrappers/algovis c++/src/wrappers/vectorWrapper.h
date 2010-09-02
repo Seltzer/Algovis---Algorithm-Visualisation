@@ -45,7 +45,7 @@ public:
 	explicit VectorWrapper<T, Alloc>(size_type n, const value_type& value = value_type(),
 													const allocator_type& a = allocator_type());
 	VectorWrapper(const VectorWrapper&);
-	VectorWrapper<T,Alloc>& operator= (const VectorWrapper<T,Alloc>& rhs);
+	VectorWrapper<T,Alloc>& operator= (const VectorWrapper<T,Alloc>&);
 	~VectorWrapper();
 	
 

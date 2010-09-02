@@ -1,5 +1,6 @@
 #include "operatorOverloads.h"
 #include "registry.h"
+#include "common.h"
 
 namespace Algovis
 {
@@ -50,58 +51,47 @@ namespace Algovis
 #undef AV_OPERATOR_MACRO
 
 // Comparison operators
-#define AV_COMPARISON_OPERATOR_MACRO(WRAPPER_TYPE, OPERATION) \
-	bool operator OPERATION(const WRAPPER_TYPE & op1, const WRAPPER_TYPE & op2) \
-	{\
-		return (op1.AVGetValue() OPERATION op2.AVGetValue()); \
-	}\
-
-
-	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,<);
-	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,<=);
-	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,>);
-	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,>=);
-	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,==);
-	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,!=);
-	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,<);
-	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,<=);
-	//AV_COMPARISON_OPERATOR_MACRO(IntWrapper,>);
-	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,>=);
-	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,==);
-	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,!=);
-	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,<);
-	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,<=);
-	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,>);
-	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,>=);
-	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,==);
-	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,!=);
-	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,<);
-	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,<=);
-	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,>);
-	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,>=);
-	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,==);
-	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,!=);
-
-
-
-#undef AV_COMPARISON_OPERATOR_MACRO
-
-
-// TODO temporary
-bool operator >(const IntWrapper& op1, const IntWrapper& op2)
-{
-	if (drawingEnabled)
-	{
-		ID id1 = IdManager::GetInstance()->GetId(&op1);
-		ID id2 = IdManager::GetInstance()->GetId(&op2);
-		std::vector<ID> ops;
-		ops.push_back(id1);
-		ops.push_back(id2);
-	
-		Algovis_Viewer::Registry::GetInstance()->HighlightOperands(ops);
+#define AV_COMPARISON_OPERATOR_MACRO(WRAPPER_TYPE, OPERATOR, OPERATOR_NOTATION)					\
+	bool operator OPERATOR (const WRAPPER_TYPE & op1, const WRAPPER_TYPE & op2)					\
+	{																							\
+		if (drawingEnabled && highlightOperandsEnabled)											\
+		{																						\
+			ID id1 = IdManager::GetInstance()->GetId(&op1);										\
+			ID id2 = IdManager::GetInstance()->GetId(&op2);										\
+			std::vector<ID> ops;																\
+			ops.push_back(id1);																	\
+			ops.push_back(id2);																	\
+			Algovis_Viewer::Registry::GetInstance()->HighlightOperands(ops, Algovis_Viewer::OPERATOR_NOTATION);\
+		}																						\
+		return (op1.AVGetValue() OPERATOR op2.AVGetValue());									\
 	}
-	return (op1.AVGetValue() > op2.AVGetValue());
-}
+	
+
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,<, LESS_THAN);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,<=, LESS_THAN_OR_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,>, MORE_THAN);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,>=, MORE_THAN_OR_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,==, EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(CharWrapper,!=, NOT_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,<, LESS_THAN);
+	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,<=, LESS_THAN_OR_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,>, MORE_THAN);
+	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,>=, MORE_THAN_OR_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,==, EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(IntWrapper,!=, NOT_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,<, LESS_THAN);
+	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,<=, LESS_THAN_OR_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,>, MORE_THAN);
+	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,>=, MORE_THAN_OR_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,==, EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(FloatWrapper,!=, NOT_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,<, LESS_THAN);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,<=, LESS_THAN_OR_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,>, MORE_THAN);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,>=, MORE_THAN_OR_EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,==, EQUAL);
+	AV_COMPARISON_OPERATOR_MACRO(DoubleWrapper,!=, NOT_EQUAL);
+#undef AV_COMPARISON_OPERATOR_MACRO
 
 
 

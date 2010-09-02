@@ -65,13 +65,20 @@ ID IdManager::GetIdForConstruction(const Wrapper* wrapper)
 	return idMapping[wrapper];
 }
 
-ID IdManager::GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper* originalWrapper)
+CopyConstructionInfo IdManager::GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper* originalWrapper)
 {
 	#if (ID_DEBUGGING_LEVEL >= 1)
 		cout << "Copy construction of originalWrapper ID" << idMapping[originalWrapper] << endl;
 	#endif
 
+	CopyConstructionInfo returnInfo;
 	
+	if (idMapping.count(originalWrapper))
+		returnInfo.otherId = idMapping[originalWrapper];
+	else
+		returnInfo.otherId = INVALID;
+	
+
 	bool originalIsException = IsWrapperAnException(originalWrapper);
 
 	// Figure out whether transplant conditions are met
@@ -79,11 +86,19 @@ ID IdManager::GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper*
 	{
 		// Transplant
 		TransplantWrapper(newWrapper, originalWrapper);
+		returnInfo.result = CopyConstructionInfo::TRANSPLANT;
+		returnInfo.newId = idMapping[newWrapper];
+
+		// Let Registry know that the address of newWrapper has changed
+		if (drawingEnabled)
+			Algovis_Viewer::Registry::GetInstance()->AddressChanged(returnInfo.newId, newWrapper);
 	}
 	else
 	{
 		// Don't transplant
 		idMapping[newWrapper] = nextIdToAllocate++;
+		returnInfo.result = CopyConstructionInfo::NORMAL_CC;
+		returnInfo.newId = idMapping[newWrapper];
 
 		#if (ID_DEBUGGING_LEVEL >=2)
 			cout << "\tRegular copy construction - newWrapper id = " << idMapping[newWrapper] << endl;
@@ -94,11 +109,10 @@ ID IdManager::GetIdForCopyConstruction(const Wrapper* newWrapper, const Wrapper*
 	if (originalIsException)
 		modeExceptions.push_back(idMapping[newWrapper]);
 
-
-	return idMapping[newWrapper];
+	return returnInfo;
 }
 
-ID IdManager::GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* originalWrapper)
+CopyAssignmentInfo IdManager::GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* originalWrapper)
 {
 	UL_ASSERT(idMapping.count(wrapper));
 	UL_ASSERT(idMapping.count(originalWrapper));
@@ -107,6 +121,11 @@ ID IdManager::GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* orig
 		cout << "Copy assignment to ID" << idMapping[wrapper] << "from ID" << idMapping[originalWrapper] << endl;
 	#endif
 
+
+	CopyAssignmentInfo returnInfo;
+	returnInfo.oldId = idMapping[wrapper];
+	returnInfo.otherId = idMapping[originalWrapper];
+	
 
 	bool originalIsException = IsWrapperAnException(originalWrapper);
 
@@ -119,6 +138,8 @@ ID IdManager::GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* orig
 		// If originalWrapper is an exception to current mode, then so is newWrapper
 		if (originalIsException)
 			modeExceptions.push_back(idMapping[wrapper]);
+
+		returnInfo.result = CopyAssignmentInfo::TRANSPLANT;
 	}
 	else
 	{
@@ -127,6 +148,7 @@ ID IdManager::GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* orig
 		{
 			RemoveFromOrphanList(wrapper);
 			GetIdForConstruction(wrapper);
+			returnInfo.result = CopyAssignmentInfo::ORPHAN_REBIRTH;
 
 			#if (ID_DEBUGGING_LEVEL >=2)
 				cout << "\twrapper was an orphan but was allocated a new ID" << idMapping[wrapper] << endl;
@@ -134,6 +156,7 @@ ID IdManager::GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* orig
 		}
 		else
 		{
+			returnInfo.result = CopyAssignmentInfo::NORMAL_ASSIGNMENT;
 			#if (ID_DEBUGGING_LEVEL >=2)
 				cout << "\tRegular copy assignment - ID" << idMapping[wrapper] << "retained its id" << endl;
 			#endif
@@ -145,7 +168,9 @@ ID IdManager::GetIdForCopyAssignment(const Wrapper* wrapper, const Wrapper* orig
 	if (originalIsException)
 		modeExceptions.push_back(idMapping[wrapper]);
 
-	return idMapping[wrapper];
+
+	returnInfo.newId = idMapping[wrapper];
+	return returnInfo;
 }
 
 
@@ -164,11 +189,19 @@ void IdManager::ReportDestruction(const Wrapper* wrapper)
 		
 	if (orphanedWrappers.count(wrapper) > 0)
 	{
+		#if (ID_DEBUGGING_LEVEL >=2)
+			cout << "\tOrphans die quietly - don't report destruction to the Registry" << endl;
+		#endif
+
 		// Orphans die quietly - don't report destruction to the Registry
 		RemoveFromOrphanList(wrapper);	
 	}
 	else
 	{
+		#if (ID_DEBUGGING_LEVEL >=2)
+			cout << "\tReporting destruction to registry (not an orphan)" << endl;
+		#endif
+
 		// Wrapper is not an orphan, so deregister it with the Registry
 		if (drawingEnabled && SettingsManager::GetInstance()->DestructionReportingEnabled())
 			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(id);

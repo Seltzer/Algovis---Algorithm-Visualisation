@@ -3,6 +3,7 @@
 
 #include "arrayAlgorithms.h"
 
+using namespace std;
 
 void OriginalDemo()
 {
@@ -41,6 +42,9 @@ void MultipleVectorDemoWithDelete()
 	EnableDrawing(true);
 
 	{
+		SetCaption(string("MultipleVectorDemoWithDelete"));
+		//EnableOperandsHighlighting(false);
+
 		// Populate
 		vector<int> c1, c2, c3, c4, c5, c6;
 		
@@ -115,6 +119,9 @@ void MergeSortDemo()
 {
 	EnableDrawing(true);
 
+
+	SetCaption(string("MergeSortDemo"));
+
 	// Populate
 	vector<int> c1, c2;
 	
@@ -129,6 +136,10 @@ void MergeSortDemo()
 	c2.push_back(3);
 	c2.push_back(4);
 
+	prt("HAIHAIHAIHAIHAI");
+	vector<int> result = merge(c1,c2, 0);
+
+
 
 /*
 	c1.push_back(1);
@@ -140,13 +151,12 @@ void MergeSortDemo()
 	c1.push_back(8);
 	c1.push_back(5);
 	c1.push_back(3);
-	c1.push_back(4);*/
+	c1.push_back(4);
+	
+	vector<int> result = mergeSort(c1);
+	*/
 
-	prt("HAIHAIHAIHAIHAI");
-	getchar();
-
-	vector<int> result = merge(c1,c2);
-	//vector<int> result = mergeSort(c1);
+	
 
 
 	prt("Press any key to leave MergeSortDemo");
@@ -200,55 +210,31 @@ void UnconversionsDemo()
 	getchar();
 }
 
-
-
-void MultipleVectorWithoutExtraCrap()
-{
-	EnableDrawing(true);
-
-	// Populate
-	vector<int> c1, c2, c3, c4, c5, c6;
-	
-	// Sort c1
-	PopulateVectorWithRandomInts(c1, 5, 0, 9);
-	for (int i = 3; i >= 0; --i)
-		c1[i] = c1[i] + c1[i+1];
-
-	// Do stuff with other vectors
-	PopulateVectorWithRandomInts(c2, 9, 0, 9);
-	PopulateVectorWithRandomInts(c3, 9, 0, 99);
-	PopulateVectorWithRandomInts(c4, 9, 0, 999);
-	PopulateVectorWithRandomInts(c5, 9, 0, 99);
-	PopulateVectorWithRandomInts(c6, 9, 0, 9);
-
-	prt("Press any key to leave MultipleVectorWithoutExtraCrap");
-	getchar();
-}
-
 void DoRandomStuffWithAVectorDemo()
 {
 	EnableDrawing(true);
 	{
 		vector<int> c1;
-		
+		int i;
 		
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
+		
 		c1.erase(c1.begin());
+		c1.push_back(6);
 		c1.insert(c1.begin(), 10, 13);
-
 		c1.erase(c1.begin() + 5, c1.begin() + 8);
 		
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
 
 		c1.resize(3);
-
 		c1.insert(c1.begin(), 10, 14);
 		c1[0] = c1[1] + c1[2];		
 
 		c1.erase(c1.begin()+2, c1.end());
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
-
 		c1.erase(c1.begin(), c1.end());
+
+		FlushAllActions();
 
 
 		prt("Press any key to delete all viewables");

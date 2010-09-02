@@ -69,65 +69,45 @@ namespace Algovis
 			: primitive(other.primitive) 
 		{
 			//std::cout << "PrimitiveType CC called id = " << id << ", otherId = " << otherId << std::endl;
-			ID otherId = IdManager::GetInstance()->GetId(&other);
-			ID id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
-			
-
+			CopyConstructionInfo info = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
+						
 			if (drawingEnabled && SettingsManager::GetInstance()->CopyConstructionReportingEnabled())
 			{
-				if (id == otherId)
-				{
-					// This wrapper is being copy constructed as the result of a transplant - inform Registry
-					Algovis_Viewer::Registry::GetInstance()->AddressChanged(id, this);
-				}
-				else
+				if (info.result == CopyConstructionInfo::NORMAL_CC)
 				{
 					// This wrapper is being copy constructed normally
-					Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(id, this, util::ToString<PrimitiveType>(primitive));
-					Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id, otherId, GetStringRepresentation());
+					Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(info.newId, this, util::ToString<PrimitiveType>(primitive));
+					Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(info.newId, info.otherId, GetStringRepresentation());
 				}
-
 			}
 		}
 
 		PrimitiveWrapper& operator=(const PrimitiveWrapper& other)
 		{
 			//std::cout << "PrimitiveType CAO called " << std::endl;
-			if (this != &other)
-			{
-				primitive = other.primitive;
+			if (this == &other)
+				return *this;
 
-				ID oldId = Id();
-				ID otherId = IdManager::GetInstance()->GetId(&other);
-				ID id = IdManager::GetInstance()->GetIdForCopyAssignment(this, &other);
-							
-				// what if both were invalid???
-				if (id == otherId)
-				{
-					// I was transplanted from other so do nothing
-				}
-				else
-				{
-					if (id == oldId)
-					{
-						// This was a regular copy assignment, so inform the Registry that my value has changed
-						if (drawingEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
-							Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(id, otherId, 
-																			GetStringRepresentation());
-					}
-					else
-					{
-						// I was an orphan have since been allocated a new id - inform Registry
-						if (drawingEnabled)
-							Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable
-									(id, this, GetStringRepresentation());
-					}
-				}
+			primitive = other.primitive;
+			CopyAssignmentInfo result = IdManager::GetInstance()->GetIdForCopyAssignment(this, &other);
+
+			if (result.result == CopyAssignmentInfo::NORMAL_ASSIGNMENT)
+			{
+				// This was a regular copy assignment, so inform the Registry that my value has changed
+				if (drawingEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
+					Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(result.newId, result.otherId, 
+																				GetStringRepresentation());
+			}
+			else if (result.result == CopyAssignmentInfo::ORPHAN_REBIRTH)
+			{
+				// I was an orphan and have since been allocated a new id - inform Registry
+				if (drawingEnabled)
+					Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable
+																(result.newId, this, GetStringRepresentation());
 			}
 
 			return *this;
 		}
-
 
 		virtual ~PrimitiveWrapper() {}
 

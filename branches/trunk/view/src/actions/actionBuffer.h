@@ -24,6 +24,12 @@ namespace Algovis_Viewer
 
 		// Param copy semantics
 		void PushBack(Action*);
+	
+		void CombineAndPerformActions();
+
+		void Flush();
+
+		bool Empty();
 
 		bool Full()
 		{

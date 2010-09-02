@@ -39,6 +39,7 @@ QSize VO_SinglePrintable::sizeHint() const
 }
 
 
+
 void VO_SinglePrintable::paintEvent(QPaintEvent*)
 {
 	if (!drawingEnabled)

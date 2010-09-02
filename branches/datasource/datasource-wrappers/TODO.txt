@@ -1,43 +1,35 @@
 Currently in progress:
 
 * Analyse dependencies between actions
-* Write wrappers for STL stacks + maps, and unsigned types
-* Write a Viewable for matrices
-* Remove SINGLE_PRINTABLE hackery
+* Write/finish wrappers for STL maps and the rest of the primitives (and perhaps strings too)
+* Write Viewables for matrices, linked lists and hash maps
+* Remove SINGLE_PRINTABLE hackery (mostly removed)
 
 
 ***** CRITICAL *****
 
-* Improve DS_Assigned and DS_HighlightOperands
+* Improve DS_Assigned and DS_HighlightOperands animations
 * Add a proper position allocation algorithm to the Container class.
-* Allow user to pause/resume/undo (dependent on ActionBuffer + history)
+* Allow user to go back through actions
   
   
 ***** HIGH PRIORITY *****
 * Add mouse over expand feature
 	- We can display 'thumbnail' views of large VOs by default and display the large versions 
 		when moused over
-	- Names/addresses of Viewables should only be shown when moused over
-		(this will speed up painting too)
+	- Perhaps title strings of Viewables should only be shown when moused over
 * Speed up and control painting  
 
 
 ***** MEDIUM PRIORITY *****
 * Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
-* Write VO_LinkedList and some sort of VO for a map type data structure
 * Do some quick research into a popular C++ graph library
-* Provide more user functions in userFunctions.h:
-		- VO naming (so that VOs aren't just memory addresses/IDs)
-		- Combining actions
-		- Settings such as 'highlight operands'
 * UI Stuff:
 	 - Some sort of control panel with list of VOs???
 	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
 		arrays of arrays.
-	 - Show action descriptions down the bottom?
-	 - Improve window resizing and implement snap to current action feature
-	 - suppress all from now on feature
-* Implement stats for arrays
+	 - Improve window resizing, fix any dodgy stuff and implement snap to current action feature
+* Implement stats for arrays???
 
 
 ***** LOW PRIORITY *****
@@ -48,7 +40,7 @@ Currently in progress:
 	What we require is essentially function hooking which is often used for aspect-oriented programming type 
 	behaviour. Useful search keywords might include: 
 		{hooking hooks aop proxy intercept method calls...}
-* Decouple utilities-lib from boost-subset so that it can be used in other projects
+* Decouple utilities-lib from boost-subset so that it can be used in other slns
 
 
 ***** GENERAL CODE TODO *****
@@ -68,8 +60,7 @@ Currently in progress:
 
 ***** BUGS *****
 * Ambiguous < op when using vec.size_type
-* Shutdown bugs when actions are occurring
-
+* Deal with assertion in DS_CreateSP::PrepareToPerform that is predicated on the array being registered
 
 **** THOUGHTS ****
 * How to deal with "unsigned char"

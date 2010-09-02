@@ -1,19 +1,20 @@
 #ifndef USER_FUNCTIONS_H
 #define USER_FUNCTIONS_H
 
+#include <string>
+
 
 extern bool drawingEnabled;
+extern bool highlightOperandsEnabled;
 
-/* Use with caution:
- *
- * Drawing is disabled by default. Theoretically if drawing is never enabled during an execution run, 
- * the view DLL should never be loaded. This doesn't really work though.
- *
- */
+// Internal to DS
 void EnableDrawing(bool enabled);
+void EnableOperandsHighlighting(bool enabled);
 
+// Result in Registry invocations
+void SetCaption(std::string&);
+void FlushAllActions();
 void Shutdown();
-
 void TestMethod();
 
 

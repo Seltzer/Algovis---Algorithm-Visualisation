@@ -5,14 +5,11 @@
 #include "utilities.h"
 //#include "conversions.h"
 
-// Our original demo with vector population, cumulative adding, bubblesorting
+// Our original demo featuring vector population, cumulative adding, bubblesorting
 void OriginalDemo();
-
 
 // A bit of sorting, pointless assignment of values between multiple vectors and deletion at the end
 void MultipleVectorDemoWithDelete();
-
-void MultipleVectorWithoutExtraCrap();
 
 void DoRandomStuffWithAVectorDemo();
 

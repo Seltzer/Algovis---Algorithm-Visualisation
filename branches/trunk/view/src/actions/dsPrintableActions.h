@@ -86,7 +86,7 @@ namespace Algovis_Viewer
 	{
 
 	public:
-		DS_HighlightOperands(World*, std::vector<ID> operands);
+		DS_HighlightOperands(World*, std::vector<ID> operands, ComparisonOps);
 		DS_HighlightOperands(const DS_HighlightOperands&);
 		virtual Action* Clone() const;
 		virtual void PrepareToPerform();
@@ -94,10 +94,16 @@ namespace Algovis_Viewer
 		virtual void Complete(bool displayed);
 
 	private:
+		// Returns true if upon departure from the method, a pointer for each operand is present in operandPtrs
+		bool FetchOperandPtrs();
+
+		ComparisonOps opType;
+
 		std::vector<ID> operands;
 		std::vector<VO_SinglePrintable*> operandPtrs;
 
 		QColor originalBBColour;
+
 	};
 
 }

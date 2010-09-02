@@ -48,8 +48,8 @@ namespace Algovis_Viewer
 		//std::vector<ViewableObject*> elements;
 		ViewableObjectType elementType;
 				
-		mutable QString addressText;
-		mutable QPoint addressTextPosition;
+		mutable QString titleText;
+		mutable QPoint titleTextPosition;
 	};
 }
 

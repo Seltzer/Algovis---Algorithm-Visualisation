@@ -31,7 +31,6 @@ namespace Algovis_Viewer
 
 	/* 0 = Off
 	 * 1 = Basic action debugging
-	 * 2 = Verbose data about Registry::AddActionToBuffer
 	 */
 	#define DEBUG_ACTION_LEVEL 0
 

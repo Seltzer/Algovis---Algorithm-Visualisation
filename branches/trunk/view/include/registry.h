@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <map>
+#include <string>
 #include "boost/thread/mutex.hpp"
 #include "utilities.h"
 #include "common.h"
@@ -96,9 +97,11 @@ namespace Algovis_Viewer
 		void PrintableModified(ID dsModified, ID dsSource, const std::string& newValue);
 
 		// Pre-Condition: Operands are single printables - TODO remove this hack
-		void HighlightOperands(const std::vector<ID>& operands);
+		void HighlightOperands(const std::vector<ID>& operands, ComparisonOps);
 
-
+		// Set caption in control panel
+		void SetCaption(const std::string&);
+		
 		// Used to test out anything imaginable - declared here so that it can be called by the DLL user
 		void TestMethod();
 
@@ -124,6 +127,10 @@ namespace Algovis_Viewer
 		 */
 		template<class T>
 		T* GetRepresentation(ID);
+
+
+		// Blocks until all actions in the buffer are performed and animated
+		void FlushAllActions();
 	
 
 	private:

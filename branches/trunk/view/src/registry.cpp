@@ -1,3 +1,4 @@
+#include <iostream>
 #include "qt/qapplication.h"
 #include "boost/foreach.hpp"
 #include "utilities.h"
@@ -75,21 +76,19 @@ void Registry::AddActionToBuffer(DS_Action* dsAction)
 	
 	UL_ASSERT(dsAction);
 	actionBuffer.PushBack(dsAction);
-	//Displayer::GetInstance()->PerformAndAnimateActionAsync(dsAction);
 
-
-	#if (DEBUG_ACTION_LEVEL >= 2)
+	#if (DEBUG_ACTION_LEVEL >= 1)
 		prt("\tFinishing Registry::AddActionToBuffer()");
 	#endif
 }
 
 
 void Registry::RegisterArray
-		(ID id, const void* dsArrayAddress, ViewableObjectType elementType, const std::vector<ID>& elements)
+		(ID id, const void* dsArrayAddress, ViewableObjectType elementType, const vector<ID>& elements)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 2)
-		std::cout << "Registering array with ID " << id << std::endl;
+		cout << "Registering array with ID " << id << std::endl;
 	#endif
 
 	
@@ -100,11 +99,11 @@ void Registry::RegisterArray
 }
 
 
-void Registry::RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddress, const std::string& value)
+void Registry::RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddress, const string& value)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 3)
-		std::cout << "Registering SP with value " << value << " and id " << id<< std::endl;
+		cout << "Registering SP with value " << value << " and id " << id<< std::endl;
 	#endif
 
 	// Create action
@@ -149,7 +148,6 @@ void Registry::AddElementToArray(ID dsArray, ID dsElement, unsigned position)
 	#endif
 
 	boost::unique_lock<boost::mutex> lock(registryMutex);
-	cout << "Inside Registry::AddElementToArray - adding dsElement @ " << dsElement << endl;
 
 
 	// Create event
@@ -163,7 +161,7 @@ void Registry::AddElementToArray(ID dsArray, ID dsElement, unsigned position)
 void Registry::AddElementsToArray(ID dsArray, const std::vector<ID>& elements, unsigned startIndex)
 {
 	#ifdef DEBUG_ARRAY_CHANGES
-		cout << "Adding " elements.size() << " elements to array with ID " << dsArray << endl;
+		cout << "Adding " << elements.size() << " elements to array with ID " << dsArray << endl;
 	#endif
 
 	// commented out to prevent recursive acquisition when we call AddElementToArray
@@ -179,7 +177,7 @@ void Registry::AddElementsToArray(ID dsArray, const std::vector<ID>& elements, u
 		AddElementToArray(dsArray, element, index++);
 }
 
-void Registry::RemoveElementsFromArray(ID dsArray, const std::vector<ID>& elements, 
+void Registry::RemoveElementsFromArray(ID dsArray, const vector<ID>& elements, 
 											unsigned startIndex, unsigned endIndex)
 {
 	DS_RemoveElementsFromArray* removeAction = 
@@ -195,7 +193,7 @@ void Registry::ClearArray(const void* dsArray)
 	prt("UNIMPLEMENTED!!!!!!!!!!!!!!!!!!!!!!!");
 }*/
 
-void Registry::PrintableAssigned(ID dsAssigned, ID dsSource, const std::string& newValue)
+void Registry::PrintableAssigned(ID dsAssigned, ID dsSource, const string& newValue)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
  
@@ -211,7 +209,7 @@ void Registry::PrintableAssigned(ID dsAssigned, ID dsSource, const std::string& 
 }
 
 // TODO: This is really similar to above
-void Registry::PrintableModified(ID dsModified, ID dsSource, const std::string& newValue)
+void Registry::PrintableModified(ID dsModified, ID dsSource, const string& newValue)
 {
 	// Don't expect this method to work atm
 
@@ -220,10 +218,25 @@ void Registry::PrintableModified(ID dsModified, ID dsSource, const std::string& 
 	AddActionToBuffer(&action);
 }
 
-void Registry::HighlightOperands(const std::vector<ID>& operands)
+void Registry::HighlightOperands(const vector<ID>& operands, ComparisonOps opType)
 {
-	DS_HighlightOperands action(world, operands);
+	DS_HighlightOperands action(world, operands, opType);
 	AddActionToBuffer(&action);
+}
+
+void Registry::SetCaption(const std::string& newCaption)
+{
+	DS_SetCaption captionAction(world, newCaption);
+	AddActionToBuffer(&captionAction);
+}
+
+
+void Registry::FlushAllActions()
+{
+	if (displayerShuttingDown)
+		return;
+
+	actionBuffer.Flush();
 }
 
 
@@ -244,7 +257,7 @@ bool Registry::IsRegistered(ID id, ViewableObjectType voType) const
 	if (registeredViewables.count(id) == 0)
 		return false;
 
-	std::map<ID, ViewableObject*>::const_iterator it = registeredViewables.find(id);
+	map<ID, ViewableObject*>::const_iterator it = registeredViewables.find(id);
 	
 	return (*it).second->GetType() == voType;
 }
@@ -274,6 +287,7 @@ void Registry::Register(ID id, ViewableObject* viewable)
 
 bool Registry::Deregister(ID id)
 {
+	cout << "Registry::Deregister for ID" << id << endl;
 	util::WriterLock<util::LockManager<1>,1> lock(*this);
 
 	UL_ASSERT(IsRegistered(id));

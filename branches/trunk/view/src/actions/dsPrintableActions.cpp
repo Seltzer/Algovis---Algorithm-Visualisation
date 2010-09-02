@@ -81,11 +81,6 @@ Action* DS_Assigned::Clone() const
 	return new DS_Assigned(*this); 
 }
 
-/*void DS_Assigned::SetSource(VO_SinglePrintable* source)
-{
-	//this->source = source;
-	//sourceIsSibling = source->parent() == subject->parent();
-}*/
 
 void DS_Assigned::UpdateHistory(HistoryManager& historyManager)
 {
@@ -221,12 +216,6 @@ Action* DS_Modified::Clone() const
 	return new DS_Modified(*this);
 }
 
-/*void DS_Modified::SetSource(VO_SinglePrintable* source)
-{
-	//this->source = source;
-	//sourceIsSibling = source->parent() == subject->parent();
-}*/
-
 void DS_Modified::UpdateHistory(HistoryManager& historyManager)
 {
 	// Combine the two histories
@@ -309,13 +298,13 @@ void DS_Modified::Complete(bool displayed)
 }
 
 /////////////////// DS_HighlightOperands
-DS_HighlightOperands::DS_HighlightOperands(World* world, std::vector<ID> operands)
-	: DS_Action(world), operands(operands)
+DS_HighlightOperands::DS_HighlightOperands(World* world, std::vector<ID> operands, ComparisonOps opType)
+	: DS_Action(world), opType(opType), operands(operands) 
 {
 }
 
 DS_HighlightOperands::DS_HighlightOperands(const DS_HighlightOperands& other)
-	: DS_Action(other), operands(other.operands), operandPtrs(other.operandPtrs), 
+	: DS_Action(other), opType(other.opType), operands(other.operands), operandPtrs(other.operandPtrs), 
 				originalBBColour(other.originalBBColour)
 {
 }
@@ -327,36 +316,81 @@ Action* DS_HighlightOperands::Clone() const
 	
 void DS_HighlightOperands::PrepareToPerform()
 {
-	Registry* reg = Registry::GetInstance();
+	FetchOperandPtrs();
+}
 
-	BOOST_FOREACH(ID op, operands)
+bool DS_HighlightOperands::FetchOperandPtrs()
+{
+	// Check whether we already have them or not
+	if (operandPtrs.size() < operands.size())
 	{
-		VO_SinglePrintable* vo = reg->GetRepresentation<VO_SinglePrintable>(op);
-		UL_ASSERT(vo);		
+		Registry* reg = Registry::GetInstance();
+	
+		BOOST_FOREACH(ID op, operands)
+		{
+			if (!reg->IsRegistered(op, SINGLE_PRINTABLE))
+				return false;
+
+			VO_SinglePrintable* vo = reg->GetRepresentation<VO_SinglePrintable>(op);
+			UL_ASSERT(vo);		
 		
-		// Who cares if this is called multiple times? It's a hack!
-		originalBBColour = vo->GetBoundingBoxColour();
-		operandPtrs.push_back(vo);
+			// Who cares if this is called multiple times? It's a hack!
+			originalBBColour = vo->GetBoundingBoxColour();
+			operandPtrs.push_back(vo);
+		}
 	}
 
+	return true;
 }
 	
-void DS_HighlightOperands::Perform(float progress, QPainter*)
+void DS_HighlightOperands::Perform(float progress, QPainter* painter)
 {	
+	if (!FetchOperandPtrs())
+		return;
+
 	BOOST_FOREACH(VO_SinglePrintable* vo, operandPtrs)
 	{
 		int intensity = (int) (progress * 255);
 		vo->SetBoundingBoxColour(QColor(intensity, intensity, intensity));
-		
-		/*
-		painter->setPen(QColor(Qt::white));
-		QRect dim(vo->GetPositionInWorld(), vo->size());
-		vo->DrawValue(dim, painter);
-
-		int intensity = (int) (progress * 255);
-		painter->setPen(QColor(intensity, intensity, intensity));
-		vo->DrawWithoutValue(dim, painter);*/
 	}
+
+	QPoint vo1 = operandPtrs[0]->GetPositionInWorld();
+	QPoint vo2 = operandPtrs[1]->GetPositionInWorld();
+
+	QString op;
+	switch(opType)
+	{
+		case EQUAL:
+			op = "==";
+			break;
+		case NOT_EQUAL:
+			op = "!=";
+			break;
+		case LESS_THAN:
+			op = (vo2.x() - vo1.x() > 0) ? "<" : ">";
+			break;
+		case LESS_THAN_OR_EQUAL:
+			op = (vo2.x() - vo1.x() > 0) ? "<=" : ">=";
+			break;
+		case MORE_THAN:
+			op = (vo2.x() - vo1.x() > 0) ? ">" : "<";
+			break;
+		case MORE_THAN_OR_EQUAL:
+			op = (vo2.x() - vo1.x() > 0) ? ">=" : "<=";
+			break;
+		default:
+			UL_ASSERT(false);
+			break;
+	}
+
+	int x = (vo1.x() + vo2.x()) / 2;
+	int y = vo1.y() - 10;
+
+	const QFont oldFont = painter->font();
+	painter->setFont(operandPtrs[0]->font());
+	painter->setPen(QColor(255,0,255));
+	painter->drawText(QPoint(x,y), op);
+	painter->setFont(oldFont);
 }
 
 void DS_HighlightOperands::Complete(bool displayed)

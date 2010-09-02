@@ -4,6 +4,7 @@
 #include "dsActions.h"
 #include "../../include/registry.h"
 #include "../viewableObjects/vo_singlePrintable.h"
+#include "../displayer/displayer.h"			// used for DS_SetCaption
 
 using namespace std;
 
@@ -207,6 +208,37 @@ void DS_CompositeAction::AddAction(Action* action)
 	if (!action->AnimationSuppressed())
 		suppressAnimation = false;
 }
+
+
+
+DS_SetCaption::DS_SetCaption(World* world, const string& newCaption)
+	: DS_Action(world), newCaption(newCaption)
+{
+}
+
+DS_SetCaption::DS_SetCaption(const DS_SetCaption& other)
+	: DS_Action(other), newCaption(other.newCaption)
+{
+}
+
+
+Action* DS_SetCaption::Clone() const
+{
+	return new DS_SetCaption(*this);
+}
+
+
+void DS_SetCaption::Complete(bool)
+{
+	Displayer::GetInstance()->SetCaption(newCaption);
+}
+
+
+
+
+
+
+
 
 
 

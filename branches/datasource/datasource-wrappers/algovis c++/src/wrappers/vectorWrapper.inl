@@ -8,7 +8,7 @@ VectorWrapper<T,Alloc>::VectorWrapper()
 
 	if (drawingEnabled)
 		Algovis_Viewer::Registry::GetInstance()->RegisterArray
-							(id, this, ConvertTypeString<T>());
+							(id, this, GetVOType<T>());
 };
 
 
@@ -20,7 +20,7 @@ VectorWrapper<T,Alloc>::VectorWrapper(const allocator_type& a)
 
 	if (drawingEnabled)
 		Algovis_Viewer::Registry::GetInstance()->RegisterArray
-							(id, this, ConvertTypeString<T>());
+							(id, this, GetVOType<T>());
 }
 
 	
@@ -33,7 +33,7 @@ VectorWrapper<T,Alloc>::VectorWrapper(size_type n, const value_type& value = val
 
 	if (drawingEnabled)
 		Algovis_Viewer::Registry::GetInstance()->RegisterArray
-							(id, this, ConvertTypeString<T>());
+							(id, this, GetVOType<T>());
 }
 
 	
@@ -42,33 +42,58 @@ template <class T, class Alloc>
 VectorWrapper<T,Alloc>::VectorWrapper(const VectorWrapper& other)
 		: value(other.value)
 {
-	ID id = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
+	printf("VectorWrapper CC");
 
-	if (drawingEnabled)
+	CopyConstructionInfo info = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
+						
+	if (drawingEnabled && SettingsManager::GetInstance()->CopyConstructionReportingEnabled())
 	{
-		std::vector<ID> elements;
+		if (info.result == CopyConstructionInfo::NORMAL_CC)
+		{
+			std::vector<ID> elements;
+			for (std::vector<T>::iterator it = value.begin(); it < value.end(); it++)
+				elements.push_back(IdManager::GetInstance()->GetId(&(*it)));
 
-		for (std::vector<T>::iterator it = value.begin(); it < value.end(); it++)
-			elements.push_back(IdManager::GetInstance()->GetId(&(*it)));
-
-		// TODO animation for this doesn't work
-		//Algovis_Viewer::Registry::GetInstance()->RegisterArray(id, this, Algovis_Viewer::SINGLE_PRINTABLE, elements);
-
-		Algovis_Viewer::Registry::GetInstance()->RegisterArray(id, this, Algovis_Viewer::SINGLE_PRINTABLE);
-		Algovis_Viewer::Registry::GetInstance()->AddElementsToArray(id, elements,0);
+			// TODO animation for this doesn't work
+			//Algovis_Viewer::Registry::GetInstance()->RegisterArray(id, this, GetVOType<T>(), elements);
+			Algovis_Viewer::Registry::GetInstance()->RegisterArray(info.newId, this, GetVOType<T>());
+			Algovis_Viewer::Registry::GetInstance()->AddElementsToArray(info.newId, elements,0);
+		}
 	}
-
 }
 
 	
 // TODO finish
 template <class T, class Alloc>
-VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<T,Alloc>& rhs)
+VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<T,Alloc>& other)
 {
-	ID otherId = IdManager::GetInstance()->GetId(&rhs);
-	ID id = IdManager::GetInstance()->GetIdForCopyAssignment(this, &rhs);
-	
-	value = rhs.value;
+	printf("VectorWrapper CAO");
+
+	if (this == &other)
+		return *this;
+
+	value = other.value;
+	CopyAssignmentInfo result = IdManager::GetInstance()->GetIdForCopyAssignment(this, &other);
+
+	if (result.result == CopyAssignmentInfo::NORMAL_ASSIGNMENT)
+	{
+		/*
+		// This was a regular copy assignment, so inform the Registry that my value has changed
+		if (drawingEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
+			Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(result.newId, result.otherId, 
+																		GetStringRepresentation());
+																		*/
+	}
+	else if (result.result == CopyAssignmentInfo::ORPHAN_REBIRTH)
+	{
+		/*
+		// I was an orphan and have since been allocated a new id - inform Registry
+		if (drawingEnabled)
+			Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable
+														(result.newId, this, GetStringRepresentation());
+														*/
+	}
+
 	return *this;
 }
 
@@ -262,7 +287,7 @@ typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::erase(iterator
 
 	// std::vector::erase works by copy assigning elements to the left and destructing anything to the right
 	// 
-	// Enable transplant mode as want copy assigned elements to retain their ids
+	// Enable transplant mode as we want copy assigned elements to retain their ids
 	// Disable drawing as we don't want element destruction to be communicated to the view
 	Algovis::IdManager::GetInstance()->EnableTransplantMode(true);
 	EnableDrawing(false);

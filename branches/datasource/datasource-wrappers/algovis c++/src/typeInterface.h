@@ -17,7 +17,7 @@ struct SameClass
 	struct type_match;                    
 
     template <typename _1> 
-	static char (& func( type_match< T& (S::*)(const S&), &_1::operator = > *))[1];
+	static char (& func( type_match< S& (T::*)(const T&), &_1::operator = > *))[1];
     
 	template <typename   > 
 	static char (& func(...))[2];            
@@ -61,7 +61,7 @@ HAS_VOID_VOID_FN(VecCheck, __IAmAVectorWrapper)
 
 // The bridge between classes and ViewableObject types
 template<class T>
-Algovis_Viewer::ViewableObjectType ConvertTypeString()
+Algovis_Viewer::ViewableObjectType GetVOType()
 {
 	if (PrimitiveCheck<T>::value == 1)
 		return Algovis_Viewer::SINGLE_PRINTABLE;

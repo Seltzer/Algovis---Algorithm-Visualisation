@@ -16,7 +16,7 @@ namespace Algovis_Viewer
 	{
 
 	public:
-		World(QWidget* parent, QPoint&, QSize&, QColor& bgColour, QColor& borderColour, unsigned refreshRate = 100);
+		World(QWidget* parent, QPoint&, QSize&, QColor& bgColour, QColor& borderColour, unsigned refreshRate = 25);
 		~World();
 		// QT Overloads
 		virtual QSize sizeHint() const;

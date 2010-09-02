@@ -111,6 +111,20 @@ namespace Algovis_Viewer
 		std::vector<Action*> subActions; // In order of excecution
 	};
 
+
+	class DS_SetCaption : public DS_Action
+	{
+
+	public:
+		DS_SetCaption(World*, const std::string&);
+		DS_SetCaption(const DS_SetCaption&);
+		virtual Action* Clone() const;
+		virtual void Complete(bool displayed);
+
+	private:
+		std::string newCaption;
+	};
+
 }
 
 #endif

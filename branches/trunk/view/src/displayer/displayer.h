@@ -12,6 +12,7 @@ class QApplication;
 class QFrame;
 class QScrollArea;
 class QPushButton;
+class QLabel;
 
 
 
@@ -44,6 +45,8 @@ public:
 	 */
 	void PerformAndAnimateActionAsync(const Action*);
 
+	void SetCaption(std::string);
+
 	World* GetWorld();
 
 private:
@@ -62,20 +65,17 @@ private:
 	
 	// QT Widgets
 	QApplication* app;
-	MainFrame *appFrame;
-	QFrame *controlFrame;
+	MainFrame* appFrame;
+	QFrame* controlFrame;
+	QLabel* caption;
 	World* world;
 	ActionAgent* actionAgent;
 	QScrollArea* worldScrollArea;
-	QPushButton* skipActionButton;
+	QPushButton *skipActionButton, *showAnimationsButton, *pauseButton;
 
 private slots:
 	void userResizedWindow(QSize*);
 	void userClosedWindow();
-	
-
-
-
 };
 
 

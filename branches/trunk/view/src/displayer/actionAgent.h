@@ -31,14 +31,18 @@ namespace Algovis_Viewer
 
 		virtual QSize sizeHint() const;
 
-	public slots:
+	private slots:
 		void skipAnimation();
+		void toggleAnimations();
+		void pauseResumeAnimations();
 	
 	private:
 		World* world;
 
 		Action* actionToBePerformed;
 		unsigned duration;
+		bool animationsSuppressed;
+		bool animationsPaused;
 
 		boost::mutex performActionMutex;
 		bool actionPending;

@@ -1,3 +1,4 @@
+#include <QApplication>
 #include <QPainter>
 #include <QColor>
 #include "boost/foreach.hpp"
@@ -21,7 +22,7 @@ namespace Algovis_Viewer
 
 //////////////// DS_CreateArray
 DS_CreateArray::DS_CreateArray(World* world, ID arrayId, const void* arrayAddress, 
-								ViewableObjectType elementType, std::vector<ID> elements)
+								ViewableObjectType elementType, vector<ID> elements)
 		: DS_Action(world, false), arrayId(arrayId), arrayAddress(arrayAddress), 
 				elementType(elementType), elements(elements)
 {
@@ -59,7 +60,6 @@ void DS_CreateArray::Complete(bool displayed)
 
 	VO_Array* newArray = new VO_Array(arrayId, arrayAddress, world, elementType, arrayElements);
 	
-
 	newArray->move(world->GetArrayPosition());
 	newArray->adjustSize();
 	newArray->setParent(world);
@@ -180,7 +180,7 @@ void DS_AddElementToArray::Complete(bool displayed)
 
 //////////////// DS_RemoveElementsFromArray
 DS_RemoveElementsFromArray::DS_RemoveElementsFromArray(World* world, const ID arrayId, 
-								const std::vector<ID>& elements, unsigned startIndex, unsigned endIndex)
+								const vector<ID>& elements, unsigned startIndex, unsigned endIndex)
 						: DS_DataFlowAction(world), arrayId(arrayId), 
 								elements(elements), startIndex(startIndex), endIndex(endIndex)
 {
@@ -211,20 +211,8 @@ void DS_RemoveElementsFromArray::PrepareToPerform()
 
 void DS_RemoveElementsFromArray::Complete(bool displayed)
 {
-	std::vector<ViewableObject*> elementPtrs = ConvertIdsToViewablePtrs(elements,SINGLE_PRINTABLE);
-	
-	
+	vector<ViewableObject*> elementPtrs = ConvertIdsToViewablePtrs(elements,SINGLE_PRINTABLE);
 	dsArray->RemoveElements(elementPtrs, startIndex, endIndex);
-
-	// View only concerns itself with elements in arrays, so delete upon removal
-	for (unsigned i = 0; i < elementPtrs.size(); i++)
-	{
-		ViewableObject* voToBeDeleted = elementPtrs[i];
-		UL_ASSERT(voToBeDeleted);
-		
-		Registry::GetInstance()->Deregister(voToBeDeleted->GetId());
-		voToBeDeleted->deleteLater();
-	}
 }
 
 

@@ -1,10 +1,11 @@
 #include "boost/foreach.hpp"
 #include <QObject>
+#include <Qt/qlabel.h>
 #include <Qt/qapplication.h>
 #include <Qt/qframe.h>
 #include <Qt/qscrollarea.h>
+#include <Qt/qpushbutton.h>
 #include <QScrollbar>
-#include <QPushButton>
 #include "utilities.h"
 
 #include "displayer.h"
@@ -124,9 +125,27 @@ void Displayer::QtAppThread()
 	controlFrame->setPalette(palette);
 
 	skipActionButton = new QPushButton(controlFrame);
-	skipActionButton->move(100,50);
+	skipActionButton->move(20,20);
 	skipActionButton->setText("Skip action");
-	QObject::connect(skipActionButton,SIGNAL(clicked()),actionAgent, SLOT(skipAnimation()));
+	QObject::connect(skipActionButton,SIGNAL(clicked()), actionAgent, SLOT(skipAnimation()));
+	
+	showAnimationsButton = new QPushButton(controlFrame);
+	showAnimationsButton->move(20, 45);
+	showAnimationsButton->setText("Toggle animations");
+	QObject::connect(showAnimationsButton,SIGNAL(clicked()), actionAgent, SLOT(toggleAnimations()));
+
+	pauseButton = new QPushButton(controlFrame);
+	pauseButton->move(20,70);
+	pauseButton->setText("Pause/resume animation");
+	QObject::connect(pauseButton,SIGNAL(clicked()), actionAgent, SLOT(pauseResumeAnimations()));
+	
+
+	caption = new QLabel(controlFrame);
+	caption->move(200,50);
+	caption->setFont(GetDefaultFont());
+	palette = caption->palette();
+	palette.setColor(QPalette::All, QPalette::WindowText, QColor(255,0,0));
+	caption->setPalette(palette);
 	
 	
     appFrame->show();
@@ -166,6 +185,12 @@ void Displayer::PerformAndAnimateActionAsync(const Action* newAction)
 }
 
 
+void Displayer::SetCaption(std::string newCaption)
+{
+	caption->setText(QString(newCaption.c_str()));
+	caption->adjustSize();
+}
+
 void Displayer::userClosedWindow()
 {
 	Registry::GetInstance()->DisplayerIsShuttingDown();
@@ -188,7 +213,6 @@ void Displayer::userResizedWindow(QSize* size)
 	actionAgent->setGeometry(0,0, dim.width(), dim.height());
 	world->repaint();
 }
-
 
 
 

@@ -14,7 +14,8 @@ namespace Algovis_Viewer
 
 ActionAgent::ActionAgent(QWidget* parent, World* world, QPoint& position, QSize& dimensions)
 	: Component(parent, position, dimensions), world(world), actionToBePerformed(NULL), actionPending(false), 
-			duration(0), performActionCount(0), shuttingDown(false)
+			duration(0), animationsSuppressed(false), animationsPaused(false),
+				performActionCount(0), shuttingDown(false)
 {
 	setAttribute(Qt::WA_TransparentForMouseEvents);
 }
@@ -93,7 +94,7 @@ void ActionAgent::paintEvent(QPaintEvent*)
 			actionPrepared = true;
 		}
 		// Animation for the action is suppressed or animation has finished
-		if (actionToBePerformed->AnimationSuppressed() || ++duration > 60)
+		if (animationsSuppressed || actionToBePerformed->AnimationSuppressed() || duration > 60)
 		{
 			#if(DEBUG_ACTION_LEVEL >=1)
 				prt("\tAbout to complete action");		
@@ -113,8 +114,11 @@ void ActionAgent::paintEvent(QPaintEvent*)
 		}
 		else
 		{
+			if (animationsPaused)
+				return;
+
 			QPainter painter(this);
-			actionToBePerformed->Perform((float) duration / 60, &painter);
+			actionToBePerformed->Perform((float) duration++ / 60, &painter);
 		}
 	}
 }
@@ -128,6 +132,16 @@ void ActionAgent::skipAnimation()
 {
 	if (actionPending)
 		duration = 60;
+}
+
+void ActionAgent::toggleAnimations()
+{
+	animationsSuppressed = !animationsSuppressed;
+}
+
+void ActionAgent::pauseResumeAnimations()
+{
+	animationsPaused = !animationsPaused;
 }
 
 

@@ -102,10 +102,10 @@ QSize VO_Array::sizeHint() const
 	float x = 2, y = 2;
 
 	// Address stuff
-	addressText = util::ToString<const void*>(dsAddress).append(":").c_str();
+	titleText = QString(titleString.c_str());
 	QFontMetrics metrics(font());
-	addressTextPosition = QPoint(x,metrics.ascent() + y);
-	x += metrics.width(addressText,addressText.length()) + xGap;
+	titleTextPosition = QPoint(x,metrics.ascent() + y);
+	x += metrics.width(titleText, titleText.length()) + xGap * 4;
 
 	
 	// Array elements
@@ -136,10 +136,10 @@ void VO_Array::adjustSize()
 	float x = 2, y = 2;
 
 	// Address stuff
-	addressText = util::ToString<const void*>(dsAddress).append(":").c_str();
+	titleText = QString(titleString.c_str());
 	QFontMetrics metrics(font());
-	addressTextPosition = QPoint(x,metrics.ascent() + y);
-	x += metrics.width(addressText,addressText.length()) + xGap;
+	titleTextPosition = QPoint(x,metrics.ascent() + y);
+	x += metrics.width(titleText, titleText.length()) + xGap * 4;
 
 	
 	// Array elements
@@ -176,14 +176,14 @@ void VO_Array::paintEvent(QPaintEvent*)
 	painter.setPen(Qt::white);
 
 	// Ignore bottom right for now
-	QRect bounds(addressTextPosition,addressTextPosition);
+	QRect bounds(titleTextPosition, titleTextPosition);
 	DrawValue(false, bounds, &painter);
 }
 
 void VO_Array::DrawValue(bool includingChildren, QRect& desiredBB, QPainter* painter)
 {
 	// Print dsAddress
-	painter->drawText(desiredBB.topLeft(), addressText);
+	painter->drawText(desiredBB.topLeft(), titleText);
 
 	// TODO untested
 	if (includingChildren)
