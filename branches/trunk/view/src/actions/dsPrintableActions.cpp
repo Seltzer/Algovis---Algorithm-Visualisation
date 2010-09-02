@@ -72,7 +72,7 @@ DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string v
 
 DS_Assigned::DS_Assigned(const DS_Assigned& other)
 	: DS_DataFlowAction(other), dsAssigned(other.dsAssigned), dsSource(other.dsSource), value(other.value),
-	subject(other.subject), sourceIDs(other.sourceIDs), sources(other.sources)
+	subject(other.subject), sources(other.sources)
 {
 }
 
@@ -89,7 +89,6 @@ Action* DS_Assigned::Clone() const
 
 void DS_Assigned::UpdateHistory(HistoryManager& historyManager)
 {
-	std::set<ValueID> history;
 	if (dsSource != INVALID)
 		history = historyManager.GetHistory(dsSource);
 	if (historyManager.IsVisible(dsAssigned))
@@ -108,8 +107,6 @@ void DS_Assigned::UpdateHistory(HistoryManager& historyManager)
 
 	historyManager.SetValue(dsAssigned, value);
 
-	sourceIDs = HistoryToSourceIDs(history, historyManager);
-
 	DS_Action::UpdateHistory(historyManager);
 }
 
@@ -127,8 +124,7 @@ void DS_Assigned::PrepareToPerform()
 	// Set subjectStart to have abs position
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
 
-	// TODO: There is only a point to this if animation is not supressed
-	sources = SourceIDsToSources(sourceIDs, subject);
+	sources = HistoryToSources(history, subject);
 }
 
 void DS_Assigned::Perform(float progress, QPainter* painter)
@@ -199,7 +195,7 @@ void DS_Assigned::Perform(float progress, QPainter* painter)
 
 void DS_Assigned::Complete(bool displayed)
 {
-	subject->UpdateValue(value);
+	subject->UpdateValue(value, completeTime);
 }
 
 
@@ -215,7 +211,7 @@ DS_Modified::DS_Modified(World* world, ID dsModified, ID dsSource, std::string v
 
 DS_Modified::DS_Modified(const DS_Modified& other)
 	: DS_DataFlowAction(other), dsModified(other.dsModified), dsSource(other.dsSource), value(other.value),
-	subject(other.subject), sourceIDs(other.sourceIDs), sources(other.sources)
+	subject(other.subject), sources(other.sources)
 {
 }
 
@@ -234,7 +230,7 @@ Action* DS_Modified::Clone() const
 void DS_Modified::UpdateHistory(HistoryManager& historyManager)
 {
 	// Combine the two histories
-	std::set<ValueID> history = historyManager.GetHistory(dsModified);
+	history = historyManager.GetHistory(dsModified);
 	if (dsSource != INVALID)
 	{
 		std::set<ValueID> otherHistory = historyManager.GetHistory(dsSource);
@@ -254,8 +250,6 @@ void DS_Modified::UpdateHistory(HistoryManager& historyManager)
 
 	historyManager.SetValue(dsModified, value);
 
-	sourceIDs = HistoryToSourceIDs(history, historyManager);
-
 	DS_Action::UpdateHistory(historyManager);
 }
 
@@ -273,7 +267,7 @@ void DS_Modified::PrepareToPerform()
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
 
 	// Set up data for all the sources
-	sources = SourceIDsToSources(sourceIDs, subject);
+	sources = HistoryToSources(history, subject);
 }
 
 void DS_Modified::Perform(float progress, QPainter* painter)
@@ -311,7 +305,7 @@ void DS_Modified::Perform(float progress, QPainter* painter)
 
 void DS_Modified::Complete(bool displayed)
 {
-	subject->UpdateValue(value);
+	subject->UpdateValue(value, completeTime);
 }
 
 /////////////////// DS_HighlightOperands

@@ -16,26 +16,7 @@ namespace Algovis_Viewer
 
 ////////////////////// Utility functions ////////////////////////////
 
-SourceID ValueIDToSourceID(ValueID id, HistoryManager& manager)
-{
-	SourceID sid(id, false);
-	if (id.id != INVALID)
-		sid.locationKnown = manager.GetModifiedTime(id.id) <= id.time; // If value has not been modified since it was accessed
-
-	return sid;
-}
-
-vector<SourceID> HistoryToSourceIDs(const set<ValueID>& history, HistoryManager& manager)
-{
-	vector<SourceID> data;
-	for (set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
-	{
-		data.push_back(ValueIDToSourceID(*i, manager));
-	}
-	return data;
-}
-
-SourceData SourceIDToSourceData(SourceID id, ViewableObject* subject)
+SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject)
 {
 	Registry* registry = Registry::GetInstance();
 
@@ -44,14 +25,14 @@ SourceData SourceIDToSourceData(SourceID id, ViewableObject* subject)
 	sourceData.source = NULL;
 	sourceData.isSibling = false;
 
-	if (registry->IsRegistered(id.vid.id, SINGLE_PRINTABLE))
+	if (registry->IsRegistered(id.id, SINGLE_PRINTABLE))
 	{
-		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(id.vid.id);
+		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(id.id);
 
 		if (source != NULL)
 		{
 			sourceData.source = source;
-			if (id.locationKnown)
+			if (source->ModifiedTime() <= id.time)
 			{
 				sourceData.dimensions = QRect(source->GetPositionInWorld(), source->size());
 				sourceData.isSibling = source->parent() != NULL && source->parent() == subject->parent();
@@ -99,11 +80,11 @@ vector<ViewableObject*> ConvertIdsToViewablePtrs(const vector<ID>& ids, Viewable
 }
 
 
-vector<SourceData> SourceIDsToSources(const vector<SourceID>& history, ViewableObject* subject)
+vector<SourceData> HistoryToSources(const set<ValueID>& history, ViewableObject* subject)
 {
 	vector<SourceData> data;
-	for (vector<SourceID>::const_iterator i = history.begin(); i != history.end(); i++)
-		data.push_back(SourceIDToSourceData(*i, subject));
+	for (set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
+		data.push_back(ValueIDToSourceData(*i, subject));
 
 	return data;
 }
@@ -130,13 +111,14 @@ DS_Action::DS_Action(World* world, set<ViewableObject*> subjects, bool suppressA
 }
 
 DS_Action::DS_Action(const DS_Action& other)
-	: Action(other)
+	: Action(other), completeTime(other.completeTime)
 {
 	UL_ASSERT(world);
 }
 
 void DS_Action::UpdateHistory(HistoryManager& historyManager)
 {
+	completeTime = historyManager.GetTime();
 	historyManager.ActionProcessed();
 }
 

@@ -17,7 +17,7 @@ namespace Algovis_Viewer
 
 VO_SinglePrintable::VO_SinglePrintable(ID id, const void* dsAddress, World* world,
 					const std::string& value, QWidget* parent)
-					: ViewableObject(id, dsAddress, world, parent), value(value), graphicalText(NULL)
+					: ViewableObject(id, dsAddress, world, parent), value(value), graphicalText(NULL), modifiedTime(0)
 {
 }
 
@@ -67,9 +67,11 @@ void VO_SinglePrintable::DrawBoundingBox(const QRect& desiredBoundingBox, QPaint
 }
 
 
-void VO_SinglePrintable::UpdateValue(const std::string& newValue)
+void VO_SinglePrintable::UpdateValue(const std::string& newValue, int time)
 { 
 	value = newValue;
+	UL_ASSERT(time > modifiedTime); // Check stuff isn't happening out of order
+	modifiedTime = time;
 		
 	if (sizeDictatedByParent)
 	{

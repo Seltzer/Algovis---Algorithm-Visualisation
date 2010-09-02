@@ -34,7 +34,6 @@ namespace Algovis_Viewer
 		virtual Action* Clone() const;
 
 		virtual std::set<ID> GetSubjects() { std::set<ID> r; r.insert(dsElement); return r; }
-		virtual std::vector<SourceID> GetSources() { return sourceIDs; }
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
@@ -50,7 +49,6 @@ namespace Algovis_Viewer
 
 		VO_Array* voArray;
 		VO_SinglePrintable* element;
-		std::vector<SourceID> sourceIDs;
 		std::string value;
 
 		QRect subjectDimensions;

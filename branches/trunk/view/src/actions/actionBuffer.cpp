@@ -69,10 +69,10 @@ void ActionBuffer::PushBack(Action* action)
 }
 
 // Could stl this, just lazy
-static std::vector<SourceID>::iterator FindID(std::vector<SourceID>& sources, ID id)
+static std::set<ValueID>::iterator FindID(std::set<ValueID>& sources, ID id)
 {
-	for (std::vector<SourceID>::iterator i = sources.begin(); i != sources.end(); i++)
-		if (i->vid.id == id)
+	for (std::set<ValueID>::iterator i = sources.begin(); i != sources.end(); i++)
+		if (i->id == id)
 			return i;
 	return sources.end();
 }
@@ -84,14 +84,14 @@ bool ActionBuffer::CanCombine(Action* tested, Action* other, int otherTime)
 	if (dfAction == NULL || dfOther == NULL) // Not even a dataflow action, don't worry
 		return true;
 
-	std::vector<SourceID> sources = dfAction->GetSources();
+	std::set<ValueID> sources = dfAction->GetSources();
 	std::set<ID> otherSubjects = dfOther->GetSubjects();
 	for (std::set<ID>::iterator sub = otherSubjects.begin(); sub != otherSubjects.end(); sub++)
 	{
-		std::vector<SourceID>::iterator sid = FindID(sources, *sub);
+		std::set<ValueID>::iterator sid = FindID(sources, *sub);
 		if (sid != sources.end()) // If this action relies on an element a previous action modifies
 		{
-			if (sid->vid.time > otherTime) // If tested action reads element after it is modified
+			if (sid->time > otherTime) // If tested action reads element after it is modified
 				return false; // We can not combine these actions as tested depends on other being complete
 		}
 	}
@@ -106,14 +106,14 @@ bool ActionBuffer::DesireCombine(Action* tested, Action* other, int otherTime)
 	if (dfAction == NULL || dfOther == NULL) // Not even a dataflow action, don't worry
 		return false;
 
-	std::vector<SourceID> sources = dfAction->GetSources();
+	std::set<ValueID> sources = dfAction->GetSources();
 	std::set<ID> otherSubjects = dfOther->GetSubjects();
 	for (std::set<ID>::iterator sub = otherSubjects.begin(); sub != otherSubjects.end(); sub++)
 	{
-		std::vector<SourceID>::iterator sid = FindID(sources, *sub);
+		std::set<ValueID>::iterator sid = FindID(sources, *sub);
 		if (sid != sources.end()) // If this action relies on an element a previous action modifies
 		{
-			if (sid->vid.time < otherTime) // If tested action reads element after it is modified
+			if (sid->time < otherTime) // If tested action reads element after it is modified
 				return true; // We can not combine these actions as tested depends on other being complete
 		}
 	}

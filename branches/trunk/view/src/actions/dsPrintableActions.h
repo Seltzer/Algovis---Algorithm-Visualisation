@@ -34,7 +34,6 @@ namespace Algovis_Viewer
 		virtual Action* Clone() const;
 
 		virtual std::set<ID> GetSubjects() { std::set<ID> r; r.insert(dsAssigned); return r; }
-		virtual std::vector<SourceID> GetSources() { return sourceIDs; }
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
@@ -48,7 +47,6 @@ namespace Algovis_Viewer
 
 		std::string value;
 		VO_SinglePrintable* subject;
-		std::vector<SourceID> sourceIDs;
 		bool tracked;
 
 		// Animation stuff
@@ -65,7 +63,6 @@ namespace Algovis_Viewer
 		virtual Action* Clone() const;
 
 		virtual std::set<ID> GetSubjects() { std::set<ID> r; r.insert(dsModified); return r; }
-		virtual std::vector<SourceID> GetSources() { return sourceIDs; }
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
@@ -78,7 +75,6 @@ namespace Algovis_Viewer
 
 		std::string value;
 		VO_SinglePrintable* subject;
-		std::vector<SourceID> sourceIDs;
 		bool tracked;
 
 		// Animation stuff

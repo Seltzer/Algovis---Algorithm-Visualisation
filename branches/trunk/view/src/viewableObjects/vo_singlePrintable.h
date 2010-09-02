@@ -37,7 +37,9 @@ namespace Algovis_Viewer
 
 		//std::set<ValueID> GetHistory() { return history; }
 
-		void UpdateValue(const std::string& newValue);
+		void UpdateValue(const std::string& newValue, int time);
+
+		int ModifiedTime() { return modifiedTime; }
 
 		// This is called when the value has been drawn, and therefore any usage of this printable
 		// should consider that drawn value it's history.
@@ -51,12 +53,8 @@ namespace Algovis_Viewer
 		std::string value;
 		mutable QString graphicalText;
 		mutable QPoint graphicalTextPosition;
-	
-		// Keep track of the displayed values which have contributed to the current value.
-		// If the value has just been displayed, then this is a single element set with the current
-		// address and time.
-		//std::set<ValueID> history;
 
+		int modifiedTime;
 	};
 
 }
