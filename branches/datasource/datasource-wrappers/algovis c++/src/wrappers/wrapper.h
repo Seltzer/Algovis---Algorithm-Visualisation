@@ -8,6 +8,7 @@
 #include "userFunctions.h"
 #include "../idManager.h"
 #include "../settingsManager.h"
+#include "../typeInterface.h"
 
 
 namespace Algovis

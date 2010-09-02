@@ -1,22 +1,22 @@
-
-#include "dsPrintableActions.h"
-
-#include <iostream>
-#include <cmath>
-#include "boost/foreach.hpp"
 #include <QPainter>
 #include <QColor>
-#include "dsactions.h"
-#include "historyManager.h"
+#include "boost/foreach.hpp"
+
+#include "dsPrintableActions.h"
+#include "dsActions.h"
 #include "../../include/registry.h"
-#include "../displayer/world.h"
+#include "historyManager.h"
 #include "../viewableObjects/vo_singlePrintable.h"
-#include "../viewableObjects/vo_array.h"
 
 using namespace std;
 
+
+
+
 namespace Algovis_Viewer
 {
+
+
 
 //////////////// DS_CreateSP
 DS_CreateSP::DS_CreateSP(World* world, ID id, const void* dsAddress, const std::string& value)
@@ -54,7 +54,6 @@ void DS_CreateSP::UpdateHistory(HistoryManager& historyManager)
 	VO_SinglePrintable* newSP = new VO_SinglePrintable(id,dsAddress, world, value);
 	registry->Register(id, newSP);
 
-	// TODO hack
 	world->adjustSize();
 
 
@@ -160,7 +159,7 @@ void DS_Assigned::Perform(float progress, QPainter* painter)
 			}
 
 			painter->setPen(QColor(Qt::white));
-			source.source->DrawValue(QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
+			source.source->DrawValue(false, QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
 		}
 	}
 		
@@ -305,7 +304,7 @@ void DS_Modified::Perform(float progress, QPainter* painter)
 			}
 
 			painter->setPen(QColor(Qt::white));
-			source.source->DrawValue(QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
+			source.source->DrawValue(false, QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
 		}
 	}
 }

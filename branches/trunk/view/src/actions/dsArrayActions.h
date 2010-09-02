@@ -7,6 +7,7 @@
 // Contains ValueID struct and DS_CreateArray, DS_AddressChanged and DS_AddElementToArray classes.
 namespace Algovis_Viewer
 {
+	class VO_Array;
 
 	class DS_CreateArray : public DS_Action
 	{
@@ -25,7 +26,6 @@ namespace Algovis_Viewer
 		std::vector<ID> elements;
 	};
 
-	// TODO implement animation?
 	class DS_AddElementToArray : public DS_DataFlowAction
 	{
 	public:

@@ -4,9 +4,6 @@
 
 #include "debugging.h"
 
-// TODO 
-#include <vector>
-
 
 #ifdef IMPORTING
 	#define DECLSPEC __declspec(dllimport)	
@@ -26,10 +23,8 @@ namespace Algovis_Viewer
 
 	/* ARBITRARY is a type we don't know how to draw (i.e. most user-defined types.
 	 * See the viewableObjects folder for implementations
-	 *
-	 * TODO: Add a pointer type
 	 */
-	enum ViewableObjectType { ARRAY, LINKED_LIST, SINGLE_PRINTABLE, ARBITRARY};
+	enum ViewableObjectType { ARRAY, LINKED_LIST, SINGLE_PRINTABLE, POINTER, ARBITRARY};
 	
 }
 

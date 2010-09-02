@@ -1,7 +1,7 @@
-//#define BOOST_ALL_NO_LIB
 #include "boost/foreach.hpp"
 #include "action.h"
-#include "../displayer/world.h"
+
+
 
 
 namespace Algovis_Viewer

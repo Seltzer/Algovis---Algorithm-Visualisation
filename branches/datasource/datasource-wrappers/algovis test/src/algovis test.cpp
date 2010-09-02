@@ -16,7 +16,8 @@ REAL_INT wmain()
 	MultipleVectorDemoWithDelete();
 	//MergeSortDemo();
 	//DoRandomStuffWithAVectorDemo();
-//	TestDemo();
+	//InterfaceTestingDemo();
+	//TestDemo();
 	
 	//Shutdown();
 

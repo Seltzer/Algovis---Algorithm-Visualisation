@@ -7,7 +7,8 @@ VectorWrapper<T,Alloc>::VectorWrapper()
 	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
 	if (drawingEnabled)
-		Algovis_Viewer::Registry::GetInstance()->RegisterArray(id, this, Algovis_Viewer::SINGLE_PRINTABLE);
+		Algovis_Viewer::Registry::GetInstance()->RegisterArray
+							(id, this, ConvertTypeString<T>());
 };
 
 
@@ -18,7 +19,8 @@ VectorWrapper<T,Alloc>::VectorWrapper(const allocator_type& a)
 	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
 	if (drawingEnabled)
-		Algovis_Viewer::Registry::GetInstance()->RegisterArray(id, this, Algovis_Viewer::SINGLE_PRINTABLE);
+		Algovis_Viewer::Registry::GetInstance()->RegisterArray
+							(id, this, ConvertTypeString<T>());
 }
 
 	
@@ -30,7 +32,8 @@ VectorWrapper<T,Alloc>::VectorWrapper(size_type n, const value_type& value = val
 	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
 	if (drawingEnabled)
-		Algovis_Viewer::Registry::GetInstance()->RegisterArray(id, this, Algovis_Viewer::SINGLE_PRINTABLE);
+		Algovis_Viewer::Registry::GetInstance()->RegisterArray
+							(id, this, ConvertTypeString<T>());
 }
 
 	

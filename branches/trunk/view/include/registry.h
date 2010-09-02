@@ -6,8 +6,6 @@
 //		ds refers to the data source (user of this dll)
 //		DS command refers to a piece of code in the data source which triggers a change in a VO.
 //			- Not all commands trigger changes and not all changes are displayed. 
-//			- Some changes are executed by dsActions, others by posting an event to world::event()
-//					(these will later be converted to dsActions)
 //
 
 #ifndef REGISTRY_H_
@@ -16,7 +14,6 @@
 
 #include <vector>
 #include <map>
-#include <Qt/qglobal.h>
 #include "boost/thread/mutex.hpp"
 #include "utilities.h"
 #include "common.h"
@@ -29,7 +26,8 @@ namespace Algovis_Viewer
 	#pragma warning(push)	
 	#pragma warning(disable:4251)	// Annoying warning about exporting private members
 
-
+	// Forward decs
+	class Displayer;
 	class World;
 	class ViewableObject;
 	class VO_Array;
@@ -41,6 +39,7 @@ namespace Algovis_Viewer
 	class DECLSPEC Registry 
 		: public util::LockManager<1> // Lock #1 used for IsRegistered/GetRepresentation/Register/Deregister
 	{
+		friend Displayer;
 
 	public:
 		// Singleton methods
@@ -49,7 +48,6 @@ namespace Algovis_Viewer
 		
 		/* PRE-CONDITIONS:
 		 *	- All elements in the array have been registered 
-		 * 			(TODO consider data structures of a recursive nature)
 		 *
 		 * NB: This method currently only works for SINGLE_PRINTABLE array elements as it is a first
 		 *		attempt at porting the existing code which represented arrays as a void* plus 
@@ -94,7 +92,6 @@ namespace Algovis_Viewer
 
 
 		// The following functions are all that is needed to trace the history of a primitive
-		// TODO dsSource can be invalid
 		void PrintableAssigned(ID dsAssigned, ID dsSource, const std::string& newValue);
 		void PrintableModified(ID dsModified, ID dsSource, const std::string& newValue);
 
@@ -115,8 +112,7 @@ namespace Algovis_Viewer
 		bool IsRegistered(ID) const;
 		
 		// Returns true if a data source object is registered as voType, false otherwise		
-		// TODO fix constness
-		bool IsRegistered(ID, ViewableObjectType voType);
+		bool IsRegistered(ID, ViewableObjectType voType) const;
 		
 		// Returns NULL if !IsRegistered(dsAddress)
 		ViewableObject* GetRepresentation(ID);
@@ -128,9 +124,7 @@ namespace Algovis_Viewer
 		 */
 		template<class T>
 		T* GetRepresentation(ID);
-
-		// TODO hack callback from Displayer
-		void DisplayerIsShuttingDown();
+	
 
 	private:
 		// Members related to non-copyable singleton behaviour
@@ -143,6 +137,9 @@ namespace Algovis_Viewer
 		// Displayer stuff
 		World* world;
 		bool displayerShuttingDown;
+		// Callback from Displayer
+		void DisplayerIsShuttingDown();
+
 		
 		// ActionBuffer Stuff
 		ActionBuffer actionBuffer;

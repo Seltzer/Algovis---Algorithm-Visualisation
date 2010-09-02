@@ -3,11 +3,8 @@
 #include "utilities.h"
 
 #include "../include/registry.h"
-#include "displayer/world.h"
 #include "displayer/displayer.h"
 #include "viewableObjects/viewableObject.h"
-#include "viewableObjects/vo_array.h"
-#include "viewableObjects/vo_singlePrintable.h"
 #include "actions/action.h"
 #include "actions/dsArrayActions.h"
 #include "actions/dsPrintableActions.h"
@@ -206,9 +203,8 @@ void Registry::PrintableAssigned(ID dsAssigned, ID dsSource, const std::string& 
 		std::cout << "Registry::PrintableAssigned for " << dsAssigned << std::endl;
 	#endif
 
-	if (dsSource == INVALID)
-		cout << "Warning! dsSource for PrintableAssigned is = " << INVALID << endl;
-
+	//if (dsSource == INVALID)
+	//	cout << "Warning! dsSource for PrintableAssigned is = " << INVALID << endl;
 
 	DS_Assigned action(world, dsAssigned, dsSource, newValue, true);
 	AddActionToBuffer(&action);
@@ -241,14 +237,16 @@ bool Registry::IsRegistered(ID id) const
 	return registeredViewables.count(id) > 0;
 }
 
-bool Registry::IsRegistered(ID id, ViewableObjectType voType)
+bool Registry::IsRegistered(ID id, ViewableObjectType voType) const
 {
 	util::ReaderLock<util::LockManager<1>,1> lock(*this);
 
 	if (registeredViewables.count(id) == 0)
 		return false;
 
-	return registeredViewables[id]->GetType() == voType;
+	std::map<ID, ViewableObject*>::const_iterator it = registeredViewables.find(id);
+	
+	return (*it).second->GetType() == voType;
 }
 
 ViewableObject* Registry::GetRepresentation(ID id)

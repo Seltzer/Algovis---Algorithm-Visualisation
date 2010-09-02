@@ -26,8 +26,12 @@ namespace Algovis_Viewer
 		virtual void adjustSize();
 		virtual void paintEvent(QPaintEvent*);
 
+		virtual void DrawValue(bool includingChildren, QRect&, QPainter*);
+		virtual void DrawBoundingBox(const QRect&, QPainter*);
+
+
 		// Get number of elements in array
-		unsigned GetSize() { return elements.size(); }
+		unsigned GetSize() { return children.size(); }
 
 		void AddElement(ViewableObject*, unsigned position);
 		void PushElementToBack(ViewableObject*);
@@ -41,7 +45,7 @@ namespace Algovis_Viewer
 
 	private:
 		virtual void childDestroyed(QObject*);
-		std::vector<ViewableObject*> elements;
+		//std::vector<ViewableObject*> elements;
 		ViewableObjectType elementType;
 				
 		mutable QString addressText;

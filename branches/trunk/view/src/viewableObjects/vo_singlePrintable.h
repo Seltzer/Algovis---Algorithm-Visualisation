@@ -27,8 +27,8 @@ namespace Algovis_Viewer
 		virtual void paintEvent(QPaintEvent*);
 
 		// TODO: DrawValue doesn't draw to the specified size yet
-		virtual void DrawValue(QRect& desiredBoundingBox, QPainter*);
-		virtual void DrawWithoutValue(QRect& desiredBoundingBox, QPainter*);
+		virtual void DrawValue(bool includingChildren, const QRect&, QPainter*);
+		virtual void DrawBoundingBox(const QRect& desiredBoundingBox, QPainter*);
 
 		
 		

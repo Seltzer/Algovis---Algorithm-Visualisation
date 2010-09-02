@@ -1,12 +1,9 @@
 Currently in progress:
 
 * Analyse dependencies between actions
-* Write mergesort demo
 * Write wrappers for STL stacks + maps, and unsigned types
 * Write a Viewable for matrices
 * Remove SINGLE_PRINTABLE hackery
-* Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
-
 
 
 ***** CRITICAL *****
@@ -26,6 +23,7 @@ Currently in progress:
 
 
 ***** MEDIUM PRIORITY *****
+* Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
 * Write VO_LinkedList and some sort of VO for a map type data structure
 * Do some quick research into a popular C++ graph library
 * Provide more user functions in userFunctions.h:

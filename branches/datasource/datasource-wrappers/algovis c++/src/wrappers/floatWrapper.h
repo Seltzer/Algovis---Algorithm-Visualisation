@@ -30,6 +30,7 @@ namespace Algovis
 			return *this;
 		}
 
+		void __IAmAPrimitiveWrapper();
 	};
 
 

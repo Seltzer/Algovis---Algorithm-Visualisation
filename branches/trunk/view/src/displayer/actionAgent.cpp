@@ -3,8 +3,6 @@
 
 #include "actionAgent.h"
 #include "../actions/action.h"
-#include "world.h"
-
 #include "../include/registry.h"
 
 
@@ -16,7 +14,7 @@ namespace Algovis_Viewer
 
 ActionAgent::ActionAgent(QWidget* parent, World* world, QPoint& position, QSize& dimensions)
 	: Component(parent, position, dimensions), world(world), actionToBePerformed(NULL), actionPending(false), 
-			duration(0), shuttingDown(false)
+			duration(0), performActionCount(0), shuttingDown(false)
 {
 	setAttribute(Qt::WA_TransparentForMouseEvents);
 }
@@ -34,7 +32,7 @@ ActionAgent::ActionAgent(QWidget* parent, World* world, QPoint& position, QSize&
  *			shuttingDown predicate.
  *		- We stave off a current invocation which is waiting on actionPending by releasing mutexes etc. to 
  *			coax it towards the second shuttingDown predicate which sends it packing.
- *		- We wait some time for a current invocation which is inside PrepareToPerform to leave (hacky!)
+ *		- We busy wait until performActionCount = 0 before we continue with destruction
  */
 ActionAgent::~ActionAgent() 
 { 
@@ -43,9 +41,9 @@ ActionAgent::~ActionAgent()
 	actionPending = false;
 	actionPendingCondVar.notify_all();
 	performActionMutex.unlock();
-	// 0.5s should be more than enough time for a current invocation to finish - HACK HACK HACK TODO TODO TODO
-	util::PlatformSleep(0.5f);
 	
+	while(performActionCount > 0);
+
 	if (actionToBePerformed != NULL)
 		delete actionToBePerformed;
 }
@@ -54,22 +52,34 @@ ActionAgent::~ActionAgent()
 // See comments about shutting down in ~ActionAgent
 void ActionAgent::PerformAndAnimateActionAsync(const Action* newAction)
 {
+	++performActionCount;
+
 	if (shuttingDown)
+	{
+		--performActionCount;
 		return;
+	}
+			
 
 	// Matched by unlock inside paintEvent()
 	performActionMutex.lock();
+
 
 	while(actionPending)
 		actionPendingCondVar.wait<boost::mutex>(performActionMutex);
 
 	if (shuttingDown)
+	{
+		--performActionCount;
 		return;
+	}
 
 	duration = 0;
 	actionToBePerformed = newAction->Clone();
 	actionPending = true;
 	actionPrepared = false;
+
+	--performActionCount;
 }
 
 

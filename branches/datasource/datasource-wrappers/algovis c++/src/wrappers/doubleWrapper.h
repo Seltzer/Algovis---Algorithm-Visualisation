@@ -31,6 +31,8 @@ namespace Algovis
 			PrimitiveWrapper<DoubleWrapper,double>::operator=(other);
 			return *this;
 		}
+				
+		void __IAmAPrimitiveWrapper();
 	};
 
 

@@ -23,6 +23,8 @@ namespace Algovis
 			PrimitiveWrapper<CharWrapper, char>::operator=(other);
 			return *this;
 		}
+
+		void __IAmAPrimitiveWrapper();
 	};
 
 

@@ -1,21 +1,23 @@
-
-#include "dsArrayActions.h"
-
-#include <iostream>
-#include <cmath>
-#include "boost/foreach.hpp"
 #include <QPainter>
 #include <QColor>
+#include "boost/foreach.hpp"
+
+#include "dsArrayActions.h"
 #include "dsactions.h"
 #include "../../include/registry.h"
 #include "../displayer/world.h"
-#include "../viewableObjects/vo_singlePrintable.h"
 #include "../viewableObjects/vo_array.h"
+#include "../viewableObjects/vo_singlePrintable.h"
 
 using namespace std;
 
+
+
+
 namespace Algovis_Viewer
 {
+
+
 
 //////////////// DS_CreateArray
 DS_CreateArray::DS_CreateArray(World* world, ID arrayId, const void* arrayAddress, 
@@ -50,7 +52,6 @@ void DS_CreateArray::Complete(bool displayed)
 	// Iterate over elements, verify that they are all registered and populate arrayElements
 	BOOST_FOREACH(ID dsElement, elements)
 	{
-		// TODO: change behaviour when above registration condition is violated (i.e. throw exception)
 		UL_ASSERT(registry->IsRegistered(dsElement));
 		arrayElements.push_back(registry->GetRepresentation(dsElement));
 	}
@@ -61,13 +62,8 @@ void DS_CreateArray::Complete(bool displayed)
 
 	newArray->move(world->GetArrayPosition());
 	newArray->adjustSize();
-	// TODO assuming top level
 	newArray->setParent(world);
 	newArray->setVisible(true);
-
-	// TODO hack TODOTODOTODOTODOTODOTODOTODOTODO
-	world->adjustSize();
-
 	Registry::GetInstance()->Register(arrayId, newArray);
 }
 
@@ -117,7 +113,6 @@ void DS_AddElementToArray::PrepareToPerform()
 	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsElement, 0, world, value);
 	registry->Register(dsElement, newSP);
 
-	// TODO hack
 	world->adjustSize();
 
 	UL_ASSERT(registry->IsRegistered(dsElement,SINGLE_PRINTABLE));
@@ -165,7 +160,7 @@ void DS_AddElementToArray::Perform(float progress, QPainter* painter)
 			}
 
 			painter->setPen(QColor(Qt::white));
-			source.source->DrawValue(QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
+			source.source->DrawValue(false, QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
 		}
 	}
 }
@@ -218,7 +213,6 @@ void DS_RemoveElementsFromArray::PrepareToPerform()
 
 void DS_RemoveElementsFromArray::Complete(bool displayed)
 {
-	// TODO hack
 	std::vector<ViewableObject*> elementPtrs = ConvertIdsToViewablePtrs(elements,SINGLE_PRINTABLE);
 	
 	

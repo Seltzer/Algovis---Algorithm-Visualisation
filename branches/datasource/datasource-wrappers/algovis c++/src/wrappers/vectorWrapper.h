@@ -61,6 +61,8 @@ public:
 
 	// Queries
 	inline size_type size() { return value.size(); }
+	inline IntWrapper orlySize() { return (int) value.size(); }
+
 	inline size_type max_size() { return value.max_size(); }
 	inline size_type capacity() { return value.capacity(); }
 	inline bool empty() { return value.empty(); }
@@ -119,10 +121,11 @@ public:
 
 
 	std::vector<T,Alloc> AVGetValue() const { return value; }
-
+	void __IAmAVectorWrapper();	
 	
 private:
 	std::vector<T,Alloc> value;
+
 
 };
 #include "vectorWrapper.inl"

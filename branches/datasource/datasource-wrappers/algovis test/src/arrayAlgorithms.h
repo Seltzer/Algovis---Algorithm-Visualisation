@@ -70,12 +70,9 @@ vector<T> merge(vector<T>& v1, vector<T>& v2)
 	if (v1.empty())
 		return vector<T>(v2);
 
-	
-	vector<T> returnVec;
-	returnVec.reserve(20);
 
 
-	if (v1[0] < v2[0])
+	if (v1[0] <= v2[0])
 	{
 		T elt = v1[0];
 		v1.erase(v1.begin());
@@ -96,6 +93,35 @@ vector<T> merge(vector<T>& v1, vector<T>& v2)
 	}
 
 }
+
+
+template<class T>
+vector<T> mergeSort(vector<T>& forMotherRussia)
+{
+	if (forMotherRussia.size() <= 1)
+		return forMotherRussia;
+
+	vector<T> a, b, aSorted, bSorted;
+
+	for (int i = 0; i < forMotherRussia.orlySize(); i++)
+	{
+		if (i < (int) (forMotherRussia.orlySize() / 2))
+		{
+			a.push_back(forMotherRussia[i]);
+		}
+		else
+		{
+			b.push_back(forMotherRussia[i]);
+		}
+	}
+
+	aSorted = mergeSort(a);
+	bSorted = mergeSort(b);
+	
+
+	return merge(a,b);
+}
+
 
 
 

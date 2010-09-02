@@ -4,7 +4,7 @@
 
 #include "components.h"
 #include "displayer.h"
-#include "world.h"
+//#include "world.h"
 
 using namespace std;
 
@@ -25,7 +25,7 @@ Component::Component()
 Component::Component(QWidget* parentComponent, QPoint& position, QSize& dimensions)
 	: QWidget(parentComponent), drawingEnabled(true)
 {
-	this->setGeometry(QRect(position, dimensions));
+	setGeometry(QRect(position, dimensions));
 	setFont(Displayer::GetDefaultFont());
 }
 
@@ -39,6 +39,9 @@ void Component::EnableDrawing(bool drawingEnabled)
 {
 	this->drawingEnabled = drawingEnabled;
 }
+
+
+
 
 ///////////////// QT overrides
 void Component::paintEvent(QPaintEvent* evt) 
@@ -79,7 +82,7 @@ MainFrame::~MainFrame()
 
 void MainFrame::resizeEvent(QResizeEvent* evt)
 {
-	displayer->ResizeWindow(evt->size());
+	emit resized(new QSize(evt->size()));
 }
 
 

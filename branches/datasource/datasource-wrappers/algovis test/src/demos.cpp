@@ -117,21 +117,36 @@ void MergeSortDemo()
 
 	// Populate
 	vector<int> c1, c2;
+	
+	
 	c1.push_back(1);
 	c1.push_back(2);
 	c1.push_back(3);
 	c1.push_back(4);
+
 	c2.push_back(1);
 	c2.push_back(1);
 	c2.push_back(3);
 	c2.push_back(4);
 
 
+/*
+	c1.push_back(1);
+	c1.push_back(5);
+	c1.push_back(3);
+	c1.push_back(2);
+	c1.push_back(4);
+
+	c1.push_back(8);
+	c1.push_back(5);
+	c1.push_back(3);
+	c1.push_back(4);*/
 
 	prt("HAIHAIHAIHAIHAI");
 	getchar();
 
 	vector<int> result = merge(c1,c2);
+	//vector<int> result = mergeSort(c1);
 
 
 	prt("Press any key to leave MergeSortDemo");
@@ -245,6 +260,26 @@ void DoRandomStuffWithAVectorDemo()
 
 
 }
+
+
+void InterfaceTestingDemo()
+{
+	EnableDrawing(true);
+
+	// Populate
+	
+	vector<int> c1;
+	vector< vector<int> > c2;
+	//c1.reserve(200);
+	
+	prt("Press any key to leave InterfaceTestingDemo");
+	getchar();
+
+
+
+}
+
+
 
 
 void TestDemo()

@@ -17,7 +17,6 @@ void ActionBuffer::PushBack(Action* action)
 {
 	if (Full())
 	{
-
 		// action a, b
 		// if a modifies some source s of b after b reads s (and s has not already been modified)
 		//		want to combine

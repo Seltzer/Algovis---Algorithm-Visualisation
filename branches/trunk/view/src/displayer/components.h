@@ -10,7 +10,7 @@
 
 
 
-// Contains Component
+// Contains Component and MainFrame classes
 namespace Algovis_Viewer
 {
 	class Displayer;
@@ -58,7 +58,9 @@ namespace Algovis_Viewer
 		Displayer* displayer;
 
 	signals:
+		void resized(QSize*);
 		void shuttingDown();
+		
 		
 	};
 

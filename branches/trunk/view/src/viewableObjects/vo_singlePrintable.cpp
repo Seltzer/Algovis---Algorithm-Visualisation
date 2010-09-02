@@ -48,19 +48,19 @@ void VO_SinglePrintable::paintEvent(QPaintEvent*)
 	
 	// Draw value
 	painter.setPen(QColor(Qt::white));
-	DrawValue(QRect(graphicalTextPosition, graphicalTextPosition),&painter);
+	DrawValue(false, QRect(graphicalTextPosition, graphicalTextPosition),&painter);
 
 	// Draw bounding box
 	painter.setPen(boundingBoxColour);
-	DrawWithoutValue(QRect(0,0,width() - 1, height() - 1), &painter);
+	DrawBoundingBox(QRect(0,0,width() - 1, height() - 1), &painter);
 }
 
-void VO_SinglePrintable::DrawValue(QRect& desiredBoundingBox, QPainter* painter)
+void VO_SinglePrintable::DrawValue(bool includingChildren, const QRect& desiredBoundingBox, QPainter* painter)
 {
 	painter->drawText(desiredBoundingBox.topLeft(), graphicalText);
 }
 
-void VO_SinglePrintable::DrawWithoutValue(QRect& desiredBoundingBox, QPainter* painter)
+void VO_SinglePrintable::DrawBoundingBox(const QRect& desiredBoundingBox, QPainter* painter)
 {
 	// Draw bounding box
 	painter->drawRect(desiredBoundingBox);
@@ -71,7 +71,7 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue)
 { 
 	value = newValue;
 		
-	if (sizeControlledByParentArray)
+	if (sizeDictatedByParent)
 	{
 		VO_Array* parent = (VO_Array*) parentWidget();
 		parent->adjustSize();

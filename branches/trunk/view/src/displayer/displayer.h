@@ -18,6 +18,7 @@ class QPushButton;
 namespace Algovis_Viewer
 {
 
+class Registry;
 class World;
 class Action;
 class ActionAgent;
@@ -34,12 +35,6 @@ public:
 	static void DestroyInstance();
 	static const QFont& GetDefaultFont();
 
-	// Currently does nothing
-	void SetRefreshRate(unsigned) {}
-	
-	// hack used by Registry ctor to grab pointer to World (TODO: remove)
-	World* GetWorld();
-	
 	/* This method passes the specified action to the actionAgent which asynchronously performs/animates it.
 	 * This method blocks until the actionAgent has finished performing its current action. 
 	 *
@@ -49,9 +44,7 @@ public:
 	 */
 	void PerformAndAnimateActionAsync(const Action*);
 
-	// TODO should be using signals/slots for this, but they're not bloody working for some reason
-	void ResizeWindow(const QSize&);
-
+	World* GetWorld();
 
 private:
 	static QFont* defaultFont;
@@ -77,7 +70,9 @@ private:
 	QPushButton* skipActionButton;
 
 private slots:
+	void userResizedWindow(QSize*);
 	void userClosedWindow();
+	
 
 
 

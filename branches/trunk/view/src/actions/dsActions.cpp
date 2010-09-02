@@ -1,13 +1,9 @@
-#include <iostream>
-#include <cmath>
 #include "boost/foreach.hpp"
 #include <QPainter>
 #include <QColor>
-#include "dsactions.h"
+#include "dsActions.h"
 #include "../../include/registry.h"
-#include "../displayer/world.h"
 #include "../viewableObjects/vo_singlePrintable.h"
-#include "../viewableObjects/vo_array.h"
 
 using namespace std;
 
@@ -29,10 +25,10 @@ SourceID ValueIDToSourceID(ValueID id, HistoryManager& manager)
 	return sid;
 }
 
-std::vector<SourceID> HistoryToSourceIDs(const std::set<ValueID>& history, HistoryManager& manager)
+vector<SourceID> HistoryToSourceIDs(const set<ValueID>& history, HistoryManager& manager)
 {
-	std::vector<SourceID> data;
-	for (std::set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
+	vector<SourceID> data;
+	for (set<ValueID>::const_iterator i = history.begin(); i != history.end(); i++)
 	{
 		data.push_back(ValueIDToSourceID(*i, manager));
 	}
@@ -68,9 +64,9 @@ SourceData SourceIDToSourceData(SourceID id, ViewableObject* subject)
 
 
 
-std::vector<ViewableObject*> ConvertIdsToViewablePtrs(const std::vector<ID>& ids)
+vector<ViewableObject*> ConvertIdsToViewablePtrs(const vector<ID>& ids)
 {
-	std::vector<ViewableObject*> viewablePtrs;
+	vector<ViewableObject*> viewablePtrs;
 
 	BOOST_FOREACH(ID id, ids)
 	{
@@ -85,10 +81,9 @@ std::vector<ViewableObject*> ConvertIdsToViewablePtrs(const std::vector<ID>& ids
 
 
 
-std::vector<ViewableObject*> ConvertIdsToViewablePtrs(
-									const std::vector<ID>& ids, ViewableObjectType expectedType)
+vector<ViewableObject*> ConvertIdsToViewablePtrs(const vector<ID>& ids, ViewableObjectType expectedType)
 {
-	std::vector<ViewableObject*> viewablePtrs;
+	vector<ViewableObject*> viewablePtrs;
 
 	BOOST_FOREACH(ID id, ids)
 	{
@@ -104,15 +99,21 @@ std::vector<ViewableObject*> ConvertIdsToViewablePtrs(
 }
 
 
-std::vector<SourceData> SourceIDsToSources(const std::vector<SourceID>& history, ViewableObject* subject)
+vector<SourceData> SourceIDsToSources(const vector<SourceID>& history, ViewableObject* subject)
 {
-	std::vector<SourceData> data;
-	for (std::vector<SourceID>::const_iterator i = history.begin(); i != history.end(); i++)
-	{
+	vector<SourceData> data;
+	for (vector<SourceID>::const_iterator i = history.begin(); i != history.end(); i++)
 		data.push_back(SourceIDToSourceData(*i, subject));
-	}
+
 	return data;
 }
+
+
+
+
+
+
+
 
 ////////////////////// DS_Action implementation ////////////////////////////
 
@@ -123,7 +124,7 @@ DS_Action::DS_Action(World* world, bool suppressAnimation)
 }
 
 
-DS_Action::DS_Action(World* world, std::set<ViewableObject*> subjects, bool suppressAnimation)
+DS_Action::DS_Action(World* world, set<ViewableObject*> subjects, bool suppressAnimation)
 	: Action(world, suppressAnimation)
 {
 }
@@ -153,7 +154,6 @@ Action* DS_Action::Clone() const
 DS_Deleted::DS_Deleted(World*, ID dsSubject)
 	: DS_Action(world), dsSubject(dsSubject)
 {
-	//subjects.insert(subject);  // TODO: Sort out whether subjects is needed
 }
 
 
@@ -170,8 +170,6 @@ Action* DS_Deleted::Clone() const
 void DS_Deleted::Complete(bool displayed)
 {
 	Registry* registry = Registry::GetInstance();
-
-
 }
 
 

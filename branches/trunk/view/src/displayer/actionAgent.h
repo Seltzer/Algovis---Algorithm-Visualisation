@@ -24,8 +24,7 @@ namespace Algovis_Viewer
 		~ActionAgent();
 
 		// Blocks until the ActionAgent has finished animating/performing its current action (if any)
-		// TODO comment
-		
+		// Method will return prematurely if it is detected that the Displayer is in the process of shutting down
 		void PerformAndAnimateActionAsync(const Action*);
 
 		virtual void paintEvent(QPaintEvent*); 
@@ -47,6 +46,8 @@ namespace Algovis_Viewer
 		boost::condition_variable_any actionPendingCondVar;
 
 		bool shuttingDown;
+		// Count of threads inside PerformAndAnimateActionAsync - used for shutting down
+		unsigned performActionCount;
 	};
 
 }

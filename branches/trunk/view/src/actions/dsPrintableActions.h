@@ -33,8 +33,6 @@ namespace Algovis_Viewer
 		DS_Assigned(const DS_Assigned& other);
 		virtual Action* Clone() const;
 
-		//void SetSource(VO_SinglePrintable* source);
-
 		virtual std::set<ID> GetSubjects() { std::set<ID> r; r.insert(dsAssigned); return r; }
 		virtual std::vector<SourceID> GetSources() { return sourceIDs; }
 
@@ -65,8 +63,6 @@ namespace Algovis_Viewer
 		DS_Modified(World* world, ID dsModified, ID dsSource, std::string value, bool tracked);
 		DS_Modified(const DS_Modified& other);
 		virtual Action* Clone() const;
-
-		//void SetSource(VO_SinglePrintable* source); // TODO: Remove or properly analyse
 
 		virtual std::set<ID> GetSubjects() { std::set<ID> r; r.insert(dsModified); return r; }
 		virtual std::vector<SourceID> GetSources() { return sourceIDs; }

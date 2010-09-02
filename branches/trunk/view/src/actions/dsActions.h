@@ -54,23 +54,22 @@ namespace Algovis_Viewer
 
 	class DS_Action : public Action
 	{
-	protected:
-		//std::set<ViewableObject*> subjects;
-		//DS_ActionType actionType;
-		//std::string value;
-		//std::set<ValueID> history;
+
 
 	public:
 		DS_Action(World*, bool animationSuppressed = false);
 		DS_Action(World* world, std::set<ViewableObject*> subjects, bool suppressAnimation = false);
 		DS_Action(const DS_Action&);
-		/*DS_Action(DS_ActionType type, ViewableObject* subject, std::string value, std::set<ValueID> history)
-			: actionType(type), subject(subject), value(value), history(history)
-		{ }*/
+
+	protected:
+		virtual Action* Clone() const;
+		//DS_ActionType actionType;
+		//std::string value;
+		//std::set<ValueID> history;
+
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
-		virtual Action* Clone() const;
 	};
 
 
@@ -84,7 +83,7 @@ namespace Algovis_Viewer
 	};
 
 
-	// Action class for deleting a VO (TODO add deletion animation?)
+	// Action class for deleting a VO
 	class DS_Deleted : public DS_Action
 	{
 	public:

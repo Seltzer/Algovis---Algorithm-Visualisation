@@ -24,6 +24,7 @@ void MergeSortDemo();
 // Kinda incomplete atm - for testing unconversions.h
 void UnconversionsDemo();
 
+void InterfaceTestingDemo();
 
 void TestDemo();
 

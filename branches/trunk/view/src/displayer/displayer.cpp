@@ -9,11 +9,10 @@
 
 #include "displayer.h"
 #include "../../include/registry.h"
-#include "../../include/common.h"
-#include "world.h"
-#include "../actions/action.h"
-#include "actionAgent.h"
 #include "components.h"
+#include "world.h"
+#include "actionAgent.h"
+
 
 
 
@@ -86,7 +85,10 @@ void Displayer::QtAppThread()
 	
     // Create the main frame
 	appFrame = new MainFrame(this);
-	connect(appFrame, SIGNAL(shuttingDown()), this, SLOT(userClosedWindow()),Qt::ConnectionType::DirectConnection);
+
+	connect(appFrame, SIGNAL(shuttingDown()), this, SLOT(userClosedWindow()),Qt::DirectConnection);
+	connect(appFrame, SIGNAL(resized(QSize*)), this, SLOT(userResizedWindow(QSize*)),Qt::DirectConnection);
+	
 	appFrame->setWindowTitle("Algovis Viewer");
 	QPalette palette = appFrame->palette();
 	palette.setColor(QPalette::Background, QColor(0, 0, 0));
@@ -117,8 +119,8 @@ void Displayer::QtAppThread()
 	controlFrame->setLineWidth(2);
 
 	palette = controlFrame->palette();
-	palette.setColor(QPalette::ColorGroup::All, QPalette::ColorRole::Light, QColor(200,0,0));
-	palette.setColor(QPalette::ColorGroup::All, QPalette::ColorRole::Dark, QColor(255,0,0));
+	palette.setColor(QPalette::All, QPalette::Light, QColor(200,0,0));
+	palette.setColor(QPalette::All, QPalette::Dark, QColor(255,0,0));
 	controlFrame->setPalette(palette);
 
 	skipActionButton = new QPushButton(controlFrame);
@@ -142,7 +144,7 @@ void Displayer::QtAppThread()
 const QFont& Displayer::GetDefaultFont()
 {
 	if (defaultFont == NULL)
-		defaultFont = new QFont("helvetica",16,QFont::Weight::Bold);
+		defaultFont = new QFont("helvetica",16,QFont::Bold);
 
 	return *defaultFont;
 }
@@ -164,12 +166,18 @@ void Displayer::PerformAndAnimateActionAsync(const Action* newAction)
 }
 
 
-
-void Displayer::ResizeWindow(const QSize& size)
+void Displayer::userClosedWindow()
 {
-	controlFrame->setGeometry(0,size.height() - controlFrame->height(), size.width(), controlFrame->height());
+	Registry::GetInstance()->DisplayerIsShuttingDown();
+	delete this;
+}
 
-	QSize dim(size.width(), size.height() - controlFrame->height());
+
+void Displayer::userResizedWindow(QSize* size)
+{
+	controlFrame->setGeometry(0,size->height() - controlFrame->height(), size->width(), controlFrame->height());
+
+	QSize dim(size->width(), size->height() - controlFrame->height());
 
 	worldScrollArea->setGeometry(0,0,dim.width(), dim.height());
 
@@ -179,14 +187,9 @@ void Displayer::ResizeWindow(const QSize& size)
 	world->setGeometry(0,0, dim.width(), dim.height());
 	actionAgent->setGeometry(0,0, dim.width(), dim.height());
 	world->repaint();
-
 }
 
-void Displayer::userClosedWindow()
-{
-	Registry::GetInstance()->DisplayerIsShuttingDown();
-	delete this;
-}
+
 
 
 }

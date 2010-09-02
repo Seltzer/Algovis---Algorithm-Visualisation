@@ -13,7 +13,7 @@ namespace Algovis_Viewer
 {
 	class World;
 	class DS_Action;
-	class ViewableObject;
+	class ViewableObjectContainer;
 
 
 	class ViewableObject : public Component
@@ -22,16 +22,24 @@ namespace Algovis_Viewer
 	public:
 		virtual ~ViewableObject();
 		virtual ViewableObjectType GetType() const = 0;
-
+		virtual bool IsVOContainer() { return false; }
 
 		// Optional method for drawing a VO's value at a specified absolute position with specified dimensions
-		virtual void DrawValue(QRect&, QPainter*) {}
+		// The value is the whole VO minus its bounding box
+		virtual void DrawValue(bool includingChildren, const QRect&, QPainter*) {}
 
-		// Optional method for drawing a VO exactly like paintEvent(), but without its value
-		virtual void DrawWithoutValue(QRect&, QPainter*) {}
+		virtual void DrawBoundingBox(const QRect&, QPainter*) {}
 
 		// NB: Returns false if VO hasn't been added to the World
+		// TODO obsolete
 		bool IsTopLevel();
+
+
+		bool HasParentViewable() const;
+		void SetParentViewable(ViewableObjectContainer*);
+
+
+
 
 		// Returns this VO's position relative to the World - undefined if VO hasn't been added to the World
 		QPoint GetPositionInWorld();
@@ -43,8 +51,7 @@ namespace Algovis_Viewer
 		const void* GetDSAddress();
 		void SetDSAddress(const void*);
 
-		// hack hack hack hack TODO
-		void SetSizeControlledByParentArray(bool);
+		void SetSizeDictatedByParent(bool);
 
 	protected:	
 		ViewableObject(ID, const void* dsAddress, World*); 
@@ -65,8 +72,12 @@ namespace Algovis_Viewer
 
 		QColor boundingBoxColour;
 
-		// hack hack hack hack TODO
-		bool sizeControlledByParentArray;
+		// If this is true, then this Viewable will call parent->adjustSize (which presumably works recursively)
+		// rather than calling adjustSize on itself
+		bool sizeDictatedByParent;
+
+		bool hasParentViewable;
+		ViewableObjectContainer* parentViewable;
 
 	};
 

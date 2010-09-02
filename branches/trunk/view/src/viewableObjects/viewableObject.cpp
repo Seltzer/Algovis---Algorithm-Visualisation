@@ -11,13 +11,14 @@ namespace Algovis_Viewer
 
 ViewableObject::ViewableObject(ID id, const void* dsAddress, World* world)
 	: id(id), dsAddress(dsAddress), world(world), mouseDraggingInitiated(false), 
-		boundingBoxColour(Qt::green), sizeControlledByParentArray(false)
+		boundingBoxColour(Qt::green), sizeDictatedByParent(false), hasParentViewable(false)
 {
 }
 
 ViewableObject::ViewableObject(ID id, const void* dsAddress, World* world, QWidget* parent)
 	: Component(parent, QPoint(5,5),QSize(200,200)),id(id), dsAddress(dsAddress), world(world), 
-		mouseDraggingInitiated(false),boundingBoxColour(Qt::green), sizeControlledByParentArray(false)
+		mouseDraggingInitiated(false),boundingBoxColour(Qt::green), 
+		sizeDictatedByParent(false), hasParentViewable(false)
 {
 }
 
@@ -56,7 +57,7 @@ void ViewableObject::mousePressEvent(QMouseEvent* evt)
 {
 	if (evt->button() == Qt::MouseButton::LeftButton)
 	{
-		if (IsTopLevel())
+		if (!HasParentViewable())
 		{
 			globalPositionBeforeDragging = evt->globalPos();
 			localPositionBeforeDragging = pos();
@@ -73,7 +74,7 @@ void ViewableObject::mouseReleaseEvent(QMouseEvent* evt)
 {
 	if (evt->button() == Qt::MouseButton::LeftButton)
 	{
-		if (IsTopLevel())
+		if (!HasParentViewable())
 			mouseDraggingInitiated = false;
 		else
 			evt->ignore();
@@ -82,7 +83,7 @@ void ViewableObject::mouseReleaseEvent(QMouseEvent* evt)
 	
 void ViewableObject::mouseMoveEvent(QMouseEvent* evt)
 {
-	if (IsTopLevel() && mouseDraggingInitiated)
+	if (!HasParentViewable() && mouseDraggingInitiated)
 	{
 		QPoint newPosition = localPositionBeforeDragging + evt->globalPos() - globalPositionBeforeDragging;
 		if (newPosition.x() < 0)
@@ -98,13 +99,16 @@ void ViewableObject::mouseMoveEvent(QMouseEvent* evt)
 		// Pass onto parent
 		evt->ignore();
 	}
-
 }
 
 void ViewableObject::wheelEvent(QWheelEvent* evt)
 {
-	// TODO hack
-	if (GetType() == ARRAY)
+	if (HasParentViewable())
+	{
+		// Let parent deal with it
+		evt->ignore();
+	}
+	else
 	{
 		QFont newFont(font());
 		
@@ -112,29 +116,17 @@ void ViewableObject::wheelEvent(QWheelEvent* evt)
 			newFont.setPointSize(max((int) font().pointSize() * 1.1, font().pointSize() + 1));
 		else
 			newFont.setPointSize(min((int) font().pointSize() / 1.1, font().pointSize() - 1));
-			
 
 		setFont(newFont);
-
-		for (QObjectList::const_iterator it = children().begin(); it != children().end(); it++)
-		{
-			ViewableObject* child = (ViewableObject*) *it;
-			child->setFont(newFont);
-		}
-
-		adjustSize();
 		evt->accept();
-	}
-	else
-	{
-		evt->ignore();
+		adjustSize();
 	}
 }
 
 
-void ViewableObject::SetSizeControlledByParentArray(bool sizeControlledByParentArray)
+void ViewableObject::SetSizeDictatedByParent(bool sizeDictatedByParent)
 {
-	this->sizeControlledByParentArray = sizeControlledByParentArray;
+	this->sizeDictatedByParent = sizeDictatedByParent;
 }
 
 
@@ -151,9 +143,21 @@ const void* ViewableObject::GetDSAddress()
 void ViewableObject::SetDSAddress(const void* newAddress)
 {
 	dsAddress = newAddress;
-	// TODO notify
+	adjustSize();
 }
 
+
+bool ViewableObject::HasParentViewable() const
+{
+	return hasParentViewable;
+}
+
+void ViewableObject::SetParentViewable(ViewableObjectContainer* newParent)
+{
+	parentViewable = newParent;
+	hasParentViewable = true;
+	setParent((QWidget*) newParent);
+}
 
 
 }
