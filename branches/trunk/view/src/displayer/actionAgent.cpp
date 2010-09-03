@@ -14,7 +14,7 @@ namespace Algovis_Viewer
 
 ActionAgent::ActionAgent(QWidget* parent, World* world, QPoint& position, QSize& dimensions)
 	: Component(parent, position, dimensions), world(world), actionToBePerformed(NULL), actionPending(false), 
-			duration(0), animationsSuppressed(false), animationsPaused(false),
+			animLength(0.5f), animationsSuppressed(false), animationsPaused(false),
 				performActionCount(0), shuttingDown(false)
 {
 	setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -75,7 +75,7 @@ void ActionAgent::PerformAndAnimateActionAsync(const Action* newAction)
 		return;
 	}
 
-	duration = 0;
+	animStartTime = QTime::currentTime();
 	actionToBePerformed = newAction->Clone();
 	actionPending = true;
 	actionPrepared = false;
@@ -94,7 +94,7 @@ void ActionAgent::paintEvent(QPaintEvent*)
 			actionPrepared = true;
 		}
 		// Animation for the action is suppressed or animation has finished
-		if (animationsSuppressed || actionToBePerformed->AnimationSuppressed() || duration > 60)
+		if (animationsSuppressed || actionToBePerformed->AnimationSuppressed() || AnimDuration() > animLength)
 		{
 			#if(DEBUG_ACTION_LEVEL >=1)
 				prt("\tAbout to complete action");		
@@ -118,7 +118,7 @@ void ActionAgent::paintEvent(QPaintEvent*)
 				return;
 
 			QPainter painter(this);
-			actionToBePerformed->Perform((float) duration++ / 60, &painter);
+			actionToBePerformed->Perform(AnimDuration() / animLength, &painter);
 		}
 	}
 }
@@ -131,7 +131,7 @@ QSize ActionAgent::sizeHint() const
 void ActionAgent::skipAnimation()
 {
 	if (actionPending)
-		duration = 60;
+		animStartTime = animStartTime.addMSecs(-int(animLength*1000)); // Subtract enough off the start time that it is complete
 }
 
 void ActionAgent::toggleAnimations()

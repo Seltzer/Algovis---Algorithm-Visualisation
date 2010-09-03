@@ -15,16 +15,17 @@ ActionBuffer::ActionBuffer(unsigned capacity)
 
 void ActionBuffer::PushBack(Action* action)
 {
-	if (Full())
-		CombineAndPerformActions();
-
-
 	Action* copy = action->Clone(); // Make a copy to protect original from UpdateHistory side effects (is there a point?)
 
 	copy->UpdateHistory(historyManager);
 
 	if (!copy->AnimationSuppressed())
+	{
+		if (Full()) // Only perform an animation if the buffer is full AND we have another action which deserves to be in it
+			CombineAndPerformActions();
+
 		buffer.push_back(copy);
+	}
 }
 
 
@@ -38,6 +39,10 @@ void ActionBuffer::CombineAndPerformActions()
 	//		want to combine
 	// if a modifies some source s of b before b reads s
 	//		can't combine
+
+	std::vector<bool> desiresCombine(buffer.size(), false);
+	desiresCombine[0] = true; // The first action desires combining with the first action (lol)
+
 	int combineCount = 1; // Always include the first action (duh)
 	for (unsigned i = 1; i < buffer.size(); i++)
 	{
@@ -52,7 +57,8 @@ void ActionBuffer::CombineAndPerformActions()
 			int otherTime = historyManager.GetTime() - buffer.size() + j; // bleh
 			if (!CanCombine(current, buffer[j], otherTime))
 				canCombine = false;
-			if (DesireCombine(current, buffer[j], otherTime))
+			// If we desire combining with some action, and that action desires combining with the first action (perhaps indirectly)
+			if (desiresCombine[j] && DesireCombine(current, buffer[j], otherTime))
 				desireCombine = true;
 		}
 
@@ -63,7 +69,10 @@ void ActionBuffer::CombineAndPerformActions()
 			break; // So quit and leave our combineCount as is (don't bother combining anything which could be but doesn't need to)
 		
 		if (desireCombine) // If we want to combine this
+		{
+			desiresCombine[i] = true;
 			combineCount = i + 1; // Then also combine all previous actions, even if they don't desire it (but we know they can)
+		}
 	}
 
 	DS_CompositeAction* composite = new DS_CompositeAction(Displayer::GetInstance()->GetWorld());

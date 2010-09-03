@@ -89,6 +89,7 @@ namespace Algovis_Viewer
 		DS_HighlightOperands(World*, std::vector<ID> operands, ComparisonOps);
 		DS_HighlightOperands(const DS_HighlightOperands&);
 		virtual Action* Clone() const;
+		virtual void UpdateHistory(HistoryManager& historyManager);
 		virtual void PrepareToPerform();
 		virtual void Perform(float progress, QPainter*);
 		virtual void Complete(bool displayed);

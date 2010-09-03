@@ -1,6 +1,8 @@
 #ifndef ACTION_AGENT_H_
 #define ACTION_AGENT_H_
 
+#include <QTime>
+
 #include "boost/thread/mutex.hpp"
 #include "boost/thread/condition_variable.hpp"
 #include "components.h"
@@ -37,10 +39,16 @@ namespace Algovis_Viewer
 		void pauseResumeAnimations();
 	
 	private:
+		float AnimDuration()
+		{
+			return animStartTime.msecsTo(QTime::currentTime()) / 1000.0f;
+		}
+
 		World* world;
 
 		Action* actionToBePerformed;
-		unsigned duration;
+		QTime animStartTime;
+		float animLength; // Animation length in seconds
 		bool animationsSuppressed;
 		bool animationsPaused;
 

@@ -313,6 +313,16 @@ Action* DS_HighlightOperands::Clone() const
 {
 	return new DS_HighlightOperands(*this);
 }
+
+void DS_HighlightOperands::UpdateHistory(HistoryManager& historyManager)
+{
+	suppressAnimation = true;
+	BOOST_FOREACH(ID op, operands)
+	{
+		if (op != INVALID && historyManager.IsVisible(op)) // found an operand we care about
+			suppressAnimation = false;
+	}
+}
 	
 void DS_HighlightOperands::PrepareToPerform()
 {
