@@ -49,7 +49,7 @@ void VO_SinglePrintable::paintEvent(QPaintEvent*)
 	
 	// Draw value
 	painter.setPen(QColor(Qt::white));
-	DrawValue(false, QRect(graphicalTextPosition, graphicalTextPosition),&painter);
+	DrawValue(false, QRect(QPoint(0, 0), QPoint(0, 0)),&painter);
 
 	// Draw bounding box
 	painter.setPen(boundingBoxColour);
@@ -58,7 +58,7 @@ void VO_SinglePrintable::paintEvent(QPaintEvent*)
 
 void VO_SinglePrintable::DrawValue(bool includingChildren, const QRect& desiredBoundingBox, QPainter* painter)
 {
-	painter->drawText(desiredBoundingBox.topLeft(), graphicalText);
+	painter->drawText(desiredBoundingBox.topLeft() + graphicalTextPosition, graphicalText);
 }
 
 void VO_SinglePrintable::DrawBoundingBox(const QRect& desiredBoundingBox, QPainter* painter)
