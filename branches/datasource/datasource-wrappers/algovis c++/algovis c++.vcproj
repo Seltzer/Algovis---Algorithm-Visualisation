@@ -237,6 +237,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="misc_ds"
+				>
+				<File
+					RelativePath=".\src\misc_ds\AlgoMatrix.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\misc_ds\AlgoMatrix.inl"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="docs"

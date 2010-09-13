@@ -24,7 +24,7 @@ namespace Algovis_Viewer
 	/* ARBITRARY is a type we don't know how to draw (i.e. most user-defined types.
 	 * See the viewableObjects folder for implementations
 	 */
-	enum ViewableObjectType { ARRAY, LINKED_LIST, SINGLE_PRINTABLE, POINTER, ARBITRARY };
+	enum ViewableObjectType { ARRAY, LINKED_LIST, SINGLE_PRINTABLE, MATRIX, POINTER, ARBITRARY };
 
 	enum ComparisonOps { EQUAL, NOT_EQUAL, MORE_THAN, MORE_THAN_OR_EQUAL, LESS_THAN, LESS_THAN_OR_EQUAL };
 	

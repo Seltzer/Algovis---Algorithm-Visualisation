@@ -9,7 +9,7 @@
 #include "../../include/common.h"
 
 
-// Contains ValueID struct and DS_Action, DS_Deleted and DS_CompositeAction classes.
+// Contains ValueID struct and DS_Action, DS_CreateAction, DS_Deleted and DS_CompositeAction classes.
 namespace Algovis_Viewer
 {
 	class ViewableObject;
@@ -49,7 +49,7 @@ namespace Algovis_Viewer
 
 	public:
 		DS_Action(World*, bool animationSuppressed = false);
-		DS_Action(World* world, std::set<ViewableObject*> subjects, bool suppressAnimation = false);
+		DS_Action(World*, std::set<ViewableObject*> subjects, bool suppressAnimation = false);
 		DS_Action(const DS_Action&);
 
 	protected:
@@ -61,6 +61,23 @@ namespace Algovis_Viewer
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
+	};
+
+
+	class DS_CreateAction : public DS_Action
+	{
+
+	public:
+		DS_CreateAction(World*, bool animationSuppressed, bool createOnSameLine = false);
+		DS_CreateAction(World*, std::set<ViewableObject*> subjects, bool animationSuppressed, 
+							bool createOnSameLine = false);
+		DS_CreateAction(const DS_CreateAction&);
+
+		void PlaceOnSameLine();
+		bool BeingCreatedOnSameLine();
+
+	protected:
+		bool createOnSameLine;
 	};
 
 

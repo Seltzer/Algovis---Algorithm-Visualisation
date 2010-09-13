@@ -82,8 +82,13 @@ vector<T> merge(vector<T>& v1, vector<T>& v2, unsigned level)
 		T elt = v1[0];
 		v1.erase(v1.begin());
 
-		vector<T> returnVec = merge(v1,v2, ++level);
+		vector<T> returnVec = merge(v1,v2, level + 1);
+		cout << "At level " << level << " of merge()";
+		//FlushAllActions();
+
 		returnVec.insert(returnVec.begin(), elt);
+		//FlushAllActions();
+		cout << "*************RETURNING" << endl;
 		return returnVec;
 	}
 	
@@ -92,8 +97,16 @@ vector<T> merge(vector<T>& v1, vector<T>& v2, unsigned level)
 		T elt = v2[0];
 		v2.erase(v2.begin());
 
-		vector<T> returnVec = merge(v1,v2, ++level);
+		vector<T> returnVec = merge(v1,v2, level + 1);
+	
+		cout << "******************************* RETURNING FROM merge ******************************" << endl;
+		cout << "At level " << level << " of merge()" << endl;
+		//FlushAllActions();
 		returnVec.insert(returnVec.begin(), elt);
+		//FlushAllActions();
+
+		cout << "hi" << endl;
+		cout << "*************RETURNING" << endl;
 		return returnVec;
 	}
 

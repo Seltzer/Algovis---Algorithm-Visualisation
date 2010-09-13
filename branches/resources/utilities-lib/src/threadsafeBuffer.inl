@@ -1,5 +1,5 @@
 // Template method implementations for ThreadsafeBuffer<T>
-
+/*
 
 template<class T>
 ThreadsafeBuffer<T>::ThreadsafeBuffer(unsigned maxItems)
@@ -127,4 +127,4 @@ bool ThreadsafeBuffer<T>::PopBack()
 	writeLockOwner = NULL;
 	//bufferMutex.unlock();
 	return false;
-}
+}*/

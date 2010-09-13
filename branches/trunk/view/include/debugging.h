@@ -24,10 +24,10 @@ namespace Algovis_Viewer
 
 	/* 0 = Off
 	 * 1 = Notify when a DS object is deregistered
-	 * 2 = Same as 1 plus notification when VO_Arrays are registered
+	 * 2 = Same as 1 plus notification when VO_Arrays and VO_Matrices are registered
 	 * 3 = Same as 2 plus notification when VO_SinglePrintables are registered
 	 */
-	#define DEBUG_REGISTRATION_LEVEL 0
+	#define DEBUG_REGISTRATION_LEVEL 2
 
 	/* 0 = Off
 	 * 1 = Basic action debugging

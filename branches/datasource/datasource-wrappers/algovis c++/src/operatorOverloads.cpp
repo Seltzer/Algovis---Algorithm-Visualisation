@@ -21,7 +21,7 @@ namespace Algovis
 	WRAPPER_TYPE operator OPERATION(const WRAPPER_TYPE & op1, const WRAPPER_TYPE & op2) { \
 		WRAPPER_TYPE result(op1.AVGetValue() OPERATION op2.AVGetValue()); \
 		\
-		if (drawingEnabled)\
+		if (communicationWithViewEnabled)\
 		{\
 		}\
 		return result; \
@@ -54,7 +54,7 @@ namespace Algovis
 #define AV_COMPARISON_OPERATOR_MACRO(WRAPPER_TYPE, OPERATOR, OPERATOR_NOTATION)					\
 	bool operator OPERATOR (const WRAPPER_TYPE & op1, const WRAPPER_TYPE & op2)					\
 	{																							\
-		if (drawingEnabled && highlightOperandsEnabled)											\
+		if (communicationWithViewEnabled && highlightOperandsEnabled)											\
 		{																						\
 			ID id1 = IdManager::GetInstance()->GetId(&op1);										\
 			ID id2 = IdManager::GetInstance()->GetId(&op2);										\

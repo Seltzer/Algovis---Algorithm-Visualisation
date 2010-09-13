@@ -7,7 +7,7 @@
 namespace Algovis_Viewer
 {
 
-	class DS_CreateSP : public DS_Action
+	class DS_CreateSP : public DS_CreateAction
 	{
 	public:
 		DS_CreateSP(World*, const ID id, const void* dsAddress, const std::string& value);

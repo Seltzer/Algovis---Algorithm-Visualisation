@@ -8,6 +8,8 @@
 // Our original demo featuring vector population, cumulative adding, bubblesorting
 void OriginalDemo();
 
+void MatrixDemo();
+
 // A bit of sorting, pointless assignment of values between multiple vectors and deletion at the end
 void MultipleVectorDemoWithDelete();
 

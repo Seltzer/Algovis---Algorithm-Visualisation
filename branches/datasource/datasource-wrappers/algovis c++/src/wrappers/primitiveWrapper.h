@@ -3,7 +3,7 @@
 
 
 #include "wrapper.h"
-
+#include "utilities.h"
 
 
 namespace Algovis
@@ -39,7 +39,7 @@ namespace Algovis
 			//std::cout << "PrimitiveWrapper C1 called - registering " << this << " with value " << primitive << std::endl;
 			ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
-			if (drawingEnabled && SettingsManager::GetInstance()->ConstructionReportingEnabled())
+			if (communicationWithViewEnabled && SettingsManager::GetInstance()->ConstructionReportingEnabled())
 			{
 				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable(id, this, GetStringRepresentation());
 				// Do not record any assignment. This way, we can detect uninitialised values later on!
@@ -52,7 +52,7 @@ namespace Algovis
 			//std::cout << "PrimitiveWrapper C2 called - registering " << this << " with value " << primitive << std::endl;
 			ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
-			if (drawingEnabled && SettingsManager::GetInstance()->ConstructionReportingEnabled())
+			if (communicationWithViewEnabled && SettingsManager::GetInstance()->ConstructionReportingEnabled())
 			{
 				ID sourceId = INVALID;
 
@@ -71,7 +71,7 @@ namespace Algovis
 			//std::cout << "PrimitiveType CC called id = " << id << ", otherId = " << otherId << std::endl;
 			CopyConstructionInfo info = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
 						
-			if (drawingEnabled && SettingsManager::GetInstance()->CopyConstructionReportingEnabled())
+			if (communicationWithViewEnabled && SettingsManager::GetInstance()->CopyConstructionReportingEnabled())
 			{
 				if (info.result == CopyConstructionInfo::NORMAL_CC)
 				{
@@ -94,14 +94,14 @@ namespace Algovis
 			if (result.result == CopyAssignmentInfo::NORMAL_ASSIGNMENT)
 			{
 				// This was a regular copy assignment, so inform the Registry that my value has changed
-				if (drawingEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
+				if (communicationWithViewEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
 					Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(result.newId, result.otherId, 
 																				GetStringRepresentation());
 			}
 			else if (result.result == CopyAssignmentInfo::ORPHAN_REBIRTH)
 			{
 				// I was an orphan and have since been allocated a new id - inform Registry
-				if (drawingEnabled)
+				if (communicationWithViewEnabled)
 					Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable
 																(result.newId, this, GetStringRepresentation());
 			}

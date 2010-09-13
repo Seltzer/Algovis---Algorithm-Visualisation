@@ -10,6 +10,7 @@
 
 // Stdlib includes
 #include <string>
+#include <sstream>
 
 // Other components of utilities-lib (for now, include them all and give the user no choice in the matter muahahaha)
 #include "macros.h"

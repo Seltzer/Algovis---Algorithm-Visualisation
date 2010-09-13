@@ -1,62 +1,27 @@
-Currently in progress:
+***** BEFORE EXHIBITION *****
 
-* Analyse dependencies between actions
-* Write/finish wrappers for STL maps and the rest of the primitives (and perhaps strings too)
-* Write Viewables for matrices, linked lists and hash maps
-* Remove SINGLE_PRINTABLE hackery (mostly removed)
+* Improve the UI and fix dodgy stuff (fix window resizing, add snap to current viewable feature)
+* Remove SINGLE_PRINTABLE hackery (mostly removed at this stage)
+* Finish existing wrappers
+* Write wrappers for std::string, std::map
+* Finish writing VO_Matrix and write VO_Map viewable
+* Verify that history works
+* Implement backtracking through actions
+* Improve animations
+* Support custom types by displaying a generic 'user-defined type pic'
+* Write more Algovis demos
 
+***** BEFORE COMPENDIUM DEADLINE *****
 
-***** CRITICAL *****
-
-* Improve DS_Assigned and DS_HighlightOperands animations
-* Add a proper position allocation algorithm to the Container class.
-* Allow user to go back through actions
-  
-  
-***** HIGH PRIORITY *****
-* Add mouse over expand feature
-	- We can display 'thumbnail' views of large VOs by default and display the large versions 
-		when moused over
-	- Perhaps title strings of Viewables should only be shown when moused over
-* Speed up and control painting  
-
-
-***** MEDIUM PRIORITY *****
-* Implement drawing for pointer types and custom user types (possibly dependent on mouseover expand feature)
-* Do some quick research into a popular C++ graph library
-* UI Stuff:
-	 - Some sort of control panel with list of VOs???
-	 - Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
+* Improve layout manager so that Viewable translations can trigger layout recalculation, not just 
+			Viewable resizes
+* Display contents of custom types when the user mouses over the user-defined type pic
+* Implement drawing for pointer types 
+* Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
 		arrays of arrays.
-	 - Improve window resizing, fix any dodgy stuff and implement snap to current action feature
-* Implement stats for arrays???
-
-
-***** LOW PRIORITY *****
-
+* Implement stats module
 * Port to Linux
-* Develop Algovis Python - http://pypi.python.org/pypi/ProxyTypes could be useful
-* Explore feasibility of Algovis Java
-	What we require is essentially function hooking which is often used for aspect-oriented programming type 
-	behaviour. Useful search keywords might include: 
-		{hooking hooks aop proxy intercept method calls...}
-* Decouple utilities-lib from boost-subset so that it can be used in other slns
-
-
-***** GENERAL CODE TODO *****
-
-* Possibly start using smart pointers if things get nasty
 * Turn algovis c++ into a DLL
-
-
-
-***** BEFORE CONFERENCE/PRESENTATION **********
-* Compile a demo which uses Algovis in another compiler 
-		(to show how easy it is to use Algovis by simply including headers and copying a couple of libs/dlls)
-* Test on uni computers
-* Write some more demos, test the compatibility of our wrappers against more libraries
-		Hopefully we can figure out if there are any other cases when #defining primitives fails
-
 
 ***** BUGS *****
 * Ambiguous < op when using vec.size_type
@@ -65,6 +30,6 @@ Currently in progress:
 **** THOUGHTS ****
 * How to deal with "unsigned char"
 * Consider string algorithms
-* Flushing buffer
+* Array deregistration...
 
 

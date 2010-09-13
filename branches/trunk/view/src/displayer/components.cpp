@@ -17,13 +17,13 @@ namespace Algovis_Viewer
 
 
 Component::Component()
-	: drawingEnabled(true)
+	: communicationWithViewEnabled(true)
 {
 	setFont(Displayer::GetDefaultFont());
 }
 
 Component::Component(QWidget* parentComponent, QPoint& position, QSize& dimensions)
-	: QWidget(parentComponent), drawingEnabled(true)
+	: QWidget(parentComponent), communicationWithViewEnabled(true)
 {
 	setGeometry(QRect(position, dimensions));
 	setFont(Displayer::GetDefaultFont());
@@ -35,9 +35,9 @@ Component::~Component()
 }
 
 
-void Component::EnableDrawing(bool drawingEnabled)
+void Component::EnableCommunicationWithView(bool communicationWithViewEnabled)
 {
-	this->drawingEnabled = drawingEnabled;
+	this->communicationWithViewEnabled = communicationWithViewEnabled;
 }
 
 
@@ -63,6 +63,12 @@ void Component::resize(int w, int h)
 { 
 	return QWidget::resize(w, h); 
 }
+
+void Component::resizeEvent(QResizeEvent* evt)
+{
+	emit resized(evt);
+}
+
 
 void Component::adjustSize() 
 { 

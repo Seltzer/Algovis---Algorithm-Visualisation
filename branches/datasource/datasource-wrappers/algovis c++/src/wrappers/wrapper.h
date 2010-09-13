@@ -39,7 +39,7 @@ namespace Algovis
 	protected:
 		ID Id()
 		{
-			if (drawingEnabled)
+			if (communicationWithViewEnabled)
 				return IdManager::GetInstance()->GetId(this);
 			else
 				return INVALID;

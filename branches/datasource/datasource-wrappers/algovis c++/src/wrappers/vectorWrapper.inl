@@ -6,7 +6,7 @@ VectorWrapper<T,Alloc>::VectorWrapper()
 {
 	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
-	if (drawingEnabled)
+	if (communicationWithViewEnabled)
 		Algovis_Viewer::Registry::GetInstance()->RegisterArray
 							(id, this, GetVOType<T>());
 };
@@ -18,7 +18,7 @@ VectorWrapper<T,Alloc>::VectorWrapper(const allocator_type& a)
 {
 	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
-	if (drawingEnabled)
+	if (communicationWithViewEnabled)
 		Algovis_Viewer::Registry::GetInstance()->RegisterArray
 							(id, this, GetVOType<T>());
 }
@@ -31,7 +31,7 @@ VectorWrapper<T,Alloc>::VectorWrapper(size_type n, const value_type& value = val
 {
 	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
-	if (drawingEnabled)
+	if (communicationWithViewEnabled)
 		Algovis_Viewer::Registry::GetInstance()->RegisterArray
 							(id, this, GetVOType<T>());
 }
@@ -46,13 +46,17 @@ VectorWrapper<T,Alloc>::VectorWrapper(const VectorWrapper& other)
 
 	CopyConstructionInfo info = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
 						
-	if (drawingEnabled && SettingsManager::GetInstance()->CopyConstructionReportingEnabled())
+	if (communicationWithViewEnabled && SettingsManager::GetInstance()->CopyConstructionReportingEnabled())
 	{
 		if (info.result == CopyConstructionInfo::NORMAL_CC)
 		{
 			std::vector<ID> elements;
 			for (std::vector<T>::iterator it = value.begin(); it < value.end(); it++)
-				elements.push_back(IdManager::GetInstance()->GetId(&(*it)));
+			{
+				ID id = IdManager::GetInstance()->GetId(&(*it));
+				std::cout << "\t id = " << id << endl;
+				elements.push_back(id);
+			}
 
 			// TODO animation for this doesn't work
 			//Algovis_Viewer::Registry::GetInstance()->RegisterArray(id, this, GetVOType<T>(), elements);
@@ -79,7 +83,7 @@ VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<
 	{
 		/*
 		// This was a regular copy assignment, so inform the Registry that my value has changed
-		if (drawingEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
+		if (communicationWithViewEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
 			Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(result.newId, result.otherId, 
 																		GetStringRepresentation());
 																		*/
@@ -88,7 +92,7 @@ VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<
 	{
 		/*
 		// I was an orphan and have since been allocated a new id - inform Registry
-		if (drawingEnabled)
+		if (communicationWithViewEnabled)
 			Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable
 														(result.newId, this, GetStringRepresentation());
 														*/
@@ -175,7 +179,7 @@ void VectorWrapper<T,Alloc>::push_back (const T& x)
 	value.push_back(x);
 	Algovis::IdManager::GetInstance()->EnableTransplantMode(false);
 
-	if (drawingEnabled)
+	if (communicationWithViewEnabled)
 	{
 		ID newElementId = IdManager::GetInstance()->GetId(&value[value.size()-1]);
 		Algovis_Viewer::Registry::GetInstance()->AddElementToArray(Id(), newElementId, value.size() - 1);
@@ -187,7 +191,7 @@ void VectorWrapper<T,Alloc>::push_back_test()
 { 
 	value.push_back(2);
 
-	if (drawingEnabled)
+	if (communicationWithViewEnabled)
 	{
 		ID newElementId = IdManager::GetInstance()->GetId(&value[value.size()-1]);
 		Algovis_Viewer::Registry::GetInstance()->AddElementToArray(Id(), newElementId, value.size() - 1);
@@ -209,6 +213,9 @@ void VectorWrapper<T,Alloc>::pop_back()
 template <class T, class Alloc>
 typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::insert(iterator position, const T& x)
 {
+	std::cout << "insert" << std::endl;
+	std::cout.flush();
+	getchar();
 	unsigned insertionIndex = position - value.begin();
 
 	// Get IDs of current elements so that we can ensure these elements are always transplanted
@@ -223,7 +230,7 @@ typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::insert(iterato
 	Algovis::IdManager::GetInstance()->PurgeModeExceptions();
 
 	// Report to Registry
-	if (drawingEnabled)
+	if (communicationWithViewEnabled)
 	{
 		// Figure out the ID of the inserted element and inform the Registry of the array insertion
 		ID id = IdManager::GetInstance()->GetId(&value[insertionIndex]);
@@ -253,7 +260,7 @@ void VectorWrapper<T,Alloc>::insert(iterator position, size_type n, const T& x)
 	Algovis::IdManager::GetInstance()->PurgeModeExceptions();
 	
 	// Report to Registry
-	if (drawingEnabled)
+	if (communicationWithViewEnabled)
 	{
 		// Figure out the IDs of the inserted elements
 		std::vector<ID> insertedElements;
@@ -290,9 +297,9 @@ typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::erase(iterator
 	// Enable transplant mode as we want copy assigned elements to retain their ids
 	// Disable drawing as we don't want element destruction to be communicated to the view
 	Algovis::IdManager::GetInstance()->EnableTransplantMode(true);
-	EnableDrawing(false);
+	EnableCommunicationWithView(false);
 	iterator returnIterator = value.erase(first, last);
-	EnableDrawing(true);
+	EnableCommunicationWithView(true);
 	Algovis::IdManager::GetInstance()->EnableTransplantMode(false);
 
 	// Inform Registry of erase
@@ -309,7 +316,7 @@ void VectorWrapper<T,Alloc>::clear()
 { 
 	value.clear(); 
 	
-	if (drawingEnabled)
+	if (communicationWithViewEnabled)
 		Algovis_Viewer::Registry::GetInstance()->ClearArray(this);
 }
 

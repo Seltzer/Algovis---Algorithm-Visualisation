@@ -1,3 +1,5 @@
+#include <iostream>
+#include <algorithm>
 #include <QObject>
 #include <QLineEdit>
 #include <Qt/qinputdialog.h>
@@ -6,6 +8,7 @@
 #include "viewableObject.h"
 #include "viewableObjectContainer.h"
 
+using namespace std;
 
 
 namespace Algovis_Viewer
@@ -132,17 +135,15 @@ void ViewableObject::wheelEvent(QWheelEvent* evt)
 		QFont newFont(font());
 		
 		if (evt->delta() > 0)
-			newFont.setPointSize(max((int) font().pointSize() * 1.1, font().pointSize() + 1));
+			newFont.setPointSize(max((int) (font().pointSize() * 1.1), font().pointSize() + 1));
 		else
-			newFont.setPointSize(min((int) font().pointSize() / 1.1, font().pointSize() - 1));
+			newFont.setPointSize(min((int) (font().pointSize() / 1.1), font().pointSize() - 1));
 
 		setFont(newFont);
 		evt->accept();
 		adjustSize();
 	}
 }
-
-
 
 void ViewableObject::spawnContextMenu(const QPoint& point)
 {

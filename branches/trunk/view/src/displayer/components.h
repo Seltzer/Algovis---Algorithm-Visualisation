@@ -18,6 +18,7 @@ namespace Algovis_Viewer
 
 	class Component : public QWidget
 	{
+		Q_OBJECT
 	
 	public:
 		Component();
@@ -33,10 +34,14 @@ namespace Algovis_Viewer
 
 
 		// So that an ActionAgent can take over drawing responsibilities for a Component during an animation
-		void EnableDrawing(bool);
+		void EnableCommunicationWithView(bool);
 
 	protected:
-		bool drawingEnabled;
+		virtual void resizeEvent(QResizeEvent*);
+		bool communicationWithViewEnabled;
+
+	signals:
+		void resized(QResizeEvent*);
 
 	};
 

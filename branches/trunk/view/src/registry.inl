@@ -1,7 +1,7 @@
 template<class T>
 T* Registry::GetRepresentation(ID id)
 {
-	util::ReaderLock<util::LockManager<1>,1> lock(*this);
+	ReaderLock<LockManager<1>,1> lock(*this);
 
 	UL_ASSERT(IsRegistered(id));
 	
@@ -15,6 +15,10 @@ T* Registry::GetRepresentation(ID id)
 	else if (typeid(T).name() == typeid(VO_SinglePrintable).name())
 	{
 		UL_ASSERT(viewRepresentation->GetType() == SINGLE_PRINTABLE);
+	}
+	else if (typeid(T).name() == typeid(VO_Matrix).name())
+	{
+		UL_ASSERT(viewRepresentation->GetType() == MATRIX);
 	}
 
 	T* viewRepresentationCast = static_cast<T*>(viewRepresentation);

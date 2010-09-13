@@ -12,7 +12,7 @@
  * 1 = Report entrance to GetIdForConstruction/CopyConstruction/CopyAssignment/ReportDestruction
  * 2 = Same as 1, but more detailed data about each method
  */
-#define ID_DEBUGGING_LEVEL 0
+#define ID_DEBUGGING_LEVEL 2
 
 #define ORPHAN_ID -100
 

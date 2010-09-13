@@ -1,3 +1,4 @@
+/*
 #include "windows.h"
 #include <deque>
 #include "boost/thread/shared_mutex.hpp"
@@ -15,7 +16,7 @@ namespace util
  *		- There are blocking and nonblocking versions of push, but only nonblocking versions of pop
  *		- Use LockBuffer() before and UnlockBuffer() after reading buffer contents
  *		- Each LockBuffer() invocation (whether recursive or not) should be followed by an UnlockBuffer() call
- */
+ *//*
 template<class T>
 class ThreadsafeBuffer
 {
@@ -63,3 +64,4 @@ private:
 
 
 }
+*/

@@ -1,4 +1,3 @@
-/*
 #ifndef LOCK_MANAGER_H_
 #define LOCK_MANAGER_H_
 
@@ -7,7 +6,7 @@
 #include "boost/thread/shared_mutex.hpp"
 #include "boost/thread/condition_variable.hpp"
 
-
+////// TEMPORARILY HERE until it can be rewritten with fewer dependencies and reintegrated into utilities-lib
 
 
 /* LockManager provides a way to easily create and manage any number of 
@@ -25,8 +24,7 @@
  *		LockManager<3> lockMgr;
  *		lockMgr<1>.AcquireReadLock();
  */
-/*
-namespace util
+namespace Algovis_Viewer
 {
 
 	template<int numLocks>
@@ -59,7 +57,7 @@ namespace util
 		mutable unsigned lockCount[numLocks+1];
 	};
 
-	#include "../src/lockManager.inl"
+	#include "lockManager.inl"
 
 
 
@@ -116,4 +114,3 @@ namespace util
 
 
 #endif
-*/

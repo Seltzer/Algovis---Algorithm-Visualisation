@@ -16,7 +16,7 @@
 #include <map>
 #include <string>
 #include "boost/thread/mutex.hpp"
-#include "utilities.h"
+#include "../util/lockManager.h"
 #include "common.h"
 #include "../src/actions/actionBuffer.h"
 
@@ -32,13 +32,14 @@ namespace Algovis_Viewer
 	class World;
 	class ViewableObject;
 	class VO_Array;
+	class VO_Matrix;
 	class VO_SinglePrintable;
 	class Action;
 	class DS_Action;
 
 	// Registry is a non-copyable singleton
 	class DECLSPEC Registry 
-		: public util::LockManager<1> // Lock #1 used for IsRegistered/GetRepresentation/Register/Deregister
+		: public LockManager<1> // Lock #1 used for IsRegistered/GetRepresentation/Register/Deregister
 	{
 		friend Displayer;
 
@@ -60,6 +61,9 @@ namespace Algovis_Viewer
 		// TODO: This shouldn't take a value, it should just note the existance of the variable. PrintableAssigned can initialise the value.
 		void RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddress, const std::string& value);
 
+		void RegisterMatrix(ID id, const void* dsMatrixAddress, ViewableObjectType elementType,
+					unsigned rows, unsigned cols, const std::vector<ID>& initElements = std::vector<ID>());
+						
 		void AddressChanged(ID id, const void* newAddress);
 
 
@@ -99,8 +103,13 @@ namespace Algovis_Viewer
 		// Pre-Condition: Operands are single printables - TODO remove this hack
 		void HighlightOperands(const std::vector<ID>& operands, ComparisonOps);
 
+		//////////////// Accessed from userFunctions.h
 		// Set caption in control panel
 		void SetCaption(const std::string&);
+		// 
+		void PlaceNextWrapperOnSameLine();
+		
+		
 		
 		// Used to test out anything imaginable - declared here so that it can be called by the DLL user
 		void TestMethod();
@@ -147,6 +156,7 @@ namespace Algovis_Viewer
 		// Callback from Displayer
 		void DisplayerIsShuttingDown();
 
+		bool createNextViewableOnSameLine;
 		
 		// ActionBuffer Stuff
 		ActionBuffer actionBuffer;

@@ -23,13 +23,13 @@ namespace Algovis_Viewer
 //////////////// DS_CreateArray
 DS_CreateArray::DS_CreateArray(World* world, ID arrayId, const void* arrayAddress, 
 								ViewableObjectType elementType, vector<ID> elements)
-		: DS_Action(world, false), arrayId(arrayId), arrayAddress(arrayAddress), 
+		: DS_CreateAction(world, false), arrayId(arrayId), arrayAddress(arrayAddress), 
 				elementType(elementType), elements(elements)
 {
 }
 
 DS_CreateArray::DS_CreateArray(const DS_CreateArray& other)
-	: DS_Action(other), arrayId(other.arrayId),arrayAddress(other.arrayAddress), 
+	: DS_CreateAction(other), arrayId(other.arrayId),arrayAddress(other.arrayAddress), 
 		elementType(other.elementType), elements(other.elements)
 {
 }
@@ -60,9 +60,13 @@ void DS_CreateArray::Complete(bool displayed)
 
 	VO_Array* newArray = new VO_Array(arrayId, arrayAddress, world, elementType, arrayElements);
 	
-	newArray->move(world->GetArrayPosition());
+	if (BeingCreatedOnSameLine())
+		world->AddViewableOnSameRow(newArray);
+	else
+		world->AddViewableOnNewRow(newArray);
+
+	
 	newArray->adjustSize();
-	newArray->setParent(world);
 	newArray->setVisible(true);
 	Registry::GetInstance()->Register(arrayId, newArray);
 }

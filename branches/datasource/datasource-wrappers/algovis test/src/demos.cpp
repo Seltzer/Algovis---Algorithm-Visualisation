@@ -7,7 +7,7 @@ using namespace std;
 
 void OriginalDemo()
 {
-	EnableDrawing(true);
+	EnableCommunicationWithView(true);
 
 	// Populate
 	vector<int> collectionToModify;
@@ -37,16 +37,35 @@ void OriginalDemo()
 }
 
 
+void MatrixDemo()
+{
+	EnableCommunicationWithView(true);
+	SetCaption(string("MatrixDemo"));
+
+	int initValue(3);
+	Algovis::AlgoMatrix<int,3,3> matrix(initValue);
+	//Algovis::AlgoMatrix<int,3,3> matrix();
+	
+	FlushAllActions();		
+
+
+	prt("Press any key to leave MatrixDemo");
+	getchar();
+}
+
 void MultipleVectorDemoWithDelete()
 {
-	EnableDrawing(true);
+	EnableCommunicationWithView(true);
 
 	{
 		SetCaption(string("MultipleVectorDemoWithDelete"));
 		//EnableOperandsHighlighting(false);
 
 		// Populate
-		vector<int> c1, c2, c3, c4, c5, c6;
+		vector<int> c1, c2, c3, c4, c5;
+		
+		::PlaceNextWrapperOnSameLine();
+		vector<int> c6;
 		
 		//c1.reserve(20);
 
@@ -117,8 +136,8 @@ void MultipleVectorDemoWithDelete()
 
 void MergeSortDemo()
 {
-	EnableDrawing(true);
-
+	EnableCommunicationWithView(true);
+	EnableOperandsHighlighting(false);
 
 	SetCaption(string("MergeSortDemo"));
 
@@ -169,7 +188,7 @@ void MergeSortDemo()
 // Tests unconversions.h
 void UnconversionsDemo()
 {
-	EnableDrawing(true);
+	EnableCommunicationWithView(true);
 
 	// Populate
 	vector<int> collectionToModify;
@@ -212,7 +231,7 @@ void UnconversionsDemo()
 
 void DoRandomStuffWithAVectorDemo()
 {
-	EnableDrawing(true);
+	EnableCommunicationWithView(true);
 	{
 		vector<int> c1;
 		int i;
@@ -250,7 +269,7 @@ void DoRandomStuffWithAVectorDemo()
 
 void InterfaceTestingDemo()
 {
-	EnableDrawing(true);
+	EnableCommunicationWithView(true);
 
 	// Populate
 	
@@ -270,7 +289,7 @@ void InterfaceTestingDemo()
 
 void TestDemo()
 {
-	EnableDrawing(true);
+	EnableCommunicationWithView(true);
 
 	// Populate
 	vector<int> c1;

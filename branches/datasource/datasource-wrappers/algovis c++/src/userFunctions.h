@@ -4,14 +4,15 @@
 #include <string>
 
 
-extern bool drawingEnabled;
+extern bool communicationWithViewEnabled;
 extern bool highlightOperandsEnabled;
 
 // Internal to DS
-void EnableDrawing(bool enabled);
+void EnableCommunicationWithView(bool enabled);
 void EnableOperandsHighlighting(bool enabled);
 
 // Result in Registry invocations
+void PlaceNextWrapperOnSameLine();
 void SetCaption(std::string&);
 void FlushAllActions();
 void Shutdown();

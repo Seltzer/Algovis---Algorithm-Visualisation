@@ -10,6 +10,7 @@
 #include "FloatWrapperTests.h"
 #include "doubleWrapperTests.h"
 #include "VectorWrapperTests.h"
+#include "AlgoMatrixTests.h"
 
 
 
@@ -26,7 +27,7 @@ class AlgoVisTestSuite : public CxxTest::TestSuite
 	public:
 		virtual void setUp() 
 		{ 
-			EnableDrawing(false);
+			EnableCommunicationWithView(false);
 
 			charValue = new CharWrapper(3);
 			intValue = new int(3);
@@ -67,6 +68,11 @@ class AlgoVisTestSuite : public CxxTest::TestSuite
 			::testVectorBasics();
 			//::testVectorBasics2();
 			::testAdvancedVector();
+		}
+
+		void testAlgoMatrix()
+		{
+			::testMatrixFunctions();
 		}
 
 };

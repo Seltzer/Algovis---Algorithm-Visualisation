@@ -20,12 +20,12 @@ namespace Algovis_Viewer
 
 //////////////// DS_CreateSP
 DS_CreateSP::DS_CreateSP(World* world, ID id, const void* dsAddress, const std::string& value)
-		: DS_Action(world, true), id(id), dsAddress(dsAddress), value(value)
+		: DS_CreateAction(world, true), id(id), dsAddress(dsAddress), value(value)
 {
 }
 
 DS_CreateSP::DS_CreateSP(const DS_CreateSP& other)
-	: DS_Action(other), id(other.id), dsAddress(other.dsAddress), value(other.value)
+	: DS_CreateAction(other), id(other.id), dsAddress(other.dsAddress), value(other.value)
 {
 }
 
@@ -108,7 +108,7 @@ void DS_Assigned::UpdateHistory(HistoryManager& historyManager)
 
 void DS_Assigned::PrepareToPerform()
 {
-	//subject->EnableDrawing(false);
+	//subject->EnableCommunicationWithView(false);
 
 	Registry* registry = Registry::GetInstance();
 
@@ -244,7 +244,7 @@ void DS_Modified::UpdateHistory(HistoryManager& historyManager)
 
 void DS_Modified::PrepareToPerform()
 {
-	//subject->EnableDrawing(false);
+	//subject->EnableCommunicationWithView(false);
 
 	Registry* registry = Registry::GetInstance();
 

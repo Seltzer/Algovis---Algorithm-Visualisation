@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "QtGui/qevent.h"
 #include "boost/foreach.hpp"
 #include "utilities.h"

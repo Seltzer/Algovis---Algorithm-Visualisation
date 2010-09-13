@@ -9,7 +9,7 @@ namespace Algovis_Viewer
 {
 	class VO_Array;
 
-	class DS_CreateArray : public DS_Action
+	class DS_CreateArray : public DS_CreateAction
 	{
 	public:
 		DS_CreateArray(World*, ID arrayId, const void* arrayAddress, 

@@ -12,8 +12,11 @@
 
 namespace Algovis_Viewer
 {
+	class ViewableObject;
+
 	class World : public Component
 	{
+		Q_OBJECT
 
 	public:
 		World(QWidget* parent, QPoint&, QSize&, QColor& bgColour, QColor& borderColour, unsigned refreshRate = 25);
@@ -21,16 +24,23 @@ namespace Algovis_Viewer
 		// QT Overloads
 		virtual QSize sizeHint() const;
 		
-		// TODO hack until we get around to writing a position allocator
-		QPoint GetArrayPosition();
+		void AddViewableOnSameRow(ViewableObject*);
+		void AddViewableOnNewRow(ViewableObject*);
+		void RemoveViewable(ViewableObject*);
+			
 
 	private:
 		QColor bgColour, borderColour;
 		QTimer myTimer;
 		unsigned refreshRate;
 
-		// hack until we get around to writing a position allocator
-		QPoint locationForNextArray;
+		std::vector<ViewableObject*> viewables;
+
+		void AddViewable(ViewableObject*);
+		
+	private slots:
+		void topLevelViewableResized(QResizeEvent*);
+		
 	};
 
 }

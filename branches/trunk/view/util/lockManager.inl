@@ -1,4 +1,3 @@
-/*
 #ifndef LOCK_MANAGER_INL_
 #define LOCK_MANAGER_INL_
 
@@ -85,4 +84,3 @@ void LockManager<numLocks>::ForceReleaseWriteLock() const
 
 
 #endif
-*/

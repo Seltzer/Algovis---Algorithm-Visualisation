@@ -12,7 +12,7 @@
 
 REAL_INT wmain()
 {
-	//MultipleVectorWithoutExtraCrap();
+	//MatrixDemo();
 	MultipleVectorDemoWithDelete();
 	//MergeSortDemo();
 	//DoRandomStuffWithAVectorDemo();

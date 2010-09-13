@@ -4,12 +4,16 @@
 #ifndef CONVERSIONS_H_
 #define CONVERSIONS_H_
 
-// Wrapper / function includes
+// Wrapper includes
 #include "wrappers/charWrapper.h"
 #include "wrappers/intWrapper.h"
 #include "wrappers/floatWrapper.h"
 #include "wrappers/doubleWrapper.h"
 #include "wrappers/vectorWrapper.h"
+
+
+// Miscellaneous data structure includes
+#include "misc_ds/AlgoMatrix.h"
 
 #include "operatorOverloads.h"
 #include "wrapperWorkarounds.h"
@@ -27,6 +31,7 @@
 #define float Algovis::FloatWrapper
 #define double Algovis::DoubleWrapper
 #define vector Algovis::VectorWrapper
+
 
 
 

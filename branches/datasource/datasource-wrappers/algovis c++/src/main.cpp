@@ -5,17 +5,22 @@
 #include "idManager.h"
 
 
-bool drawingEnabled = false;
+bool communicationWithViewEnabled = false;
 bool highlightOperandsEnabled = true;
 
-void EnableDrawing(bool enabled)
+void EnableCommunicationWithView(bool enabled)
 {
-	drawingEnabled = enabled;
+	communicationWithViewEnabled = enabled;
 }
 
 void EnableOperandsHighlighting(bool enabled)
 {
 	highlightOperandsEnabled = enabled;
+}
+
+void PlaceNextWrapperOnSameLine()
+{
+	Algovis_Viewer::Registry::GetInstance()->PlaceNextWrapperOnSameLine();
 }
 
 void SetCaption(std::string& newCaption)

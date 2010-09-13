@@ -82,6 +82,7 @@ void ActionBuffer::CombineAndPerformActions()
 		//delete buffer.front(); // TODO
 		buffer.pop_front();
 	}
+
 	Displayer::GetInstance()->PerformAndAnimateActionAsync(composite);
 }
 
@@ -101,7 +102,8 @@ bool ActionBuffer::CanCombine(Action* tested, Action* other, int otherTime)
 	DS_DataFlowAction* dfAction = dynamic_cast<DS_DataFlowAction*>(tested);
 	DS_DataFlowAction* dfOther = dynamic_cast<DS_DataFlowAction*>(other);
 	if (dfAction == NULL || dfOther == NULL) // Not even a dataflow action, don't worry
-		return true;
+		return false;
+	// TODO zomg this is killing stuff
 
 	std::set<ValueID> sources = dfAction->GetSources();
 	std::set<ID> otherSubjects = dfOther->GetSubjects();
@@ -150,6 +152,7 @@ void ActionBuffer::Flush()
 	while (!Empty())
 		CombineAndPerformActions();
 }
+
 
 
 

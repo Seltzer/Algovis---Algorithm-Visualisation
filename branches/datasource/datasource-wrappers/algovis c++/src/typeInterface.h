@@ -51,6 +51,7 @@ bool IsSameClassAs()
 
 HAS_VOID_VOID_FN(PrimitiveCheck, __IAmAPrimitiveWrapper)
 HAS_VOID_VOID_FN(VecCheck, __IAmAVectorWrapper)
+HAS_VOID_VOID_FN(MatrixCheck, __IAmAMatrix)	
 
 #undef HAS_VOID_VOID_FN
 
@@ -67,6 +68,8 @@ Algovis_Viewer::ViewableObjectType GetVOType()
 		return Algovis_Viewer::SINGLE_PRINTABLE;
 	else if (VecCheck<T>::value == 1)
 		return Algovis_Viewer::ARRAY;
+	else if (MatrixCheck<T>::value == 1)
+		return Algovis_Viewer::MATRIX;
 	else
 		return Algovis_Viewer::ARBITRARY;
 }

@@ -129,8 +129,32 @@ Action* DS_Action::Clone() const
 }
 
 
+////////////////////// DS_CreateAction implementation ////////////////////////////
+DS_CreateAction::DS_CreateAction(World* world, bool animationSuppressed, bool createOnSameLine)
+	: DS_Action(world, animationSuppressed), createOnSameLine(createOnSameLine)
+{
+}
 
+DS_CreateAction::DS_CreateAction(World*, std::set<ViewableObject*> subjects, bool animationSuppressed, 
+					bool createOnNewLine)
+	: DS_Action(world, subjects, animationSuppressed), createOnSameLine(createOnSameLine)
+{
+}
 
+DS_CreateAction::DS_CreateAction(const DS_CreateAction& other)
+	: DS_Action(other), createOnSameLine(other.createOnSameLine)
+{
+}
+
+void DS_CreateAction::PlaceOnSameLine()
+{
+	createOnSameLine = true;
+}
+
+bool DS_CreateAction::BeingCreatedOnSameLine()
+{
+	return createOnSameLine;
+}
 
 
 ////////////////////// DS_Deleted implementation ////////////////////////////

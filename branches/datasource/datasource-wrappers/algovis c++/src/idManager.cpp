@@ -90,7 +90,7 @@ CopyConstructionInfo IdManager::GetIdForCopyConstruction(const Wrapper* newWrapp
 		returnInfo.newId = idMapping[newWrapper];
 
 		// Let Registry know that the address of newWrapper has changed
-		if (drawingEnabled)
+		if (communicationWithViewEnabled)
 			Algovis_Viewer::Registry::GetInstance()->AddressChanged(returnInfo.newId, newWrapper);
 	}
 	else
@@ -203,7 +203,7 @@ void IdManager::ReportDestruction(const Wrapper* wrapper)
 		#endif
 
 		// Wrapper is not an orphan, so deregister it with the Registry
-		if (drawingEnabled && SettingsManager::GetInstance()->DestructionReportingEnabled())
+		if (communicationWithViewEnabled && SettingsManager::GetInstance()->DestructionReportingEnabled())
 			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(id);
 	}
 }

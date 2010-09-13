@@ -9,6 +9,7 @@
 #include "actions/action.h"
 #include "actions/dsArrayActions.h"
 #include "actions/dsPrintableActions.h"
+#include "actions/dsMatrixActions.h"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ Registry* Registry::instance(NULL);
 ///////////////////////// Private methods
 
 Registry::Registry()
-	: world(NULL), displayerShuttingDown(false), actionBuffer(3)
+	: world(NULL), createNextViewableOnSameLine(false), displayerShuttingDown(false), actionBuffer(3)
 { 
 	#if (DEBUG_GENERAL_LEVEL >= 2)
 		prt("REGISTRY CTOR");
@@ -93,10 +94,36 @@ void Registry::RegisterArray
 
 	
 	DS_CreateArray creationAction(world, id, dsArrayAddress, elementType, elements);
+
+	if (createNextViewableOnSameLine)
+	{
+		creationAction.PlaceOnSameLine();
+		createNextViewableOnSameLine = false;
+	}
 	//creationAction.SuppressAnimation();
 
 	AddActionToBuffer(&creationAction);
 }
+
+void Registry::RegisterMatrix(ID id, const void* dsMatrixAddress, ViewableObjectType elementType,
+					unsigned rows, unsigned cols, const std::vector<ID>& initElements)
+{
+	boost::unique_lock<boost::mutex> lock(registryMutex);
+	#if (DEBUG_REGISTRATION_LEVEL >= 2)
+		cout << "Registering matrix with ID " << id << std::endl;
+	#endif
+
+	DS_CreateMatrix creationAction(world, id, dsMatrixAddress, elementType, rows, cols, initElements);
+
+	if (createNextViewableOnSameLine)
+	{
+		creationAction.PlaceOnSameLine();
+		createNextViewableOnSameLine = false;
+	}
+
+	AddActionToBuffer(&creationAction);
+}
+
 
 
 void Registry::RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddress, const string& value)
@@ -108,6 +135,13 @@ void Registry::RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddre
 
 	// Create action
 	DS_CreateSP creationAction(world, id, dsSinglePrintableAddress, value);
+
+	if (createNextViewableOnSameLine)
+	{
+		creationAction.PlaceOnSameLine();
+		createNextViewableOnSameLine = false;
+	}
+
 	creationAction.SuppressAnimation(); // Single printable creations are currently never displayed
 
 	AddActionToBuffer(&creationAction);
@@ -230,6 +264,11 @@ void Registry::SetCaption(const std::string& newCaption)
 	AddActionToBuffer(&captionAction);
 }
 
+void Registry::PlaceNextWrapperOnSameLine()
+{
+	createNextViewableOnSameLine = true;
+}
+
 
 void Registry::FlushAllActions()
 {
@@ -245,14 +284,14 @@ void Registry::FlushAllActions()
 //////////// Registration methods
 bool Registry::IsRegistered(ID id) const
 {
-	util::ReaderLock<util::LockManager<1>,1> lock(*this);
+	ReaderLock<LockManager<1>,1> lock(*this);
 
 	return registeredViewables.count(id) > 0;
 }
 
 bool Registry::IsRegistered(ID id, ViewableObjectType voType) const
 {
-	util::ReaderLock<util::LockManager<1>,1> lock(*this);
+	ReaderLock<LockManager<1>,1> lock(*this);
 
 	if (registeredViewables.count(id) == 0)
 		return false;
@@ -264,7 +303,7 @@ bool Registry::IsRegistered(ID id, ViewableObjectType voType) const
 
 ViewableObject* Registry::GetRepresentation(ID id)
 {
-	util::ReaderLock<util::LockManager<1>,1> lock(*this);
+	ReaderLock<LockManager<1>,1> lock(*this);
 
 	if (!IsRegistered(id))
 		return NULL;
@@ -274,7 +313,7 @@ ViewableObject* Registry::GetRepresentation(ID id)
 
 void Registry::Register(ID id, ViewableObject* viewable)
 {
-	util::WriterLock<util::LockManager<1>,1> lock(*this);
+	WriterLock<LockManager<1>,1> lock(*this);
 
 	UL_ASSERT(viewable);
 	UL_ASSERT(!IsRegistered(id));
@@ -288,7 +327,7 @@ void Registry::Register(ID id, ViewableObject* viewable)
 bool Registry::Deregister(ID id)
 {
 	cout << "Registry::Deregister for ID" << id << endl;
-	util::WriterLock<util::LockManager<1>,1> lock(*this);
+	WriterLock<LockManager<1>,1> lock(*this);
 
 	UL_ASSERT(IsRegistered(id));
 	registeredViewables.erase(registeredViewables.find(id));

@@ -156,6 +156,10 @@
 			Name="Tests"
 			>
 			<File
+				RelativePath=".\Tests\AlgoMatrixTests.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Tests\AlgoVisTestSuite.h"
 				>
 			</File>

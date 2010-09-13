@@ -39,8 +39,6 @@ namespace Algovis_Viewer
 	protected slots:
 		virtual void childDestroyed(QObject*) {}
 		
-
-
 	};
 
 
