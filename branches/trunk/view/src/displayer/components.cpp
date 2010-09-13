@@ -4,7 +4,6 @@
 
 #include "components.h"
 #include "displayer.h"
-//#include "world.h"
 
 using namespace std;
 

@@ -27,7 +27,7 @@ namespace Algovis_Viewer
 	 * 2 = Same as 1 plus notification when VO_Arrays and VO_Matrices are registered
 	 * 3 = Same as 2 plus notification when VO_SinglePrintables are registered
 	 */
-	#define DEBUG_REGISTRATION_LEVEL 2
+	#define DEBUG_REGISTRATION_LEVEL 0
 
 	/* 0 = Off
 	 * 1 = Basic action debugging

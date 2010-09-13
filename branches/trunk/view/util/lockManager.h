@@ -1,7 +1,6 @@
 #ifndef LOCK_MANAGER_H_
 #define LOCK_MANAGER_H_
 
-
 #include "windows.h"
 #include "boost/thread/shared_mutex.hpp"
 #include "boost/thread/condition_variable.hpp"

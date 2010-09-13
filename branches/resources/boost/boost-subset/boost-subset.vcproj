@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources\boost&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\..\resources\boost&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -145,8 +145,92 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="lib"
+			>
+			<Filter
+				Name="date_time"
+				>
+				<Filter
+					Name="gregorian"
+					>
+					<File
+						RelativePath="..\libs\date_time\src\gregorian\date_generators.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\libs\date_time\src\gregorian\greg_month.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\libs\date_time\src\gregorian\greg_names.hpp"
+						>
+					</File>
+					<File
+						RelativePath="..\libs\date_time\src\gregorian\greg_weekday.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\libs\date_time\src\gregorian\gregorian_types.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="posix_time"
+					>
+					<File
+						RelativePath="..\libs\date_time\src\posix_time\posix_time_types.cpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="smart_ptr"
+				>
+				<File
+					RelativePath="..\libs\smart_ptr\src\sp_collector.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\libs\smart_ptr\src\sp_debug_hooks.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="thread"
+				>
+				<File
+					RelativePath="..\libs\thread\src\tss_null.cpp"
+					>
+				</File>
+				<Filter
+					Name="win32"
+					>
+					<File
+						RelativePath="..\libs\thread\src\win32\thread.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\libs\thread\src\win32\timeconv.inl"
+						>
+					</File>
+					<File
+						RelativePath="..\libs\thread\src\win32\tss_dll.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\libs\thread\src\win32\tss_pe.cpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath=".\main.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\boost\config\user.hpp"
 			>
 		</File>
 	</Files>

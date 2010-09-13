@@ -11,7 +11,6 @@
 #ifndef REGISTRY_H_
 #define REGISTRY_H_
 
-
 #include <vector>
 #include <map>
 #include <string>

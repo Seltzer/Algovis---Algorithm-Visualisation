@@ -2,7 +2,6 @@
 #define ACTION_AGENT_H_
 
 #include <QTime>
-
 #include "boost/thread/mutex.hpp"
 #include "boost/thread/condition_variable.hpp"
 #include "components.h"
