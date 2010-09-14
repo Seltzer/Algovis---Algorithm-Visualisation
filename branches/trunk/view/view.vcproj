@@ -222,6 +222,10 @@
 				Name="displayer"
 				>
 				<File
+					RelativePath=".\src\displayer\actionAgent.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\src\displayer\actionAgent.h"
 					>
 					<FileConfiguration
@@ -457,10 +461,6 @@
 				</File>
 				<File
 					RelativePath=".\src\actions\action.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\displayer\actionAgent.cpp"
 					>
 				</File>
 				<File

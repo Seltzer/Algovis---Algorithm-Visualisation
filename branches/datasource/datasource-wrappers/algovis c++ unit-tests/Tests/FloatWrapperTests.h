@@ -75,4 +75,5 @@ void testFloatWrapper(float* floatValue)
 
 	// Testing dereferencing
 	TS_ASSERT_EQUALS(3.00f, *floatValue);
+
 }

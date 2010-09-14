@@ -38,10 +38,7 @@ namespace Algovis_Viewer
 		void pauseResumeAnimations();
 	
 	private:
-		float AnimDuration()
-		{
-			return animStartTime.msecsTo(QTime::currentTime()) / 1000.0f;
-		}
+		float AnimDuration();
 
 		World* world;
 
@@ -49,12 +46,19 @@ namespace Algovis_Viewer
 		QTime animStartTime;
 		float animLength; // Animation length in seconds
 		bool animationsSuppressed;
+		
+		// Pausing stuff
+		boost::mutex pausingMutex;
+		QTime animsPauseTime;
 		bool animationsPaused;
 
 		boost::mutex performActionMutex;
 		bool actionPending;
 		bool actionPrepared;
 		boost::condition_variable_any actionPendingCondVar;
+
+
+		
 
 		bool shuttingDown;
 		// Count of threads inside PerformAndAnimateActionAsync - used for shutting down

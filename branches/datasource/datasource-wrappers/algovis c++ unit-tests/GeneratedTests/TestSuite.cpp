@@ -29,31 +29,31 @@ public:
 
 static class TestDescription_AlgoVisTestSuite_testFloatWrapper : public CxxTest::RealTestDescription {
 public:
- TestDescription_AlgoVisTestSuite_testFloatWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 51, "testFloatWrapper" ) {}
+ TestDescription_AlgoVisTestSuite_testFloatWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 54, "testFloatWrapper" ) {}
  void runTest() { suite_AlgoVisTestSuite.testFloatWrapper(); }
 } testDescription_AlgoVisTestSuite_testFloatWrapper;
 
 static class TestDescription_AlgoVisTestSuite_testDoubleWrapper : public CxxTest::RealTestDescription {
 public:
- TestDescription_AlgoVisTestSuite_testDoubleWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 56, "testDoubleWrapper" ) {}
+ TestDescription_AlgoVisTestSuite_testDoubleWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 59, "testDoubleWrapper" ) {}
  void runTest() { suite_AlgoVisTestSuite.testDoubleWrapper(); }
 } testDescription_AlgoVisTestSuite_testDoubleWrapper;
 
 static class TestDescription_AlgoVisTestSuite_testCharWrapper : public CxxTest::RealTestDescription {
 public:
- TestDescription_AlgoVisTestSuite_testCharWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 61, "testCharWrapper" ) {}
+ TestDescription_AlgoVisTestSuite_testCharWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 64, "testCharWrapper" ) {}
  void runTest() { suite_AlgoVisTestSuite.testCharWrapper(); }
 } testDescription_AlgoVisTestSuite_testCharWrapper;
 
 static class TestDescription_AlgoVisTestSuite_testVectorWrapper : public CxxTest::RealTestDescription {
 public:
- TestDescription_AlgoVisTestSuite_testVectorWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 66, "testVectorWrapper" ) {}
+ TestDescription_AlgoVisTestSuite_testVectorWrapper() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 69, "testVectorWrapper" ) {}
  void runTest() { suite_AlgoVisTestSuite.testVectorWrapper(); }
 } testDescription_AlgoVisTestSuite_testVectorWrapper;
 
 static class TestDescription_AlgoVisTestSuite_testAlgoMatrix : public CxxTest::RealTestDescription {
 public:
- TestDescription_AlgoVisTestSuite_testAlgoMatrix() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 73, "testAlgoMatrix" ) {}
+ TestDescription_AlgoVisTestSuite_testAlgoMatrix() : CxxTest::RealTestDescription( Tests_AlgoVisTestSuite, suiteDescription_AlgoVisTestSuite, 76, "testAlgoMatrix" ) {}
  void runTest() { suite_AlgoVisTestSuite.testAlgoMatrix(); }
 } testDescription_AlgoVisTestSuite_testAlgoMatrix;
 

@@ -5,10 +5,13 @@
 #include "../actions/action.h"
 #include "../include/registry.h"
 
+using namespace std;
+
 
 
 namespace Algovis_Viewer
 {
+
 
 
 
@@ -75,7 +78,6 @@ void ActionAgent::PerformAndAnimateActionAsync(const Action* newAction)
 		return;
 	}
 
-	animStartTime = QTime::currentTime();
 	actionToBePerformed = newAction->Clone();
 	actionPending = true;
 	actionPrepared = false;
@@ -86,16 +88,25 @@ void ActionAgent::PerformAndAnimateActionAsync(const Action* newAction)
 
 void ActionAgent::paintEvent(QPaintEvent*)
 {
+	boost::unique_lock<boost::mutex> lock(pausingMutex);
+
+	if (animationsPaused)
+		return;
+
 	if (actionPending)
 	{
 		if (!actionPrepared)
 		{
 			actionToBePerformed->PrepareToPerform();
 			actionPrepared = true;
+			animStartTime = QTime::currentTime();
 		}
-		// Animation for the action is suppressed or animation has finished
+	
 		if (animationsSuppressed || actionToBePerformed->AnimationSuppressed() || AnimDuration() > animLength)
 		{
+			// Animation is suppressed for this action or all actions, or the animation is finished
+			// So complete action and clean it up
+
 			#if(DEBUG_ACTION_LEVEL >=1)
 				prt("\tAbout to complete action");		
 				actionToBePerformed->Complete(true);
@@ -106,6 +117,7 @@ void ActionAgent::paintEvent(QPaintEvent*)
 
 			// Clean up action
 			delete actionToBePerformed;
+			animStartTime = QTime();
 			actionToBePerformed = NULL;
 			actionPending = false;
 
@@ -114,9 +126,7 @@ void ActionAgent::paintEvent(QPaintEvent*)
 		}
 		else
 		{
-			if (animationsPaused)
-				return;
-
+			// Perform action
 			QPainter painter(this);
 			actionToBePerformed->Perform(AnimDuration() / animLength, &painter);
 		}
@@ -141,8 +151,25 @@ void ActionAgent::toggleAnimations()
 
 void ActionAgent::pauseResumeAnimations()
 {
+	boost::unique_lock<boost::mutex> lock(pausingMutex);
+
+	// animStartTime is null if there isn't a pending action, or there is a pending action but it hasn't begun
+	if (animStartTime.isNull())
+		return;
+
+	if (!animationsPaused)
+		animsPauseTime = QTime::currentTime();
+	else
+		animStartTime = animStartTime.addMSecs(animsPauseTime.msecsTo(QTime::currentTime()));
+	
 	animationsPaused = !animationsPaused;
 }
+
+float ActionAgent::AnimDuration()
+{
+	return animStartTime.msecsTo(QTime::currentTime()) / 1000.0f;
+}
+
 
 
 }
