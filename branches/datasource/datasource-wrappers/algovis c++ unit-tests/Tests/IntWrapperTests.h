@@ -2,7 +2,7 @@
 using namespace Algovis;
 
 
-void testIntWrapper(int* intValue)
+void testIntWrapperArithmetic(int* intValue)
 {
 	// Testing basic comparison operators
 	int a(3), b(2);
@@ -84,4 +84,71 @@ void testIntWrapper(int* intValue)
 
 	// Testing dereferencing
 	TS_ASSERT_EQUALS(3, *intValue);
+}
+
+void testIntWrapperCompoundAssignmentOps()
+{
+	int i = 2;
+
+	i += 5;
+	TS_ASSERT_EQUALS(7, i);
+
+	i -= 5;
+	TS_ASSERT_EQUALS(2, i);
+
+	i *= 5;
+	TS_ASSERT_EQUALS(10, i);
+
+	// Doesn't belong here
+	TS_ASSERT_EQUALS(1, i % 3);
+	
+	i /= 5;
+	TS_ASSERT_EQUALS(2, i);
+
+	i %= 2;
+	TS_ASSERT_EQUALS(0, i);
+
+
+}
+
+
+void testIntWrapperBitwiseOps()
+{
+	int j = 31;		// 11111
+	int k = 7;		// 00111
+
+	TS_ASSERT_EQUALS(7, j & k);
+	TS_ASSERT_EQUALS(31, j | k);
+	TS_ASSERT_EQUALS(24, j ^ k);
+	j &= k;
+	TS_ASSERT_EQUALS(7, j);
+	j ^= 0;
+	TS_ASSERT_EQUALS(7, j);
+
+	int l = 21;		// 10101
+	TS_ASSERT_EQUALS(-22, ~l);	// 01010 = -22
+
+	// TODO test << >> <<= >>=
+}
+
+
+void testIntLogicalOps()
+{
+	int j = 31;		// 11111
+	int k = 7;		// 00111
+
+	TS_ASSERT_DIFFERS(0, j && k);
+	TS_ASSERT_DIFFERS(0, j || k);
+
+	k = 0;
+	TS_ASSERT_EQUALS(0, j && k);
+	TS_ASSERT_DIFFERS(0, j || k);
+
+	j = k = 0;
+	TS_ASSERT_EQUALS(0, j && k);
+	TS_ASSERT_EQUALS(0, j || k);
+
+	TS_ASSERT_DIFFERS(0, !j && !k);
+	TS_ASSERT_DIFFERS(0, !j || k);
+	TS_ASSERT_DIFFERS(0, j || !k);
 }

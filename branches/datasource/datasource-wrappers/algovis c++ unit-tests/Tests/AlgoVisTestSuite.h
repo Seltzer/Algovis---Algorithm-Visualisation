@@ -45,7 +45,10 @@ class AlgoVisTestSuite : public CxxTest::TestSuite
 
 		void testIntWrapper()
 		{
-			::testIntWrapper(intValue);
+			::testIntWrapperArithmetic(intValue);
+			::testIntWrapperCompoundAssignmentOps();
+			::testIntWrapperBitwiseOps();
+			::testIntLogicalOps();
 		}
 
 		void testFloatWrapper()

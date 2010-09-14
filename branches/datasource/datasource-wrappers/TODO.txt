@@ -1,15 +1,17 @@
 ***** BEFORE EXHIBITION *****
 
-* Improve the UI and fix dodgy stuff (fix window resizing, add snap to current viewable feature)
 * Remove SINGLE_PRINTABLE hackery (mostly removed at this stage)
-* Finish existing wrappers
-* Write wrappers for std::string, std::map
-* Finish writing VO_Matrix and write VO_Map viewable
-* Verify that history works
+* Finish existing Wrappers and Viewables (VectorWrapper and matrix)
+* Write wrappers for std::string, std::map and VO_Map
+* Improve the UI and fix dodgy stuff:
+	- Fix window resizing
+	- Add snap to current viewable feature
+	- Make buttons
 * Implement backtracking through actions
 * Improve animations
 * Support custom types by displaying a generic 'user-defined type pic'
 * Write more Algovis demos
+
 
 ***** BEFORE COMPENDIUM DEADLINE *****
 
