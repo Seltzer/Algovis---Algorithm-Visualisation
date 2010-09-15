@@ -284,7 +284,27 @@ void InterfaceTestingDemo()
 
 }
 
+void BacktrackDemo()
+{
+	EnableCommunicationWithView(true);
 
+	// Populate
+	vector<int> collectionToModify;
+
+	collectionToModify.reserve(50);
+	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
+
+	
+	for (int i = 7; i >= 0; --i)
+	{
+		collectionToModify[i] = collectionToModify[i] + collectionToModify[i+1];
+	}
+
+
+
+	prt("Press any key to leave BacktrackDemo");
+	getchar();
+}
 
 
 void TestDemo()

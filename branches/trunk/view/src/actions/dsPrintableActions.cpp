@@ -63,15 +63,16 @@ void DS_CreateSP::UpdateHistory(HistoryManager& historyManager)
 
 
 ////////////////////// DS_Assigned implementation ////////////////////////////
-DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string value, bool tracked)
-	: DS_DataFlowAction(world), value(value), dsAssigned(dsAssigned), dsSource(dsSource), tracked(tracked)
+DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string newValue, bool tracked)
+	: DS_DataFlowAction(world), newValue(newValue), dsAssigned(dsAssigned), dsSource(dsSource), tracked(tracked)
 {
 	//ViewableObject* viewable = (ViewableObject*)subject;
 	//subjects.insert(viewable); // May need to keep the original printable pointer?
 }
 
 DS_Assigned::DS_Assigned(const DS_Assigned& other)
-	: DS_DataFlowAction(other), dsAssigned(other.dsAssigned), dsSource(other.dsSource), value(other.value),
+	: DS_DataFlowAction(other), dsAssigned(other.dsAssigned), dsSource(other.dsSource), 
+			oldValue(other.oldValue), newValue(other.newValue),
 	subject(other.subject), sources(other.sources)
 {
 }
@@ -100,7 +101,7 @@ void DS_Assigned::UpdateHistory(HistoryManager& historyManager)
 			historyManager.ResetHistory(dsAssigned); // I don't know... seemed like a good idea at the time
 	}
 
-	historyManager.SetValue(dsAssigned, value);
+	historyManager.SetValue(dsAssigned, newValue);
 
 	DS_Action::UpdateHistory(historyManager);
 }
@@ -120,6 +121,24 @@ void DS_Assigned::PrepareToPerform()
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
 
 	sources = HistoryToSources(history, subject);
+
+	oldValue = subject->GetValue();
+}
+
+void DS_Assigned::PrepareToUnperform()
+{
+	// Pretty similar to PrepareToPerform
+	Registry* registry = Registry::GetInstance();
+
+	UL_ASSERT(registry->IsRegistered(dsAssigned, SINGLE_PRINTABLE));
+	subject = registry->GetRepresentation<VO_SinglePrintable>(dsAssigned);
+	UL_ASSERT(subject);
+
+	// Set subjectStart to have abs position
+	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
+
+	// Update, since dimensions and pointers may have changed
+	sources = UpdateSources(sources);
 }
 
 void DS_Assigned::Perform(float progress, QPainter* painter)
@@ -188,10 +207,22 @@ void DS_Assigned::Perform(float progress, QPainter* painter)
 	}*/
 }
 
+void DS_Assigned::Unperform(float progress, QPainter* painter)
+{
+	return Perform((1.00f - progress), painter);
+}
+
 void DS_Assigned::Complete(bool displayed)
 {
-	subject->UpdateValue(value, completeTime);
+	subject->UpdateValue(newValue, completeTime);
+	Action::Complete(displayed);
 }
+
+void DS_Assigned::Uncomplete(bool displayed)
+{
+	subject->UpdateValueHack(oldValue);
+}
+
 
 
 
@@ -329,6 +360,13 @@ void DS_HighlightOperands::PrepareToPerform()
 	FetchOperandPtrs();
 }
 
+void DS_HighlightOperands::PrepareToUnperform()
+{
+	// Pointers could be dead by now, so refetch them
+	operandPtrs.clear();
+	FetchOperandPtrs();
+}
+
 bool DS_HighlightOperands::FetchOperandPtrs()
 {
 	// Check whether we already have them or not
@@ -403,12 +441,21 @@ void DS_HighlightOperands::Perform(float progress, QPainter* painter)
 	painter->setFont(oldFont);
 }
 
+void DS_HighlightOperands::Unperform(float progress, QPainter* painter)
+{	
+	return Perform(progress, painter);
+}
+
 void DS_HighlightOperands::Complete(bool displayed)
 {
 	BOOST_FOREACH(VO_SinglePrintable* vo, operandPtrs)
 		vo->SetBoundingBoxColour(originalBBColour);
 }
 
+void DS_HighlightOperands::Uncomplete(bool displayed)
+{
+	return Complete(displayed);
+}
 
 
 

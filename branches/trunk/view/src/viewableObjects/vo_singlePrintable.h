@@ -39,6 +39,8 @@ namespace Algovis_Viewer
 
 		void UpdateValue(const std::string& newValue, int time);
 
+		void UpdateValueHack(const std::string& newValue);
+
 		int ModifiedTime() { return modifiedTime; }
 
 		// This is called when the value has been drawn, and therefore any usage of this printable

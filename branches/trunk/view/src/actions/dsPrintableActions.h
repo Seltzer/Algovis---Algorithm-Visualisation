@@ -29,7 +29,7 @@ namespace Algovis_Viewer
 	class DS_Assigned : public DS_DataFlowAction
 	{
 	public:
-		DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string value, bool tracked);
+		DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string newValue, bool tracked);
 		DS_Assigned(const DS_Assigned& other);
 		virtual Action* Clone() const;
 
@@ -38,18 +38,22 @@ namespace Algovis_Viewer
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
 		virtual void PrepareToPerform();
+		virtual void PrepareToUnperform();
 		virtual void Perform(float progress, QPainter*);
+		virtual void Unperform(float progress, QPainter*);
 		virtual void Complete(bool displayed);
+		virtual void Uncomplete(bool displayed);
 
 	protected:
+		// Set during init
 		ID dsAssigned;
 		ID dsSource;
 
-		std::string value;
-		VO_SinglePrintable* subject;
+		std::string oldValue, newValue;
 		bool tracked;
 
-		// Animation stuff
+		// Animation stuff (set in PrepareToPerform)
+		VO_SinglePrintable* subject;
 		QRect subjectDimensions;
 		std::vector<SourceData> sources;
 	};
@@ -91,8 +95,11 @@ namespace Algovis_Viewer
 		virtual Action* Clone() const;
 		virtual void UpdateHistory(HistoryManager& historyManager);
 		virtual void PrepareToPerform();
+		virtual void PrepareToUnperform();
 		virtual void Perform(float progress, QPainter*);
+		virtual void Unperform(float progress, QPainter*);
 		virtual void Complete(bool displayed);
+		virtual void Uncomplete(bool displayed);
 
 	private:
 		// Returns true if upon departure from the method, a pointer for each operand is present in operandPtrs

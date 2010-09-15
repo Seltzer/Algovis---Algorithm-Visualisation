@@ -16,9 +16,10 @@ namespace Algovis_Viewer
 
 
 ActionAgent::ActionAgent(QWidget* parent, World* world, QPoint& position, QSize& dimensions)
-	: Component(parent, position, dimensions), world(world), actionToBePerformed(NULL), actionPending(false), 
+	: Component(parent, position, dimensions), world(world), actionPending(false), 
+			actionPrepared(false), mode(AgentMode::ON_DEMAND),
 			animLength(0.5f), animationsSuppressed(false), animationsPaused(false),
-				performActionCount(0), shuttingDown(false)
+				performActionCount(0), currentAction(INVALID), shuttingDown(false)
 {
 	setAttribute(Qt::WA_TransparentForMouseEvents);
 }
@@ -48,8 +49,8 @@ ActionAgent::~ActionAgent()
 	
 	while(performActionCount > 0);
 
-	if (actionToBePerformed != NULL)
-		delete actionToBePerformed;
+	//if ( != NULL)
+	//	delete actionToBePerformed;
 }
 
 
@@ -78,9 +79,14 @@ void ActionAgent::PerformAndAnimateActionAsync(const Action* newAction)
 		return;
 	}
 
-	actionToBePerformed = newAction->Clone();
-	actionPending = true;
+	Action* clone = newAction->Clone();
+	actionHistory.push_back(clone);
 	actionPrepared = false;
+	currentAction = actionHistory.size() - 1;
+
+	// Do this last
+	actionPending = true;
+
 
 	--performActionCount;
 }
@@ -90,46 +96,142 @@ void ActionAgent::paintEvent(QPaintEvent*)
 {
 	boost::unique_lock<boost::mutex> lock(pausingMutex);
 
-	if (animationsPaused)
+	if (!actionPending)
 		return;
 
-	if (actionPending)
+
+	// Prepare to perform/unperform action if it isn't already prepared
+	if (!actionPrepared)
 	{
-		if (!actionPrepared)
+		if (mode != AgentMode::BACKTRACKING)
 		{
-			actionToBePerformed->PrepareToPerform();
-			actionPrepared = true;
+			actionHistory[currentAction]->PrepareToPerform();
 			animStartTime = QTime::currentTime();
 		}
-	
-		if (animationsSuppressed || actionToBePerformed->AnimationSuppressed() || AnimDuration() > animLength)
+		else
 		{
-			// Animation is suppressed for this action or all actions, or the animation is finished
-			// So complete action and clean it up
+			actionHistory[currentAction]->PrepareToUnperform();
+			
+			// what if action has already started???
+			animStartTime = QTime::currentTime();
+			actionHistory[currentAction]->SetProgress(0.00f);
+		}
 
+		actionPrepared = true;
+	}
+
+
+	// Advance animation if animations are not paused
+	if (!animationsPaused)
+		actionHistory[currentAction]->SetProgress(AnimDuration() / animLength);
+
+
+	// Decide whether to animate another frame of the action or complete it
+	if (animationsSuppressed || actionHistory[currentAction]->AnimationSuppressed() || 
+			actionHistory[currentAction]->IsFinishedAnimating())
+	{
+		// Animation is suppressed for this action or all actions, or the animation is finished
+		// So complete action and clean it up
+
+		if (mode == AgentMode::ON_DEMAND)
+		{
 			#if(DEBUG_ACTION_LEVEL >=1)
-				prt("\tAbout to complete action");		
-				actionToBePerformed->Complete(true);
+				prt("\tAbout to complete action in ON_DEMAND mode");		
+				actionHistory.back()->Complete(true);
 				prt("\tCompleted action");		
 			#else			
-				actionToBePerformed->Complete(!actionToBePerformed->AnimationSuppressed());
+				actionHistory[currentAction]->Complete(!actionHistory[currentAction]->AnimationSuppressed());
 			#endif
 
 			// Clean up action
-			delete actionToBePerformed;
 			animStartTime = QTime();
-			actionToBePerformed = NULL;
+			currentAction = INVALID;
 			actionPending = false;
 
 			performActionMutex.unlock();
 			actionPendingCondVar.notify_all();
 		}
+		else if (mode == AgentMode::FORWARDTRACKING)
+		{
+			#if(DEBUG_ACTION_LEVEL >=1)
+				prt("\tAbout to complete action in FORWARDTRACKING mode");		
+				actionHistory.back()->Complete(true);
+				prt("\tCompleted action");		
+			#else			
+				actionHistory[currentAction]->Complete(!actionHistory[currentAction]->AnimationSuppressed());
+			#endif
+
+			// Clean up action
+			animStartTime = QTime();
+
+			if (currentAction < actionHistory.size() - 1)
+			{
+				// More actions to forwardtrack
+				++currentAction;
+				actionPrepared = false;
+
+				cout << "\tMore actions to forwardtrack - forwardtracking Action #" << currentAction << endl;
+			}
+			else
+			{
+				// Finished forwardtracking
+				cout << "\tNo more actions to forwardtracking" << endl;
+				
+				currentAction = INVALID;
+
+				mode = AgentMode::ON_DEMAND;
+				actionPending = false;
+				performActionMutex.unlock();
+				actionPendingCondVar.notify_all();
+			}
+		}
 		else
 		{
-			// Perform action
-			QPainter painter(this);
-			actionToBePerformed->Perform(AnimDuration() / animLength, &painter);
+			#if(DEBUG_ACTION_LEVEL >=1)
+				prt("\tAbout to uncomplete action in BACKTRACKING mode");		
+				actionHistory.back()->Uncomplete(true);
+				prt("\tUncompleted action");		
+			#else			
+				actionHistory[currentAction]->Uncomplete(!actionHistory[currentAction]->AnimationSuppressed());
+			#endif
+
+			// Clean up action - TODO
+			animStartTime = QTime();
+			
+			cout << "Finished backtracking Action #" << currentAction << endl;
+
+			if (currentAction > 0)
+			{
+				// More actions to backtrack
+				--currentAction;
+				actionPrepared = false;
+
+				cout << "\tMore actions to backtrack - backtracking Action #" << currentAction << endl;
+			}
+			else
+			{
+				// Finished backtracking
+				cout << "\tNo more actions to backtrack" << endl;
+				
+				currentAction = INVALID;
+				//backtracking = false;
+				
+				
+				//actionPending = false;
+				//performActionMutex.unlock();
+				//actionPendingCondVar.notify_all();
+			}
 		}
+	}
+	else
+	{
+		// Perform action
+		QPainter painter(this);
+
+		if (mode != AgentMode::BACKTRACKING)
+			actionHistory[currentAction]->Perform(actionHistory[currentAction]->GetProgress(), &painter);
+		else
+			actionHistory[currentAction]->Unperform(actionHistory[currentAction]->GetProgress(), &painter);
 	}
 }
 
@@ -168,6 +270,55 @@ void ActionAgent::pauseResumeAnimations()
 float ActionAgent::AnimDuration()
 {
 	return animStartTime.msecsTo(QTime::currentTime()) / 1000.0f;
+}
+
+// TODO what if user is inside PerformActionAndAnimateAsync and has performActionMutex already???
+void ActionAgent::backtrack()
+{
+	boost::unique_lock<boost::mutex> lock(pausingMutex);
+	prt("backtracking");
+
+	UL_ASSERT(mode != AgentMode::BACKTRACKING);
+	UL_ASSERT(!animationsPaused);
+
+	if (currentAction = INVALID)
+	{
+		// No action is being performed, so the first action to backtrack is the last one in ActionHistory
+		currentAction = actionHistory.size() - 1;
+		actionPrepared = false;
+	}
+	else
+	{
+		// Action is currently being performed - should be the last one
+		UL_ASSERT(currentAction == actionHistory.size() - 1);
+		actionHistory[currentAction]->SetProgress(1.00f - actionHistory[currentAction]->GetProgress());
+	}
+
+	mode = AgentMode::BACKTRACKING;
+	actionPending = true;
+}
+
+void ActionAgent::forwardtrack()
+{
+	boost::unique_lock<boost::mutex> lock(pausingMutex);
+	prt("forward tracking");
+
+	UL_ASSERT(mode == AgentMode::BACKTRACKING);
+	UL_ASSERT(!animationsPaused);
+
+	//UL_ASSERT(currentAction == INVALID);
+	UL_ASSERT(actionHistory.size() > 0);
+
+	if (currentAction == INVALID)
+		currentAction = 0;
+
+
+	actionHistory[currentAction]->SetProgress(0);
+
+	mode = AgentMode::FORWARDTRACKING;
+
+	// Should already be true...
+	actionPending = true;
 }
 
 

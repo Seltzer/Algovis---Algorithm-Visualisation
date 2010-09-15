@@ -86,6 +86,23 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue, int time)
 
 }
 
+void VO_SinglePrintable::UpdateValueHack(const std::string& newValue)
+{ 
+	value = newValue;
+		
+	if (sizeDictatedByParent)
+	{
+		VO_Array* parent = (VO_Array*) parentWidget();
+		parent->adjustSize();
+	}
+	else
+	{
+		adjustSize();
+	}
+
+}
+
+
 
 /*void VO_SinglePrintable::ResetHistory(ValueID drawnValue)
 {

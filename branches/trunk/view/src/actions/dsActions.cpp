@@ -19,13 +19,12 @@ namespace Algovis_Viewer
 
 SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject)
 {
-	Registry* registry = Registry::GetInstance();
-
-	SourceData sourceData;
+	SourceData sourceData(id);
 	sourceData.dimensions = QRect(0,0,0,0);
 	sourceData.source = NULL;
 	sourceData.isSibling = false;
 
+	Registry* registry = Registry::GetInstance();
 	if (registry->IsRegistered(id.id, SINGLE_PRINTABLE))
 	{
 		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(id.id);
@@ -43,6 +42,44 @@ SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject)
 	return sourceData;
 }
 
+
+
+vector<SourceData> UpdateSources(vector<SourceData>& sourceData)
+{
+	vector<SourceData> updatedSourceData;
+
+	for (int i = 0; i < sourceData.size(); i++)
+	{
+		// The ValueId and isSibling relationship won't have changed
+		SourceData updatedSource(sourceData[i].valueId);
+		updatedSource.isSibling = sourceData[i].isSibling;
+			
+		// Pointer and dimensions might have changed
+		updatedSource.source = NULL;
+		updatedSource.dimensions = QRect(0,0,0,0);
+		
+		// Attempt to update pointer and dimensions
+		Registry* registry = Registry::GetInstance();
+		if (registry->IsRegistered(updatedSource.valueId.id, SINGLE_PRINTABLE))
+		{
+			VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(updatedSource.valueId.id);
+
+			if (source != NULL)
+			{
+				updatedSource.source = source;
+
+				// If dimensions were set when sourceData was originally created (i.e. dimensions != (0,0,0,0 )
+				// then recalculate them as they may have changed
+				if (sourceData[i].dimensions.isValid())
+					updatedSource.dimensions = QRect(source->GetPositionInWorld(), source->size());
+			}
+		}
+
+		updatedSourceData.push_back(updatedSource);
+	}
+
+	return updatedSourceData;
+}
 
 
 
@@ -213,16 +250,38 @@ void DS_CompositeAction::PrepareToPerform()
 	}
 }
 
+void DS_CompositeAction::PrepareToUnperform()
+{
+	for (int i = subActions.size() - 1; i >= 0; i--)
+	{
+		if (!subActions[i]->AnimationSuppressed())
+			subActions[i]->PrepareToUnperform();
+	}
+}
+
 void DS_CompositeAction::Perform(float progress, QPainter* painter)
 {
 	for (unsigned i = 0; i < subActions.size(); i++)
 		subActions[i]->Perform(progress, painter);
 }
 
+void DS_CompositeAction::Unperform(float progress, QPainter* painter)
+{
+	for (unsigned i = 0; i < subActions.size(); i++)
+		subActions[i]->Unperform(progress, painter);
+}
+
+
 void DS_CompositeAction::Complete(bool displayed)
 {
 	for (unsigned i = 0; i < subActions.size(); i++)
 		subActions[i]->Complete(displayed);
+}
+
+void DS_CompositeAction::Uncomplete(bool displayed)
+{
+	for (int i = subActions.size() - 1; i >= 0; i--)
+		subActions[i]->Uncomplete(displayed);
 }
 
 

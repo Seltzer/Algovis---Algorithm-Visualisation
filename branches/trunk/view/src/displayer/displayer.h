@@ -71,7 +71,7 @@ private:
 	World* world;
 	ActionAgent* actionAgent;
 	QScrollArea* worldScrollArea;
-	QPushButton *skipActionButton, *showAnimationsButton, *pauseButton;
+	QPushButton *skipActionButton, *showAnimationsButton, *pauseButton, *backtrackButton, *forwardTrackButton;
 
 private slots:
 	void userResizedWindow(QSize*);

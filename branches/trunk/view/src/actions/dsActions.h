@@ -17,7 +17,14 @@ namespace Algovis_Viewer
 	class VO_Array;
 
 	// Handy struct to represent data needed to animate a source
-	struct SourceData {
+	struct SourceData 
+	{
+		SourceData(ValueID id) 
+			: valueId(id) 
+		{
+		}
+		
+		ValueID valueId;
 		QRect dimensions;
 		VO_SinglePrintable* source;
 		bool isSibling;
@@ -25,6 +32,12 @@ namespace Algovis_Viewer
 
 	// Set up source data for animation using current state of world
 	SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject);
+
+	// For updating sourceData
+	// This is a bit of a hacky method so DON'T use it unless you know exactly how it works
+	// Currently used for updating source data which was calculated earlier on while backtracking
+	std::vector<SourceData> UpdateSources(std::vector<SourceData>& sourceData);
+
 
 	// Lightweight method for converting a list of IDs to VO pointers
 	// 
@@ -118,9 +131,12 @@ namespace Algovis_Viewer
 		~DS_CompositeAction();
 		virtual Action* Clone() const;
 
-		void PrepareToPerform();
-		void Perform(float progress, QPainter* painter);
+		virtual void PrepareToPerform();
+		virtual void PrepareToUnperform();
+		virtual void Perform(float progress, QPainter* painter);
+		virtual void Unperform(float progress, QPainter* painter);
 		virtual void Complete(bool displayed);
+		virtual void Uncomplete(bool displayed);
 
 		void AddAction(Action* action);
 

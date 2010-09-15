@@ -124,24 +124,36 @@ void Displayer::QtAppThread()
 	palette.setColor(QPalette::All, QPalette::Dark, QColor(255,0,0));
 	controlFrame->setPalette(palette);
 
-	skipActionButton = new QPushButton(controlFrame);
-	skipActionButton->move(20,20);
-	skipActionButton->setText("Skip action");
-	QObject::connect(skipActionButton,SIGNAL(clicked()), actionAgent, SLOT(skipAnimation()));
+	backtrackButton = new QPushButton(controlFrame);
+	backtrackButton->move(20,20);
+	backtrackButton->setText("|<<");
+	QObject::connect(backtrackButton,SIGNAL(clicked()), actionAgent, SLOT(backtrack()));
+
+	pauseButton = new QPushButton(controlFrame);
+	pauseButton->move(100,20);
+	pauseButton->setText("|> ||");
+	QObject::connect(pauseButton,SIGNAL(clicked()), actionAgent, SLOT(pauseResumeAnimations()));
 	
+	skipActionButton = new QPushButton(controlFrame);
+	skipActionButton->move(180,20);
+	skipActionButton->setText(">|");
+	QObject::connect(skipActionButton,SIGNAL(clicked()), actionAgent, SLOT(skipAnimation()));
+
+	forwardTrackButton = new QPushButton(controlFrame);
+	forwardTrackButton->move(260,20);
+	forwardTrackButton->setText(">>|");
+	QObject::connect(forwardTrackButton,SIGNAL(clicked()), actionAgent, SLOT(forwardtrack()));
+
+
+
+
 	showAnimationsButton = new QPushButton(controlFrame);
-	showAnimationsButton->move(20, 45);
+	showAnimationsButton->move(20, 70);
 	showAnimationsButton->setText("Toggle animations");
 	QObject::connect(showAnimationsButton,SIGNAL(clicked()), actionAgent, SLOT(toggleAnimations()));
 
-	pauseButton = new QPushButton(controlFrame);
-	pauseButton->move(20,70);
-	pauseButton->setText("Pause/resume animation");
-	QObject::connect(pauseButton,SIGNAL(clicked()), actionAgent, SLOT(pauseResumeAnimations()));
-	
-
 	caption = new QLabel(controlFrame);
-	caption->move(200,50);
+	caption->move(300,50);
 	caption->setFont(GetDefaultFont());
 	palette = caption->palette();
 	palette.setColor(QPalette::All, QPalette::WindowText, QColor(255,0,0));

@@ -36,13 +36,15 @@ namespace Algovis_Viewer
 		void skipAnimation();
 		void toggleAnimations();
 		void pauseResumeAnimations();
+		void backtrack();
+		void forwardtrack();
 	
 	private:
 		float AnimDuration();
 
 		World* world;
 
-		Action* actionToBePerformed;
+		//Action* actionToBePerformed;
 		QTime animStartTime;
 		float animLength; // Animation length in seconds
 		bool animationsSuppressed;
@@ -58,7 +60,15 @@ namespace Algovis_Viewer
 		boost::condition_variable_any actionPendingCondVar;
 
 
-		
+		enum AgentMode { ON_DEMAND, BACKTRACKING, FORWARDTRACKING } ;
+		AgentMode mode;
+
+		// Backtracking stuff (currently unused)
+		// store history of actions - TODO delete on destruction
+		std::vector<Action*> actionHistory;
+		// Indexes in actionHistory - INVALID if there is no current action
+		unsigned currentAction;
+
 
 		bool shuttingDown;
 		// Count of threads inside PerformAndAnimateActionAsync - used for shutting down
