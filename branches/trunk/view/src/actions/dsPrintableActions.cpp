@@ -120,9 +120,15 @@ void DS_Assigned::PrepareToPerform()
 	// Set subjectStart to have abs position
 	subjectDimensions = QRect(subject->GetPositionInWorld(), subject->size());
 
-	sources = HistoryToSources(history, subject);
-
-	oldValue = subject->GetValue();
+	if (!completedAtLeastOnce)
+	{
+		sources = HistoryToSources(history, subject);
+		oldValue = subject->GetValue();
+	}
+	else
+	{
+		sources = UpdateSources(sources);
+	}
 }
 
 void DS_Assigned::PrepareToUnperform()
@@ -214,8 +220,15 @@ void DS_Assigned::Unperform(float progress, QPainter* painter)
 
 void DS_Assigned::Complete(bool displayed)
 {
-	subject->UpdateValue(newValue, completeTime);
-	Action::Complete(displayed);
+	if (!completedAtLeastOnce)
+	{
+		subject->UpdateValue(newValue, completeTime);
+		Action::Complete(displayed);
+	}
+	else
+	{
+		subject->UpdateValueHack(newValue);
+	}
 }
 
 void DS_Assigned::Uncomplete(bool displayed)
@@ -395,6 +408,11 @@ void DS_HighlightOperands::Perform(float progress, QPainter* painter)
 {	
 	if (!FetchOperandPtrs())
 		return;
+
+	if (progress > 1.0f) 
+		progress = 1.0f;
+	else if (progress < 0.0f)
+		progress = 0.0f;
 
 	BOOST_FOREACH(VO_SinglePrintable* vo, operandPtrs)
 	{
