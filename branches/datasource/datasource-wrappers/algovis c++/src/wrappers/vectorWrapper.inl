@@ -54,7 +54,6 @@ VectorWrapper<T,Alloc>::VectorWrapper(const VectorWrapper& other)
 			for (std::vector<T>::iterator it = value.begin(); it < value.end(); it++)
 			{
 				ID id = IdManager::GetInstance()->GetId(&(*it));
-				std::cout << "\t id = " << id << endl;
 				elements.push_back(id);
 			}
 
@@ -63,6 +62,8 @@ VectorWrapper<T,Alloc>::VectorWrapper(const VectorWrapper& other)
 			Algovis_Viewer::Registry::GetInstance()->RegisterArray(info.newId, this, GetVOType<T>());
 			Algovis_Viewer::Registry::GetInstance()->AddElementsToArray(info.newId, elements,0);
 		}
+
+		UL_ASSERT(info.result == CopyConstructionInfo::NORMAL_CC);
 	}
 }
 
@@ -76,27 +77,39 @@ VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<
 	if (this == &other)
 		return *this;
 
+	// Previous elements will automatically destruct and deregister themselves
 	value = other.value;
-	CopyAssignmentInfo result = IdManager::GetInstance()->GetIdForCopyAssignment(this, &other);
 
-	if (result.result == CopyAssignmentInfo::NORMAL_ASSIGNMENT)
+	CopyAssignmentInfo info = IdManager::GetInstance()->GetIdForCopyAssignment(this, &other);
+
+	if (communicationWithViewEnabled)
 	{
-		/*
-		// This was a regular copy assignment, so inform the Registry that my value has changed
-		if (communicationWithViewEnabled && SettingsManager::GetInstance()->CopyAssignmentReportingEnabled())
-			Algovis_Viewer::Registry::GetInstance()->PrintableAssigned(result.newId, result.otherId, 
-																		GetStringRepresentation());
-																		*/
-	}
-	else if (result.result == CopyAssignmentInfo::ORPHAN_REBIRTH)
-	{
-		/*
-		// I was an orphan and have since been allocated a new id - inform Registry
-		if (communicationWithViewEnabled)
-			Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable
-														(result.newId, this, GetStringRepresentation());
+		if (info.result == CopyAssignmentInfo::NORMAL_ASSIGNMENT)
+		{
+			std::vector<ID> elements;
+			for (std::vector<T>::iterator it = value.begin(); it < value.end(); it++)
+			{
+				ID id = IdManager::GetInstance()->GetId(&(*it));
+				elements.push_back(id);
+			}
+
+			// TODO animation for this doesn't work
+			// This was a regular copy assignment, so inform the Registry that my value has changed
+			Algovis_Viewer::Registry::GetInstance()->AddElementsToArray(info.newId, elements,0);
+		}
+		else if (info.result == CopyAssignmentInfo::ORPHAN_REBIRTH)
+		{
+			/*
+			// I was an orphan and have since been allocated a new id - inform Registry
+			if (communicationWithViewEnabled)
+				Algovis_Viewer::Registry::GetInstance()->RegisterSinglePrintable
+															(result.newId, this, GetStringRepresentation());
 														*/
+		}
+
+		UL_ASSERT(info.result == CopyConstructionInfo::NORMAL_CC);
 	}
+	
 
 	return *this;
 }
@@ -215,7 +228,6 @@ typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::insert(iterato
 {
 	std::cout << "insert" << std::endl;
 	std::cout.flush();
-	getchar();
 	unsigned insertionIndex = position - value.begin();
 
 	// Get IDs of current elements so that we can ensure these elements are always transplanted

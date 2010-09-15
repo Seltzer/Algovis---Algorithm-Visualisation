@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <map>
+#include <deque>
 #include <string>
 #include "boost/thread/mutex.hpp"
 #include "../util/lockManager.h"
@@ -105,8 +106,11 @@ namespace Algovis_Viewer
 		//////////////// Accessed from userFunctions.h
 		// Set caption in control panel
 		void SetCaption(const std::string&);
+		
 		// 
-		void PlaceNextWrapperOnSameLine();
+		void PlaceNextOnSameLineAsLast();
+
+		void PlaceNextTwoOnSameLine();
 		
 		
 		
@@ -155,7 +159,8 @@ namespace Algovis_Viewer
 		// Callback from Displayer
 		void DisplayerIsShuttingDown();
 
-		bool createNextViewableOnSameLine;
+		// User-specified layout
+		std::deque<bool> createViewablesOnSameLine;
 		
 		// ActionBuffer Stuff
 		ActionBuffer actionBuffer;
@@ -164,6 +169,9 @@ namespace Algovis_Viewer
 		// Registered viewables
 		std::map<ID, ViewableObject*> registeredViewables;
 		boost::mutex registryMutex;
+
+
+		void DebugQueue();
 	};
 	#include "../src/registry.inl"
 

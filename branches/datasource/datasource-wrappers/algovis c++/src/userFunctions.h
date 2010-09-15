@@ -12,7 +12,9 @@ void EnableCommunicationWithView(bool enabled);
 void EnableOperandsHighlighting(bool enabled);
 
 // Result in Registry invocations
-void PlaceNextWrapperOnSameLine();
+void PlaceNextOnSameLineAsLast();
+void PlaceNextTwoOnSameLine();
+
 void SetCaption(std::string&);
 void FlushAllActions();
 void Shutdown();

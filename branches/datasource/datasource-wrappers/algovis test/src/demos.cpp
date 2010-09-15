@@ -64,7 +64,7 @@ void MultipleVectorDemoWithDelete()
 		// Populate
 		vector<int> c1, c2, c3, c4, c5;
 		
-		::PlaceNextWrapperOnSameLine();
+		::PlaceNextOnSameLineAsLast();
 		vector<int> c6;
 		
 		//c1.reserve(20);
@@ -141,10 +141,15 @@ void MergeSortDemo()
 
 	SetCaption(string("MergeSortDemo"));
 
-	// Populate
+
+	::PlaceNextTwoOnSameLine();
 	vector<int> c1, c2;
 	
-	
+	::PlaceNextOnSameLineAsLast();
+	vector<int> result;
+
+
+	// Populate
 	c1.push_back(1);
 	c1.push_back(2);
 	c1.push_back(3);
@@ -155,9 +160,13 @@ void MergeSortDemo()
 	c2.push_back(3);
 	c2.push_back(4);
 
-	prt("HAIHAIHAIHAIHAI");
-	vector<int> result = merge(c1,c2, 0);
-
+	
+	::PlaceNextTwoOnSameLine();
+	result = merge(c1,c2, 0);
+	
+	
+	
+	FlushAllActions();
 
 
 /*
@@ -233,11 +242,14 @@ void DoRandomStuffWithAVectorDemo()
 {
 	EnableCommunicationWithView(true);
 	{
-		vector<int> c1;
+		vector<int> c1, c2;
 		int i;
 		
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
 		
+		c2 = c1;
+
+
 		c1.erase(c1.begin());
 		c1.push_back(6);
 		c1.insert(c1.begin(), 10, 13);
@@ -252,6 +264,7 @@ void DoRandomStuffWithAVectorDemo()
 		c1.erase(c1.begin()+2, c1.end());
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
 		c1.erase(c1.begin(), c1.end());
+
 
 		FlushAllActions();
 
@@ -284,27 +297,6 @@ void InterfaceTestingDemo()
 
 }
 
-void BacktrackDemo()
-{
-	EnableCommunicationWithView(true);
-
-	// Populate
-	vector<int> collectionToModify;
-
-	collectionToModify.reserve(50);
-	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
-
-	
-	for (int i = 7; i >= 0; --i)
-	{
-		collectionToModify[i] = collectionToModify[i] + collectionToModify[i+1];
-	}
-
-
-
-	prt("Press any key to leave BacktrackDemo");
-	getchar();
-}
 
 
 void TestDemo()

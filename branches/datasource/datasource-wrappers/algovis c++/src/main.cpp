@@ -18,9 +18,14 @@ void EnableOperandsHighlighting(bool enabled)
 	highlightOperandsEnabled = enabled;
 }
 
-void PlaceNextWrapperOnSameLine()
+void PlaceNextOnSameLineAsLast()
 {
-	Algovis_Viewer::Registry::GetInstance()->PlaceNextWrapperOnSameLine();
+	Algovis_Viewer::Registry::GetInstance()->PlaceNextOnSameLineAsLast();
+}
+
+void PlaceNextTwoOnSameLine()
+{
+	Algovis_Viewer::Registry::GetInstance()->PlaceNextTwoOnSameLine();
 }
 
 void SetCaption(std::string& newCaption)

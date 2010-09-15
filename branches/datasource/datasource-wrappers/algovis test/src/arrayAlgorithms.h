@@ -64,7 +64,7 @@ void Vector_BubbleSortAscending(vector<int>& vec)
 
 
 template<class T>
-vector<T> merge(vector<T>& v1, vector<T>& v2, unsigned level)
+vector<T> merge(vector<T> v1, vector<T> v2, unsigned level)
 {
 	std::stringstream ss;
 	ss << "At level " << level << " of merge()";
@@ -77,36 +77,32 @@ vector<T> merge(vector<T>& v1, vector<T>& v2, unsigned level)
 	if (v1.empty())
 		return vector<T>(v2);
 
+	::PlaceNextOnSameLineAsLast();
+	vector<T> oneElement;
+	::PlaceNextOnSameLineAsLast();
+	vector<T> returnVec;
+
 	if (v1[0] <= v2[0])
 	{
-		T elt = v1[0];
+		oneElement.push_back(v1[0]);
 		v1.erase(v1.begin());
 
-		vector<T> returnVec = merge(v1,v2, level + 1);
-		cout << "At level " << level << " of merge()";
-		//FlushAllActions();
+		::PlaceNextTwoOnSameLine();
+		returnVec = merge(v1,v2, level + 1);
+		returnVec.insert(returnVec.begin(), oneElement[0]);
 
-		returnVec.insert(returnVec.begin(), elt);
-		//FlushAllActions();
-		cout << "*************RETURNING" << endl;
 		return returnVec;
 	}
 	
 	if (v1[0] > v2[0])
 	{
-		T elt = v2[0];
+		oneElement.push_back(v2[0]);
 		v2.erase(v2.begin());
 
-		vector<T> returnVec = merge(v1,v2, level + 1);
-	
-		cout << "******************************* RETURNING FROM merge ******************************" << endl;
-		cout << "At level " << level << " of merge()" << endl;
-		//FlushAllActions();
-		returnVec.insert(returnVec.begin(), elt);
-		//FlushAllActions();
+		::PlaceNextTwoOnSameLine();
+		returnVec = merge(v1,v2, level + 1);
+		returnVec.insert(returnVec.begin(), oneElement[0]);
 
-		cout << "hi" << endl;
-		cout << "*************RETURNING" << endl;
 		return returnVec;
 	}
 

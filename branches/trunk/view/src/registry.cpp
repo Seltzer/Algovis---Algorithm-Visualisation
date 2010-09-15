@@ -25,7 +25,7 @@ Registry* Registry::instance(NULL);
 ///////////////////////// Private methods
 
 Registry::Registry()
-	: world(NULL), createNextViewableOnSameLine(false), displayerShuttingDown(false), actionBuffer(3)
+	: world(NULL), displayerShuttingDown(false), actionBuffer(3)
 { 
 	#if (DEBUG_GENERAL_LEVEL >= 2)
 		prt("REGISTRY CTOR");
@@ -95,11 +95,23 @@ void Registry::RegisterArray
 	
 	DS_CreateArray creationAction(world, id, dsArrayAddress, elementType, elements);
 
-	if (createNextViewableOnSameLine)
+	//prt("\nRegistering array");
+	if (!createViewablesOnSameLine.empty())
 	{
-		creationAction.PlaceOnSameLine();
-		createNextViewableOnSameLine = false;
+	//	DebugQueue();
+
+		if (createViewablesOnSameLine.front())
+			creationAction.PlaceOnSameLine();
+		createViewablesOnSameLine.pop_front();
+
+	//	DebugQueue();
 	}
+	else
+	{
+	//	prt("\tBuffer empty - placing on new line");
+	}
+
+
 	//creationAction.SuppressAnimation();
 
 	AddActionToBuffer(&creationAction);
@@ -115,10 +127,12 @@ void Registry::RegisterMatrix(ID id, const void* dsMatrixAddress, ViewableObject
 
 	DS_CreateMatrix creationAction(world, id, dsMatrixAddress, elementType, rows, cols, initElements);
 
-	if (createNextViewableOnSameLine)
+	if (!createViewablesOnSameLine.empty())
 	{
-		creationAction.PlaceOnSameLine();
-		createNextViewableOnSameLine = false;
+		if (createViewablesOnSameLine.front())
+			creationAction.PlaceOnSameLine();
+
+		createViewablesOnSameLine.pop_front();
 	}
 
 	AddActionToBuffer(&creationAction);
@@ -136,11 +150,15 @@ void Registry::RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddre
 	// Create action
 	DS_CreateSP creationAction(world, id, dsSinglePrintableAddress, value);
 
-	if (createNextViewableOnSameLine)
+	/*
+	if (!createViewablesOnSameLine.empty())
 	{
-		creationAction.PlaceOnSameLine();
-		createNextViewableOnSameLine = false;
-	}
+		prt("********** BUFFER BEING EMPTIED BY REG_SP");
+		if (createViewablesOnSameLine.front())
+			creationAction.PlaceOnSameLine();
+
+		createViewablesOnSameLine.pop_front();
+	}*/
 
 	creationAction.SuppressAnimation(); // Single printable creations are currently never displayed
 
@@ -264,9 +282,20 @@ void Registry::SetCaption(const std::string& newCaption)
 	AddActionToBuffer(&captionAction);
 }
 
-void Registry::PlaceNextWrapperOnSameLine()
+void Registry::PlaceNextOnSameLineAsLast()
 {
-	createNextViewableOnSameLine = true;
+	createViewablesOnSameLine.push_back(true);
+//	createNextViewableOnSameLine = true;
+}
+
+void Registry::PlaceNextTwoOnSameLine()
+{
+	// If there isn't a layout policy for the next element, insert the default
+	if (createViewablesOnSameLine.empty())
+		createViewablesOnSameLine.push_back(false);
+
+	// Add layout policy for next next
+	createViewablesOnSameLine.push_back(true);
 }
 
 
@@ -349,6 +378,15 @@ void Registry::DisplayerIsShuttingDown()
 void Registry::TestMethod()
 {
 	Displayer::GetInstance();
+}
+
+void Registry::DebugQueue()
+{
+	cout << "{";
+	BOOST_FOREACH(bool pref, createViewablesOnSameLine)
+		cout << pref << "\t";
+	cout << "}";
+
 }
 
 

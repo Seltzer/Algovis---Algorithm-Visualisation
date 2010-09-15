@@ -78,9 +78,8 @@ void World::AddViewableOnNewRow(ViewableObject* viewable)
 	}
 	else
 	{
-		QPoint pos = viewables.back()->pos();
-		pos += QPoint(0, viewables.back()->height() + 20);
-		viewable->move(pos);
+		int y = viewables.back()->pos().y() + viewables.back()->height() + 20;
+		viewable->move(50,y);
 	}
 	
 	AddViewable(viewable);

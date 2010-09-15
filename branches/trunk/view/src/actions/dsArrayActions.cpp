@@ -110,7 +110,6 @@ void DS_AddElementToArray::PrepareToPerform()
 	UL_ASSERT(registry->IsRegistered(dsArray,ARRAY));
 
 	voArray = registry->GetRepresentation<VO_Array>(dsArray);
-	UL_ASSERT(position <= voArray->GetSize());
 
 	element = elementFactory->Create(); // Create a viewable for whatever element was added.
 

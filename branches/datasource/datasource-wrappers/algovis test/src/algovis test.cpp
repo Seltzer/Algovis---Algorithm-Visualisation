@@ -12,14 +12,13 @@
 
 REAL_INT wmain()
 {
-	//BacktrackDemo();
 	//MatrixDemo();
 	//MultipleVectorDemoWithDelete();
-	//MergeSortDemo();
+	MergeSortDemo();
 	//DoRandomStuffWithAVectorDemo();
 	//InterfaceTestingDemo();
 	//TestDemo();
-	ScreenDemo();
+	//ScreenDemo();
 	
 	//Shutdown();
 
