@@ -9,6 +9,17 @@
 namespace Algovis_Viewer
 {
 
+	class ViewableObjectContainerFactory : public ViewableObjectFactory
+	{
+	protected:
+		ViewableObjectContainerFactory(ID id, const void* dsAddress, World* world, QWidget* parent = NULL)
+			: ViewableObjectFactory(id, dsAddress, world, parent)
+		{}
+	public:
+		virtual ViewableObject* Create() = 0;
+	};
+
+
 	// A ViewableObject which contains other ViewableObjects
 	class ViewableObjectContainer : public ViewableObject
 	{

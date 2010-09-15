@@ -59,6 +59,21 @@ namespace Algovis_Viewer
 		int modifiedTime;
 	};
 
+	class VO_SinglePrintableFactory : public ViewableObjectFactory
+	{
+	protected:
+		std::string value;
+	public:
+		VO_SinglePrintableFactory(ID id, const void* dsAddress, World* world,
+							const std::string& value, QWidget* parent = NULL)
+			: ViewableObjectFactory(id, dsAddress, world, parent), value(value)
+		{}
+		virtual ViewableObject* Create()
+		{
+			return new VO_SinglePrintable(id, dsAddress, world, value, parent);
+		}
+	};
+
 }
 
 

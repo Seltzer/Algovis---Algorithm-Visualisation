@@ -8,6 +8,9 @@
 namespace Algovis_Viewer
 {
 
+	class ViewableObject;
+	class ViewableObjectFactory;
+
 	struct ValueID
 	{
 		ValueID(ID id, int time) : id(id), time(time) {}
@@ -21,12 +24,15 @@ namespace Algovis_Viewer
 		int time;
 	};
 
+	// TODO: May be tidier have different history data for different types of things
 	struct HistoryData
 	{
 		bool visible;
 		std::set<ValueID> history;
 		std::string value; // Well... It seemed neccessary
 		int modifiedTime;
+		ViewableObject* viewable;
+		ViewableObjectFactory* factory;
 	};
 
 	class HistoryManager
@@ -41,6 +47,8 @@ namespace Algovis_Viewer
 		void ResetHistory(ID id);
 		void SetValue(ID id, std::string value);
 		std::string GetValue(ID id);
+		void SetFactory(ID id, ViewableObjectFactory* viewable);
+		ViewableObjectFactory* GetFactory(ID id);
 		int GetModifiedTime(ID id);
 
 		int GetTime();

@@ -51,6 +51,22 @@ namespace Algovis_Viewer
 		mutable QString titleText;
 		mutable QPoint titleTextPosition;
 	};
+
+	class VO_ArrayFactory : public ViewableObjectContainerFactory
+	{
+	protected:
+		ViewableObjectType elementType;
+		const std::vector<ViewableObject*>& elements;
+	public:
+		VO_ArrayFactory(ID id, const void* dsAddress, World* world, ViewableObjectType elementType, 
+					const std::vector<ViewableObject*>& elements, QWidget* parent = NULL)
+			: ViewableObjectContainerFactory(id, dsAddress, world, parent), elementType(elementType), elements(elements)
+		{}
+		virtual ViewableObject* Create()
+		{
+			return new VO_Array(id, dsAddress, world, elementType, elements, parent);
+		}
+	};
 }
 
 

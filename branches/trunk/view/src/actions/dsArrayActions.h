@@ -48,7 +48,8 @@ namespace Algovis_Viewer
 		unsigned position;
 
 		VO_Array* voArray;
-		VO_SinglePrintable* element;
+		ViewableObjectFactory* elementFactory;
+		ViewableObject* element;
 		std::string value;
 
 		QRect subjectDimensions;

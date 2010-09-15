@@ -36,10 +36,13 @@ Action* DS_CreateSP::Clone() const
 
 void DS_CreateSP::UpdateHistory(HistoryManager& historyManager)
 {
+	VO_SinglePrintableFactory* newSP = new VO_SinglePrintableFactory(id,dsAddress, world, value);
+
 	historyManager.AddRecord(id);
 	// It is very much debatable what the history should be.
 	historyManager.ResetHistory(id);
 	historyManager.SetValue(id, value);
+	historyManager.SetFactory(id, newSP);
 
 	DS_Action::UpdateHistory(historyManager);
 }
@@ -73,7 +76,7 @@ DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string n
 DS_Assigned::DS_Assigned(const DS_Assigned& other)
 	: DS_DataFlowAction(other), dsAssigned(other.dsAssigned), dsSource(other.dsSource), 
 			oldValue(other.oldValue), newValue(other.newValue),
-	subject(other.subject), sources(other.sources)
+	subject(other.subject), sources(other.sources), subjectDimensions(other.subjectDimensions)
 {
 }
 
@@ -250,7 +253,7 @@ DS_Modified::DS_Modified(World* world, ID dsModified, ID dsSource, std::string v
 
 DS_Modified::DS_Modified(const DS_Modified& other)
 	: DS_DataFlowAction(other), dsModified(other.dsModified), dsSource(other.dsSource), value(other.value),
-	subject(other.subject), sources(other.sources)
+	subject(other.subject), sources(other.sources), subjectDimensions(other.subjectDimensions)
 {
 }
 

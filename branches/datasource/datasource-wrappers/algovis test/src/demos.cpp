@@ -333,3 +333,32 @@ void TestDemo()
 	prt("Press any key to leave TestDemo");
 	getchar();
 }
+
+void ScreenDemo()
+{
+	EnableCommunicationWithView(true);
+
+	int count = 10;
+	vector<float> sum;
+	for (int i = 0; i < count; i++)
+		sum.push_back((float)(util::generateRandomNumber(0, 100)) / 10.0f);
+
+	vector<float> sum2;
+	sum2.resize(count-1);
+
+	for (int i = 0; i < count-1; i++)
+		sum2[i] = (sum[i] + sum[i+1]) / 2;
+
+	vector<int> fib;
+	fib.reserve(12);
+	fib.push_back(1);
+	fib.push_back(1);
+	for (int i = 0; i < 10; i++)
+		fib.push_back(fib[i] + fib[i+1]);
+
+	vector<int> sortCollection;
+	PopulateVectorWithRandomInts(sortCollection, 9, 0, 9);
+	Vector_BubbleSortAscending(sortCollection);
+
+	getchar();
+}

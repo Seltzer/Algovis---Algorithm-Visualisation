@@ -16,7 +16,21 @@ namespace Algovis_Viewer
 	class World;
 	class DS_Action;
 	class ViewableObjectContainer;
+	class ViewableObject;
 
+	class ViewableObjectFactory
+	{
+	protected:
+		ID id;
+		const void* dsAddress;
+		World* world;
+		QWidget* parent;
+		ViewableObjectFactory(ID id, const void* dsAddress, World* world, QWidget* parent = NULL)
+			: id(id), dsAddress(dsAddress), world(world), parent(parent)
+		{}
+	public:
+		virtual ViewableObject* Create() = 0;
+	};
 
 	class ViewableObject : public Component
 	{

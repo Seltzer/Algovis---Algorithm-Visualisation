@@ -80,7 +80,7 @@ DS_AddElementToArray::DS_AddElementToArray
 
 DS_AddElementToArray::DS_AddElementToArray(const DS_AddElementToArray& other)
 		: DS_DataFlowAction(other), dsArray(other.dsArray), dsElement(other.dsElement), position(other.position),
-		value(other.value)
+		value(other.value), voArray(other.voArray), elementFactory(other.elementFactory), element(other.element)
 {
 }
 
@@ -98,6 +98,7 @@ void DS_AddElementToArray::UpdateHistory(HistoryManager& historyManager)
 	historyManager.SetVisible(dsElement, true);
 	historyManager.ResetHistory(dsElement);
 	value = historyManager.GetValue(dsElement);
+	elementFactory = historyManager.GetFactory(dsElement);
 
 	DS_Action::UpdateHistory(historyManager);
 }
@@ -107,22 +108,11 @@ void DS_AddElementToArray::PrepareToPerform()
 	Registry* registry = Registry::GetInstance();
 
 	UL_ASSERT(registry->IsRegistered(dsArray,ARRAY));
-	
-	// Create single printable stuff moved to hear as view no longer cares about most creations
-	UL_ASSERT(!registry->IsRegistered(dsElement));
-
-	// TODO: dunno about address atm.
-	VO_SinglePrintable* newSP = new VO_SinglePrintable(dsElement, 0, world, value);
-	registry->Register(dsElement, newSP);
-
-	world->adjustSize();
-
-	UL_ASSERT(registry->IsRegistered(dsElement,SINGLE_PRINTABLE));
 
 	voArray = registry->GetRepresentation<VO_Array>(dsArray);
 	UL_ASSERT(position <= voArray->GetSize());
 
-	element = registry->GetRepresentation<VO_SinglePrintable>(dsElement);
+	element = elementFactory->Create(); // Create a viewable for whatever element was added.
 
 	// TODO: Do not assume array is shown (and therefore this is not suppressed)
 
@@ -170,6 +160,10 @@ void DS_AddElementToArray::Perform(float progress, QPainter* painter)
 void DS_AddElementToArray::Complete(bool displayed)
 {
 	Registry* registry = Registry::GetInstance();
+
+	// TODO: Do not assume array is shown, and therefore element is shown.
+	UL_ASSERT(!registry->IsRegistered(dsElement));
+	registry->Register(dsElement, element);
 
 	voArray->AddElement(element, position);
 
