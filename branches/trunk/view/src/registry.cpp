@@ -269,6 +269,7 @@ void Registry::PrintableAssigned(ID dsAssigned, ID dsSource, const string& newVa
 // TODO: This is really similar to above
 void Registry::PrintableModified(ID dsModified, ID dsSource, const string& newValue)
 {
+	boost::unique_lock<boost::mutex> lock(registryMutex);
 	// Don't expect this method to work atm
 
 	// TODO: This will not include itself as a source in the animation. As far as I know thats the only issue with using an assigned action

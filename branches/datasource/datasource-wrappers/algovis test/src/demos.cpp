@@ -330,9 +330,8 @@ void ScreenDemo()
 		sum.push_back((rand() % 100) / 10.0f);
 
 	vector<float> sum2;
-	sum2.resize(count-1);
 	for (int i = 0; i < count-1; i++)
-		sum2[i] = (sum[i] + sum[i+1]) / 2;
+		sum2.push_back((sum[i] + sum[i+1]) / 2);
 
 	vector<int> fib;
 	fib.reserve(12);
@@ -343,8 +342,8 @@ void ScreenDemo()
 
 	vector<int> sortCollection;
 	PopulateVectorWithRandomInts(sortCollection, 9, 0, 9);
-	//Vector_BubbleSortAscending(sortCollection);
-	std::sort(sortCollection.begin(), sortCollection.end());
+	Vector_BubbleSortAscending(sortCollection);
+	//std::sort(sortCollection.begin(), sortCollection.end());
 
 	getchar();
 }

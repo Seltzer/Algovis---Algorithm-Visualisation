@@ -16,7 +16,7 @@ Action::Action(World* world, bool suppressAnimation)
 
 Action::Action(const Action& other)
 	: world(other.world), suppressAnimation(other.suppressAnimation), 
-		completedAtLeastOnce(other.completedAtLeastOnce), progress(other.progress)
+		completedAtLeastOnce(other.completedAtLeastOnce), progress(other.progress), completeTime(other.completeTime)
 {
 }
 
@@ -55,7 +55,11 @@ bool Action::IsFinishedAnimating()
 	return progress >= 1.00f;
 }
 
-
+void Action::UpdateHistory(HistoryManager& historyManager)
+{
+	completeTime = historyManager.GetTime();
+	historyManager.ActionProcessed();
+}
 
 
 

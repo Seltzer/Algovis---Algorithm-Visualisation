@@ -62,11 +62,10 @@ namespace Algovis_Viewer
 		DS_Action(World*, std::set<ViewableObject*> subjects, bool suppressAnimation = false);
 		DS_Action(const DS_Action&);
 
-	protected:
-		virtual Action* Clone() const;
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
-		int completeTime;
+	protected:
+		virtual Action* Clone() const;
 	};
 
 

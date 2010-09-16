@@ -30,7 +30,7 @@ namespace Algovis_Viewer
 		void SuppressAnimation();
 		bool AnimationSuppressed();
 
-		virtual void UpdateHistory(HistoryManager& historyManager) = 0;
+		virtual void UpdateHistory(HistoryManager& historyManager);
 
 		// For preparation, such as acquiring drawing responsibility over Viewables etc.
 		// WARNING - don't make any non-GUI-thread-sensitive invocations on Viewables since
@@ -53,6 +53,7 @@ namespace Algovis_Viewer
 		// Calculates whether action has completed its animation whether it's being performed or unperformed
 		virtual bool IsFinishedAnimating();
 
+		int GetCompleteTime() { return completeTime; }
 
 	protected:
 		World* world;
@@ -62,6 +63,8 @@ namespace Algovis_Viewer
 
 		// 0.2 progress means 20% performed or 20% unperformed
 		float progress;
+
+		int completeTime;
 
 	};
 

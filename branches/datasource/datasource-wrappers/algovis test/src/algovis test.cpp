@@ -14,13 +14,14 @@ REAL_INT wmain()
 {
 	EnableCommunicationWithView(true);
 
+	//OriginalDemo();
 	//MatrixDemo();
 	//MultipleVectorDemoWithDelete();
-	MergeSortDemo();
+	//MergeSortDemo();
 	//DoRandomStuffWithAVectorDemo();
 	//InterfaceTestingDemo();
 	//TestDemo();
-	//ScreenDemo();
+	ScreenDemo();
 	
 	//Shutdown();
 

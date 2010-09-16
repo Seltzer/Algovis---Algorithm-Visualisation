@@ -22,7 +22,9 @@ namespace Algovis
 			return static_cast<const Derived*>(this);
 		}
 
-	protected:
+	// TODO: This was commented out because += etc. in op overloads need to change value without going through everything
+	//protected:
+	public:
 		PrimitiveType primitive;
 
 	public:

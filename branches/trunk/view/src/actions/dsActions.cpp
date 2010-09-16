@@ -150,15 +150,14 @@ DS_Action::DS_Action(World* world, set<ViewableObject*> subjects, bool suppressA
 }
 
 DS_Action::DS_Action(const DS_Action& other)
-	: Action(other), completeTime(other.completeTime)
+	: Action(other)
 {
 	UL_ASSERT(world);
 }
 
 void DS_Action::UpdateHistory(HistoryManager& historyManager)
 {
-	completeTime = historyManager.GetTime();
-	historyManager.ActionProcessed();
+	Action::UpdateHistory(historyManager);
 }
 
 Action* DS_Action::Clone() const

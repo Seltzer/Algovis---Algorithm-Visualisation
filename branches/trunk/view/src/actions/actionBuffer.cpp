@@ -54,7 +54,7 @@ void ActionBuffer::CombineAndPerformActions()
 		// And also whether it would be a good thing to do
 		for (unsigned j = 0; j < i; j++)
 		{
-			int otherTime = historyManager.GetTime() - buffer.size() + j; // bleh
+			int otherTime = buffer[j]->GetCompleteTime();
 			if (!CanCombine(current, buffer[j], otherTime))
 				canCombine = false;
 			// If we desire combining with some action, and that action desires combining with the first action (perhaps indirectly)
@@ -134,8 +134,8 @@ bool ActionBuffer::DesireCombine(Action* tested, Action* other, int otherTime)
 		std::set<ValueID>::iterator sid = FindID(sources, *sub);
 		if (sid != sources.end()) // If this action relies on an element a previous action modifies
 		{
-			if (sid->time < otherTime) // If tested action reads element after it is modified
-				return true; // We can not combine these actions as tested depends on other being complete
+			if (sid->time < otherTime) // If tested action reads element before it is modified
+				return true; // We want to combine these actions
 		}
 	}
 	return false;
