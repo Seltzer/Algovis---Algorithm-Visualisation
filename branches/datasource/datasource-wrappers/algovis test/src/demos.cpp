@@ -142,14 +142,13 @@ void MergeSortDemo()
 	SetCaption(string("MergeSortDemo"));
 
 
+
 	::PlaceNextTwoOnSameLine();
 	vector<int> c1, c2;
-	
+
 	::PlaceNextOnSameLineAsLast();
 	vector<int> result;
 
-
-	// Populate
 	c1.push_back(1);
 	c1.push_back(2);
 	c1.push_back(3);
@@ -159,34 +158,28 @@ void MergeSortDemo()
 	c2.push_back(1);
 	c2.push_back(3);
 	c2.push_back(4);
-
 	
 	::PlaceNextTwoOnSameLine();
 	result = merge(c1,c2, 0);
 	
-	
-	
-	FlushAllActions();
-
-
-/*
+		/*
+	vector<int> c1;
 	c1.push_back(1);
 	c1.push_back(5);
 	c1.push_back(3);
 	c1.push_back(2);
 	c1.push_back(4);
-
 	c1.push_back(8);
 	c1.push_back(5);
 	c1.push_back(3);
 	c1.push_back(4);
 	
-	vector<int> result = mergeSort(c1);
-	*/
+	vector<int> result = mergeSort(c1);*/
+	
 
 	
 
-
+	FlushAllActions();
 	prt("Press any key to leave MergeSortDemo");
 	getchar();
 

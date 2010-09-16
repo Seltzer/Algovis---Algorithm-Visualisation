@@ -25,7 +25,7 @@ Registry* Registry::instance(NULL);
 ///////////////////////// Private methods
 
 Registry::Registry()
-	: world(NULL), displayerShuttingDown(false), actionBuffer(3)
+	: world(NULL), displayerShuttingDown(false), actionBuffer(3), ensureNextIsDisplayed(false)
 { 
 	#if (DEBUG_GENERAL_LEVEL >= 2)
 		prt("REGISTRY CTOR");
@@ -95,24 +95,12 @@ void Registry::RegisterArray
 	
 	DS_CreateArray creationAction(world, id, dsArrayAddress, elementType, elements);
 
-	//prt("\nRegistering array");
 	if (!createViewablesOnSameLine.empty())
-	{
-	//	DebugQueue();
-
+	{	
 		if (createViewablesOnSameLine.front())
 			creationAction.PlaceOnSameLine();
 		createViewablesOnSameLine.pop_front();
-
-	//	DebugQueue();
 	}
-	else
-	{
-	//	prt("\tBuffer empty - placing on new line");
-	}
-
-
-	//creationAction.SuppressAnimation();
 
 	AddActionToBuffer(&creationAction);
 }
@@ -150,17 +138,23 @@ void Registry::RegisterSinglePrintable(ID id, const void* dsSinglePrintableAddre
 	// Create action
 	DS_CreateSP creationAction(world, id, dsSinglePrintableAddress, value);
 
-	/*
-	if (!createViewablesOnSameLine.empty())
+	if (ensureNextIsDisplayed)
 	{
-		prt("********** BUFFER BEING EMPTIED BY REG_SP");
-		if (createViewablesOnSameLine.front())
-			creationAction.PlaceOnSameLine();
+		ensureNextIsDisplayed = false;
+		creationAction.CreateAndDisplayASAP();
 
-		createViewablesOnSameLine.pop_front();
-	}*/
+		if (!createViewablesOnSameLine.empty())
+		{
+			if (createViewablesOnSameLine.front())
+				creationAction.PlaceOnSameLine();
+			createViewablesOnSameLine.pop_front();
+		}
+	}
+	else
+	{
+		creationAction.SuppressAnimation();
+	}
 
-	creationAction.SuppressAnimation(); // Single printable creations are currently never displayed
 
 	AddActionToBuffer(&creationAction);
 
@@ -298,6 +292,38 @@ void Registry::PlaceNextTwoOnSameLine()
 	createViewablesOnSameLine.push_back(true);
 }
 
+void Registry::EnsureNextIsDisplayed()
+{
+	ensureNextIsDisplayed = true;
+}
+
+void Registry::DisplayThis(ID id)
+{
+	// Don't trust the user
+	if (IsRegistered(id))
+		return;
+	
+
+	// Create action
+	DS_EnsureDisplayed action(world, false, id);
+
+		
+	// Pretty sure this doesn't need to be set - TODO
+	action.CreateAndDisplayASAP();
+
+	if (!createViewablesOnSameLine.empty())
+	{
+		if (createViewablesOnSameLine.front())
+			action.PlaceOnSameLine();
+		createViewablesOnSameLine.pop_front();
+	}
+
+
+
+	AddActionToBuffer(&action);
+
+}
+
 
 void Registry::FlushAllActions()
 {
@@ -372,22 +398,13 @@ void Registry::DisplayerIsShuttingDown()
 }
 
 
-
-
-
 void Registry::TestMethod()
 {
 	Displayer::GetInstance();
 }
 
-void Registry::DebugQueue()
-{
-	cout << "{";
-	BOOST_FOREACH(bool pref, createViewablesOnSameLine)
-		cout << pref << "\t";
-	cout << "}";
 
-}
+
 
 
 

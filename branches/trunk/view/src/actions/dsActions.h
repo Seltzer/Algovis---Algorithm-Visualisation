@@ -15,6 +15,7 @@ namespace Algovis_Viewer
 	class ViewableObject;
 	class VO_SinglePrintable;
 	class VO_Array;
+	class ViewableObjectFactory;
 
 	// Handy struct to represent data needed to animate a source
 	struct SourceData 
@@ -52,13 +53,9 @@ namespace Algovis_Viewer
 	// Same as above but for entire history
 	std::vector<SourceData> HistoryToSources(const std::set<ValueID>& history, ViewableObject* subject);
 
-	//enum DS_ActionType { DAT_Insert, DAT_Erase, DAT_Assign, DAT_BeingDestroyed };
 
 	class DS_Action : public Action
 	{
-	protected:
-		int completeTime;
-
 
 	public:
 		DS_Action(World*, bool animationSuppressed = false);
@@ -67,13 +64,9 @@ namespace Algovis_Viewer
 
 	protected:
 		virtual Action* Clone() const;
-		//DS_ActionType actionType;
-		//std::string value;
-		//std::set<ValueID> history;
-
-
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
+		int completeTime;
 	};
 
 
@@ -88,9 +81,13 @@ namespace Algovis_Viewer
 
 		void PlaceOnSameLine();
 		bool BeingCreatedOnSameLine();
+		void CreateAndDisplayASAP();
 
 	protected:
+		ViewableObjectFactory* myFactory;
+
 		bool createOnSameLine;
+		bool createAndDisplayASAP;
 	};
 
 
@@ -157,6 +154,25 @@ namespace Algovis_Viewer
 	private:
 		std::string newCaption;
 	};
+
+	class DS_EnsureDisplayed : public DS_CreateAction
+	{
+	public:
+		DS_EnsureDisplayed(World*, bool animationSuppressed, ID id);
+		DS_EnsureDisplayed(const DS_EnsureDisplayed&);
+		virtual Action* Clone() const;
+
+		// Note, this action doesn't actually update the history
+		virtual void UpdateHistory(HistoryManager&);
+		virtual void PrepareToPerform();
+		virtual void Complete(bool displayed);
+	
+	private:
+		ID id;
+		ViewableObjectFactory* voFactory;
+	};
+
+	
 
 }
 

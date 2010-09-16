@@ -1,3 +1,7 @@
+// todo hack
+#include <iostream>
+
+
 #include "vo_singlePrintable.h"
 #include "../displayer/displayer.h"
 
@@ -44,7 +48,7 @@ void VO_SinglePrintable::paintEvent(QPaintEvent*)
 {
 	if (!communicationWithViewEnabled)
 		return;
-
+	
 	QPainter painter(this);
 	
 	// Draw value
@@ -101,6 +105,21 @@ void VO_SinglePrintable::UpdateValueHack(const std::string& newValue)
 	}
 
 }
+
+
+
+
+
+ViewableObject* VO_SinglePrintableFactory::Create()
+{
+	VO_SinglePrintable* newSP = new VO_SinglePrintable(id, dsAddress, world, value, parent);
+	//Registry::GetInstance()->Register(id, newSP);
+	return newSP;
+}
+
+
+
+
 
 
 

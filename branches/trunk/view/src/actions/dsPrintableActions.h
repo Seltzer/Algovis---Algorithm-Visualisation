@@ -16,7 +16,7 @@ namespace Algovis_Viewer
 
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
-		//virtual void Complete(bool displayed);
+		virtual void Complete(bool displayed);
 
 	private:
 		const ID id;

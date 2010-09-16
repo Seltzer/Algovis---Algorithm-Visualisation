@@ -107,10 +107,12 @@ namespace Algovis_Viewer
 		// Set caption in control panel
 		void SetCaption(const std::string&);
 		
-		// 
+		// User Functions
 		void PlaceNextOnSameLineAsLast();
-
 		void PlaceNextTwoOnSameLine();
+		void EnsureNextIsDisplayed();
+		
+		void DisplayThis(ID);
 		
 		
 		
@@ -161,6 +163,8 @@ namespace Algovis_Viewer
 
 		// User-specified layout
 		std::deque<bool> createViewablesOnSameLine;
+
+		bool ensureNextIsDisplayed;
 		
 		// ActionBuffer Stuff
 		ActionBuffer actionBuffer;
@@ -169,9 +173,6 @@ namespace Algovis_Viewer
 		// Registered viewables
 		std::map<ID, ViewableObject*> registeredViewables;
 		boost::mutex registryMutex;
-
-
-		void DebugQueue();
 	};
 	#include "../src/registry.inl"
 

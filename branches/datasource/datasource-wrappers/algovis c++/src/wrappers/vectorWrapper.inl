@@ -42,7 +42,7 @@ template <class T, class Alloc>
 VectorWrapper<T,Alloc>::VectorWrapper(const VectorWrapper& other)
 		: value(other.value)
 {
-	printf("VectorWrapper CC");
+	//printf("VectorWrapper CC");
 
 	CopyConstructionInfo info = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
 						
@@ -72,7 +72,7 @@ VectorWrapper<T,Alloc>::VectorWrapper(const VectorWrapper& other)
 template <class T, class Alloc>
 VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<T,Alloc>& other)
 {
-	printf("VectorWrapper CAO");
+	//printf("VectorWrapper CAO");
 
 	if (this == &other)
 		return *this;
@@ -226,7 +226,7 @@ void VectorWrapper<T,Alloc>::pop_back()
 template <class T, class Alloc>
 typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::insert(iterator position, const T& x)
 {
-	std::cout << "insert" << std::endl;
+	//std::cout << "insert" << std::endl;
 	std::cout.flush();
 	unsigned insertionIndex = position - value.begin();
 

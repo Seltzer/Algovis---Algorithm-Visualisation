@@ -8,6 +8,8 @@
 #include "historyManager.h"
 #include "../viewableObjects/vo_singlePrintable.h"
 
+#include "../displayer/world.h"
+
 using namespace std;
 
 
@@ -20,7 +22,7 @@ namespace Algovis_Viewer
 
 //////////////// DS_CreateSP
 DS_CreateSP::DS_CreateSP(World* world, ID id, const void* dsAddress, const std::string& value)
-		: DS_CreateAction(world, true), id(id), dsAddress(dsAddress), value(value)
+		: DS_CreateAction(world, false), id(id), dsAddress(dsAddress), value(value)
 {
 }
 
@@ -36,33 +38,36 @@ Action* DS_CreateSP::Clone() const
 
 void DS_CreateSP::UpdateHistory(HistoryManager& historyManager)
 {
-	VO_SinglePrintableFactory* newSP = new VO_SinglePrintableFactory(id,dsAddress, world, value);
+	myFactory = new VO_SinglePrintableFactory(id,dsAddress, world, value);
 
 	historyManager.AddRecord(id);
 	// It is very much debatable what the history should be.
 	historyManager.ResetHistory(id);
 	historyManager.SetValue(id, value);
-	historyManager.SetFactory(id, newSP);
+	historyManager.SetFactory(id, myFactory);
 
 	DS_Action::UpdateHistory(historyManager);
+
+
 }
 
-/*void DS_CreateSP::Complete(bool displayed)
+void DS_CreateSP::Complete(bool displayed)
 {
-	Registry* registry = Registry::GetInstance();
+	if (createAndDisplayASAP)
+	{
+		ViewableObject* element = myFactory->Create();
 
-	// Verify that SP hasn't already been registered
-	UL_ASSERT(!registry->IsRegistered(id));
+		if (BeingCreatedOnSameLine())
+			world->AddViewableOnSameRow(element);
+		else
+			world->AddViewableOnNewRow(element);
+		
+		element->adjustSize();
+		element->setVisible(true);
+		Registry::GetInstance()->Register(id, element);
 
-	VO_SinglePrintable* newSP = new VO_SinglePrintable(id,dsAddress, world, value);
-	registry->Register(id, newSP);
-
-	world->adjustSize();
-
-
-	UL_ASSERT(registry->IsRegistered(id,SINGLE_PRINTABLE));
-
-}*/
+	}
+}
 
 
 ////////////////////// DS_Assigned implementation ////////////////////////////

@@ -68,10 +68,7 @@ namespace Algovis_Viewer
 							const std::string& value, QWidget* parent = NULL)
 			: ViewableObjectFactory(id, dsAddress, world, parent), value(value)
 		{}
-		virtual ViewableObject* Create()
-		{
-			return new VO_SinglePrintable(id, dsAddress, world, value, parent);
-		}
+		virtual ViewableObject* Create();
 	};
 
 }

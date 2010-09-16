@@ -1,8 +1,9 @@
+
+
 ***** BEFORE EXHIBITION *****
 
 * Remove SINGLE_PRINTABLE hackery (mostly removed at this stage)
 * Finish existing Wrappers and Viewables (VectorWrapper and matrix) 
-	- Research implicitly constructing ints from IntWrappers
 * Write MapWrapper, DequeWrapper and VO_Map
 * Improve the UI and fix dodgy stuff:
 	- Fix window resizing

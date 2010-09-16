@@ -70,38 +70,90 @@ vector<T> merge(vector<T> v1, vector<T> v2, unsigned level)
 	ss << "At level " << level << " of merge()";
 	SetCaption(ss.str());
 
-
+	// Base cases
 	if (v2.empty())
 		return vector<T>(v1);
 
 	if (v1.empty())
 		return vector<T>(v2);
 
-	::PlaceNextOnSameLineAsLast();
-	vector<T> oneElement;
-	::PlaceNextOnSameLineAsLast();
-	vector<T> returnVec;
 
+	// Recursive cases
 	if (v1[0] <= v2[0])
 	{
-		oneElement.push_back(v1[0]);
+		// Extract smallest element in the two vectors
+		::PlaceNextOnSameLineAsLast();
+		T singleElement = v1[0];
+		::EnsureThisIsDisplayed(&singleElement);
+
 		v1.erase(v1.begin());
+
+		// Create returnVec now
+		::PlaceNextOnSameLineAsLast();
+		vector<T> returnVec;
 
 		::PlaceNextTwoOnSameLine();
 		returnVec = merge(v1,v2, level + 1);
-		returnVec.insert(returnVec.begin(), oneElement[0]);
+		returnVec.insert(returnVec.begin(), singleElement);
 
 		return returnVec;
 	}
 	
 	if (v1[0] > v2[0])
 	{
-		oneElement.push_back(v2[0]);
+		// Extract smallest element in the two vectors
+		::PlaceNextOnSameLineAsLast();
+		T singleElement = v2[0];
+		::EnsureThisIsDisplayed(&singleElement);
+
 		v2.erase(v2.begin());
+
+		// Create returnVec now
+		::PlaceNextOnSameLineAsLast();
+		vector<T> returnVec;
 
 		::PlaceNextTwoOnSameLine();
 		returnVec = merge(v1,v2, level + 1);
-		returnVec.insert(returnVec.begin(), oneElement[0]);
+		returnVec.insert(returnVec.begin(), singleElement);
+
+		return returnVec;
+	}
+
+}
+
+template<class T>
+vector<T> economicalMerge(vector<T>& v1, vector<T>& v2)
+{
+	if (v2.empty())
+		return vector<T>(v1);
+
+	if (v1.empty())
+		return vector<T>(v2);
+
+	
+	
+
+	if (v1[0] <= v2[0])
+	{
+		::PlaceNextOnSameLineAsLast();
+		T element = v1[0];
+		v1.erase(v1.begin());
+
+		::PlaceNextTwoOnSameLine();
+		vector<T> returnVec = economicalMerge(v1,v2);
+		returnVec.insert(returnVec.begin(), element);
+
+		return returnVec;
+	}
+	
+	if (v1[0] > v2[0])
+	{
+		::PlaceNextOnSameLineAsLast();
+		T element = v2[0];
+		v2.erase(v2.begin());
+
+		vector<T> returnVec = economicalMerge(v1,v2);
+		returnVec.insert(returnVec.begin(), element);
 
 		return returnVec;
 	}
@@ -115,7 +167,8 @@ vector<T> mergeSort(vector<T>& forMotherRussia)
 	if (forMotherRussia.size() <= 1)
 		return forMotherRussia;
 
-	vector<T> a, b, aSorted, bSorted;
+	::PlaceNextTwoOnSameLine();
+	vector<T> a, b;
 
 	for (int i = 0; i < forMotherRussia.orlySize(); i++)
 	{
@@ -129,11 +182,11 @@ vector<T> mergeSort(vector<T>& forMotherRussia)
 		}
 	}
 
-	aSorted = mergeSort(a);
-	bSorted = mergeSort(b);
+	a = mergeSort(a);
+	b = mergeSort(b);
 	
 
-	return merge(a,b);
+	return economicalMerge(a,b);
 }
 
 

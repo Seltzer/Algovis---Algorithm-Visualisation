@@ -5,6 +5,7 @@
 #include "../../include/registry.h"
 #include "../viewableObjects/vo_singlePrintable.h"
 #include "../displayer/displayer.h"			// used for DS_SetCaption
+#include "../displayer/world.h"
 
 using namespace std;
 
@@ -168,18 +169,22 @@ Action* DS_Action::Clone() const
 
 ////////////////////// DS_CreateAction implementation ////////////////////////////
 DS_CreateAction::DS_CreateAction(World* world, bool animationSuppressed, bool createOnSameLine)
-	: DS_Action(world, animationSuppressed), createOnSameLine(createOnSameLine)
+	: DS_Action(world, animationSuppressed), myFactory(NULL),
+		createOnSameLine(createOnSameLine), createAndDisplayASAP(false)
 {
 }
 
 DS_CreateAction::DS_CreateAction(World*, std::set<ViewableObject*> subjects, bool animationSuppressed, 
 					bool createOnNewLine)
-	: DS_Action(world, subjects, animationSuppressed), createOnSameLine(createOnSameLine)
+	: DS_Action(world, subjects, animationSuppressed), myFactory(NULL),
+		createOnSameLine(createOnSameLine), createAndDisplayASAP(false)
 {
 }
 
 DS_CreateAction::DS_CreateAction(const DS_CreateAction& other)
-	: DS_Action(other), createOnSameLine(other.createOnSameLine)
+	: DS_Action(other), myFactory(other.myFactory),
+		createOnSameLine(other.createOnSameLine), createAndDisplayASAP(other.createAndDisplayASAP)
+
 {
 }
 
@@ -191,6 +196,11 @@ void DS_CreateAction::PlaceOnSameLine()
 bool DS_CreateAction::BeingCreatedOnSameLine()
 {
 	return createOnSameLine;
+}
+
+void DS_CreateAction::CreateAndDisplayASAP()
+{
+	createAndDisplayASAP = true;
 }
 
 
@@ -317,6 +327,49 @@ void DS_SetCaption::Complete(bool)
 }
 
 
+
+
+
+
+DS_EnsureDisplayed::DS_EnsureDisplayed(World* world, bool animationSuppressed, ID id)
+	: DS_CreateAction(world, animationSuppressed), id(id), voFactory(NULL)
+{
+}
+
+DS_EnsureDisplayed::DS_EnsureDisplayed(const DS_EnsureDisplayed& other)
+	: DS_CreateAction(other), id(other.id), voFactory(other.voFactory)
+{
+}
+
+Action* DS_EnsureDisplayed::Clone() const
+{
+	return new DS_EnsureDisplayed(*this);
+}
+
+void DS_EnsureDisplayed::UpdateHistory(HistoryManager& historyMgr)
+{
+	voFactory = historyMgr.GetFactory(id);
+}
+
+
+void DS_EnsureDisplayed::PrepareToPerform()
+{
+	UL_ASSERT(!Registry::GetInstance()->IsRegistered(id));
+}
+
+void DS_EnsureDisplayed::Complete(bool displayed)
+{
+	ViewableObject* vo = voFactory->Create();
+
+	if (BeingCreatedOnSameLine())
+		world->AddViewableOnSameRow(vo);
+	else
+		world->AddViewableOnNewRow(vo);
+	
+	vo->adjustSize();
+	vo->setVisible(true);
+	Registry::GetInstance()->Register(id, vo);
+}
 
 
 

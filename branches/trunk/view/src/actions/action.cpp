@@ -1,3 +1,8 @@
+// TODO hack
+#include "utilities.h"
+#include "dsPrintableActions.h"
+
+
 #include "boost/foreach.hpp"
 #include "action.h"
 
@@ -6,7 +11,7 @@
 
 namespace Algovis_Viewer
 {
-
+ 
 
 
 Action::Action(World* world, bool suppressAnimation)

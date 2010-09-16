@@ -38,6 +38,8 @@ namespace Algovis_Viewer
 
 	protected:
 		virtual void resizeEvent(QResizeEvent*);
+
+		// TODO change the name of this - it's obsolete
 		bool communicationWithViewEnabled;
 
 	signals:

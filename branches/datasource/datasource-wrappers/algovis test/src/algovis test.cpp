@@ -12,9 +12,11 @@
 
 REAL_INT wmain()
 {
+	EnableCommunicationWithView(true);
+
 	//MatrixDemo();
-	//MultipleVectorDemoWithDelete();
-	MergeSortDemo();
+	MultipleVectorDemoWithDelete();
+	//MergeSortDemo();
 	//DoRandomStuffWithAVectorDemo();
 	//InterfaceTestingDemo();
 	//TestDemo();

@@ -112,7 +112,7 @@ void DS_AddElementToArray::PrepareToPerform()
 	voArray = registry->GetRepresentation<VO_Array>(dsArray);
 
 	element = elementFactory->Create(); // Create a viewable for whatever element was added.
-
+	
 	// TODO: Do not assume array is shown (and therefore this is not suppressed)
 
 	// Set subjectStart to have abs position

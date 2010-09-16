@@ -66,6 +66,8 @@ void World::AddViewableOnSameRow(ViewableObject* viewable)
 		viewable->move(pos);
 	}
 	
+	// todo hack remove
+	viewable->EnableCommunicationWithView(true);
 	AddViewable(viewable);
 }
 
@@ -82,6 +84,8 @@ void World::AddViewableOnNewRow(ViewableObject* viewable)
 		viewable->move(50,y);
 	}
 	
+	// todo hack remove
+	viewable->EnableCommunicationWithView(true);
 	AddViewable(viewable);
 }
 
