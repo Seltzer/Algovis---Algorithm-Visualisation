@@ -43,18 +43,10 @@ ViewableObject::~ViewableObject()
 
 QPoint ViewableObject::GetPositionInWorld()
 {
-	if (IsTopLevel() || !parentWidget())
+	if (!hasParentViewable)
 		return pos();
-
-	return pos() + ((ViewableObject*) parentWidget())->GetPositionInWorld();
-}
-
-bool ViewableObject::IsTopLevel()
-{
-	if (parentWidget())
-		return parentWidget() == (QWidget*) world;
-
-	return false;
+	else
+		return pos() + parentViewable->GetPositionInWorld();
 }
 
 QColor ViewableObject::GetBoundingBoxColour()

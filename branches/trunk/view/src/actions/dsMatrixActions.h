@@ -4,12 +4,13 @@
 #include "dsActions.h"
 
 
-// Contains TODO
+// Contains DS_CreateMatrix class
 namespace Algovis_Viewer
 {
 	class VO_Matrix;
+	class ViewableObjectFactory;
 
-	
+
 	class DS_CreateMatrix : public DS_CreateAction
 	{
 	public:
@@ -18,6 +19,9 @@ namespace Algovis_Viewer
 		DS_CreateMatrix(const DS_CreateMatrix&);
 		virtual Action* Clone() const;
 
+		virtual void UpdateHistory(HistoryManager&); 
+		virtual void PrepareToPerform();
+
 		virtual void Complete(bool displayed);
 
 	private:
@@ -25,7 +29,15 @@ namespace Algovis_Viewer
 		const void* matrixAddress;
 		ViewableObjectType elementType;
 		unsigned rows, cols;
+
+		// Initialised during construction
 		std::vector<ID> elements;
+		
+		// Initialised during UpdateHistory
+		std::vector<ViewableObjectFactory*> elementFactories;
+
+		// Initialised during UpdateHistory
+		std::vector<ViewableObjectFactory*> elementPtrs;
 	};
 
 

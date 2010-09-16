@@ -68,7 +68,6 @@ VectorWrapper<T,Alloc>::VectorWrapper(const VectorWrapper& other)
 }
 
 	
-// TODO finish
 template <class T, class Alloc>
 VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<T,Alloc>& other)
 {
@@ -99,6 +98,7 @@ VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<
 		}
 		else if (info.result == CopyAssignmentInfo::ORPHAN_REBIRTH)
 		{
+			// TODO Finish ORPHAN_REBIRTH mode for VectorWrapper CAO
 			/*
 			// I was an orphan and have since been allocated a new id - inform Registry
 			if (communicationWithViewEnabled)

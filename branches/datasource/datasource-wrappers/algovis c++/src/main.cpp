@@ -41,7 +41,6 @@ void SetCaption(std::string& newCaption)
 void EnsureThisIsDisplayed(Algovis::Wrapper* wrapper)
 {
 	Algovis::ID id = Algovis::IdManager::GetInstance()->GetId(wrapper);
-	std::cout << "id = " << id << std::endl;
 	Algovis_Viewer::Registry::GetInstance()->DisplayThis(id);
 }
 

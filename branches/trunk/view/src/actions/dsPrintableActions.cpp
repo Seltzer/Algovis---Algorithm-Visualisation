@@ -235,13 +235,13 @@ void DS_Assigned::Complete(bool displayed)
 	}
 	else
 	{
-		subject->UpdateValueHack(newValue);
+		subject->UpdateValue(newValue);
 	}
 }
 
 void DS_Assigned::Uncomplete(bool displayed)
 {
-	subject->UpdateValueHack(oldValue);
+	subject->UpdateValue(oldValue);
 }
 
 

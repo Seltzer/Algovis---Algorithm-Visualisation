@@ -179,10 +179,10 @@ bool Registry::DeregisterObject(ID id)
 
 
 	// Create event
-	DS_Deleted* deleteAction = new DS_Deleted(world, id);
-	deleteAction->SuppressAnimation();	
+	//DS_Deleted* deleteAction = new DS_Deleted(world, id);
+	//deleteAction->SuppressAnimation();	
 
-	AddActionToBuffer(deleteAction);
+	//AddActionToBuffer(deleteAction);
 
 	return true;
 }
@@ -217,10 +217,22 @@ void Registry::AddElementsToArray(ID dsArray, const std::vector<ID>& elements, u
 	
 	// Later on, we could possibly make this a CompositeAction containing AddElementToArray actions
 	// which all are animated at the same time???
-	unsigned index = startIndex;
+	
+	DS_CompositeAction action(world);
+	
+	for (int i = 0; i < elements.size(); i++)
+	{
+		DS_AddElementToArray* subaction = new DS_AddElementToArray(world, dsArray, elements[i], startIndex + i);
+		action.AddAction(subaction);
+	}
 
-	BOOST_FOREACH(ID element, elements)
-		AddElementToArray(dsArray, element, index++);
+	AddActionToBuffer(&action);
+
+		
+	//unsigned index = startIndex;
+
+	//BOOST_FOREACH(ID element, elements)
+	//	AddElementToArray(dsArray, element, index++);
 }
 
 void Registry::RemoveElementsFromArray(ID dsArray, const vector<ID>& elements, 
@@ -307,17 +319,12 @@ void Registry::DisplayThis(ID id)
 	// Create action
 	DS_EnsureDisplayed action(world, false, id);
 
-		
-	// Pretty sure this doesn't need to be set - TODO
-	action.CreateAndDisplayASAP();
-
 	if (!createViewablesOnSameLine.empty())
 	{
 		if (createViewablesOnSameLine.front())
 			action.PlaceOnSameLine();
 		createViewablesOnSameLine.pop_front();
 	}
-
 
 
 	AddActionToBuffer(&action);

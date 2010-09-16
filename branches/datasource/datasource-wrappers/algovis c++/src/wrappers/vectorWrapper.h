@@ -9,11 +9,6 @@
 
 
 
-/* TODO - Finish implementing vector ops
- *		- Replace all size_type args with LongWrappers
- *
- * TODO finish integrating with viewer
- */
 namespace Algovis
 {
 

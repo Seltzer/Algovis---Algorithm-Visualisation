@@ -224,6 +224,22 @@ Action* DS_Deleted::Clone() const
 void DS_Deleted::Complete(bool displayed)
 {
 	Registry* registry = Registry::GetInstance();
+	
+	if (registry->IsRegistered(dsSubject))
+	{		
+		ViewableObject* vo = registry->GetRepresentation(dsSubject);
+		vo->setVisible(false);
+		registry->Deregister(dsSubject);
+		//delete vo;
+		//registry->Deregister(dsSubject);
+		//world->RemoveViewable(vo);
+		//vo->setVisible(false);
+
+	}
+	
+	
+	
+	
 }
 
 
@@ -249,6 +265,13 @@ DS_CompositeAction::~DS_CompositeAction()
 Action* DS_CompositeAction::Clone() const
 {
 	return new DS_CompositeAction(*this);
+}
+
+
+void DS_CompositeAction::UpdateHistory(HistoryManager& historyMgr)
+{
+	for (unsigned i = 0; i < subActions.size(); i++)
+		subActions[i]->UpdateHistory(historyMgr);
 }
 
 void DS_CompositeAction::PrepareToPerform()

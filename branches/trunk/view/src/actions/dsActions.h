@@ -128,6 +128,7 @@ namespace Algovis_Viewer
 		~DS_CompositeAction();
 		virtual Action* Clone() const;
 
+		virtual void UpdateHistory(HistoryManager&);
 		virtual void PrepareToPerform();
 		virtual void PrepareToUnperform();
 		virtual void Perform(float progress, QPainter* painter);

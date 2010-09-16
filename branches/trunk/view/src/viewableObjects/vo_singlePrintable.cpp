@@ -1,19 +1,12 @@
-// todo hack
-#include <iostream>
-
-
-#include "vo_singlePrintable.h"
-#include "../displayer/displayer.h"
-
 #include <QPainter>
 #include <QString>
 #include "qt/qpainter.h"
 #include "qt/qfont.h"
+#include "vo_singlePrintable.h"
+#include "viewableObjectContainer.h"
 
-#include "../include/registry.h"
 
-// part of hack
-#include "vo_array.h"
+
 
 namespace Algovis_Viewer
 {
@@ -46,7 +39,7 @@ QSize VO_SinglePrintable::sizeHint() const
 
 void VO_SinglePrintable::paintEvent(QPaintEvent*)
 {
-	if (!communicationWithViewEnabled)
+	if (!responsibleForDrawingSelf)
 		return;
 	
 	QPainter painter(this);
@@ -80,8 +73,9 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue, int time)
 		
 	if (sizeDictatedByParent)
 	{
-		VO_Array* parent = (VO_Array*) parentWidget();
-		parent->adjustSize();
+		//VO_Array* parent = (VO_Array*) parentWidget();
+		//parent->adjustSize();
+		parentViewable->adjustSize();
 	}
 	else
 	{
@@ -90,14 +84,15 @@ void VO_SinglePrintable::UpdateValue(const std::string& newValue, int time)
 
 }
 
-void VO_SinglePrintable::UpdateValueHack(const std::string& newValue)
+void VO_SinglePrintable::UpdateValue(const std::string& newValue)
 { 
 	value = newValue;
 		
 	if (sizeDictatedByParent)
 	{
-		VO_Array* parent = (VO_Array*) parentWidget();
-		parent->adjustSize();
+		//VO_Array* parent = (VO_Array*) parentWidget();
+		//parent->adjustSize();
+		parentViewable->adjustSize();
 	}
 	else
 	{
@@ -106,6 +101,10 @@ void VO_SinglePrintable::UpdateValueHack(const std::string& newValue)
 
 }
 
+int VO_SinglePrintable::ModifiedTime() 
+{ 
+	return modifiedTime; 
+}
 
 
 
@@ -116,27 +115,6 @@ ViewableObject* VO_SinglePrintableFactory::Create()
 	//Registry::GetInstance()->Register(id, newSP);
 	return newSP;
 }
-
-
-
-
-
-
-
-/*void VO_SinglePrintable::ResetHistory(ValueID drawnValue)
-{
-	history.clear();
-	history.insert(drawnValue);
-}*/
-
-/*void VO_SinglePrintable::Assigned(std::set<ValueID> history, const std::string& newValue)
-{
-	// This printable now has the same history as the one it was assigned from
-	// This is true because history only includes items that have been displayed
-	//this->history = history;
-
-	UpdateValue(newValue);
-}*/
 
 
 

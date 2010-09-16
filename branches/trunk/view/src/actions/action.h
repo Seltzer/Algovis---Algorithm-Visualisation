@@ -30,9 +30,6 @@ namespace Algovis_Viewer
 		void SuppressAnimation();
 		bool AnimationSuppressed();
 
-		// TODO hack
-		void UnsuppressAnimation() { suppressAnimation = false; }
-
 		virtual void UpdateHistory(HistoryManager& historyManager) = 0;
 
 		// For preparation, such as acquiring drawing responsibility over Viewables etc.

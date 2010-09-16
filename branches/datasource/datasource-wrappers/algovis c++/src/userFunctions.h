@@ -3,22 +3,22 @@
 
 #include <string>
 
-namespace Algovis
-{
-	class Wrapper;
-}
+namespace Algovis { class Wrapper; }
 
 
 extern bool communicationWithViewEnabled;
 extern bool highlightOperandsEnabled;
 
-// Internal to DS
+
+// Modes
 void EnableCommunicationWithView(bool enabled);
 void EnableOperandsHighlighting(bool enabled);
 
-// Result in Registry invocations
+// Layout Management
 void PlaceNextOnSameLineAsLast();
 void PlaceNextTwoOnSameLine();
+
+// Enforcing display
 void EnsureNextIsDisplayed();
 void EnsureThisIsDisplayed(Algovis::Wrapper*);
 
@@ -26,6 +26,8 @@ void EnsureThisIsDisplayed(Algovis::Wrapper*);
 void SetCaption(std::string&);
 void FlushAllActions();
 void Shutdown();
+
+
 void TestMethod();
 
 

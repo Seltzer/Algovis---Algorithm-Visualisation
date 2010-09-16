@@ -4,6 +4,7 @@
 #include <vector>
 #include <QTimer>
 #include <qevent.h>
+#include "boost/thread/mutex.hpp"
 #include "components.h"
 
 
@@ -35,11 +36,15 @@ namespace Algovis_Viewer
 		unsigned refreshRate;
 
 		std::vector<ViewableObject*> viewables;
+		
+		// hack TODO
+		boost::mutex worldMutex;
 
 		void AddViewable(ViewableObject*);
 		
 	private slots:
 		void topLevelViewableResized(QResizeEvent*);
+		void topLevelViewableMoved(QMoveEvent*);
 		
 	};
 

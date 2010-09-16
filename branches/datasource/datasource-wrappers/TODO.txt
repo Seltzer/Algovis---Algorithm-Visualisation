@@ -2,7 +2,6 @@
 
 ***** BEFORE EXHIBITION *****
 
-* Remove SINGLE_PRINTABLE hackery (mostly removed at this stage)
 * Finish existing Wrappers and Viewables (VectorWrapper and matrix) 
 * Write MapWrapper, DequeWrapper and VO_Map
 * Improve the UI and fix dodgy stuff:
@@ -10,12 +9,13 @@
 	- Add snap to current viewable feature
 	- Make buttons
 * Improve animations
-* Support custom types by displaying a generic 'user-defined type pic'
 * Write more Algovis demos
 
 
 ***** BEFORE COMPENDIUM DEADLINE *****
 
+* Remove SINGLE_PRINTABLE hackery (mostly removed at this stage)
+* Support custom types by displaying a generic 'user-defined type pic'
 * Write StringWrapper
 * Improve layout manager so that Viewable translations can trigger layout recalculation, not just 
 			Viewable resizes

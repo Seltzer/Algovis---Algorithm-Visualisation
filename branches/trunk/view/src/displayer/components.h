@@ -4,6 +4,7 @@
 #include "qt/qwidget.h"
 #include <QFrame>
 #include <QResizeEvent>
+#include <QMoveEvent>
 #include <QCloseEvent>
 
 
@@ -34,16 +35,17 @@ namespace Algovis_Viewer
 
 
 		// So that an ActionAgent can take over drawing responsibilities for a Component during an animation
-		void EnableCommunicationWithView(bool);
+		void ResponsibleForDrawingSelf(bool);
 
 	protected:
 		virtual void resizeEvent(QResizeEvent*);
+		virtual void moveEvent(QMoveEvent*);
 
-		// TODO change the name of this - it's obsolete
-		bool communicationWithViewEnabled;
+		bool responsibleForDrawingSelf;
 
 	signals:
 		void resized(QResizeEvent*);
+		void moved(QMoveEvent*);
 
 	};
 

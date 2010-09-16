@@ -66,8 +66,11 @@ void DS_CreateArray::Complete(bool displayed)
 		world->AddViewableOnNewRow(newArray);
 
 	
+	
 	newArray->adjustSize();
 	newArray->setVisible(true);
+
+	world->adjustSize();
 	Registry::GetInstance()->Register(arrayId, newArray);
 }
 
@@ -117,7 +120,16 @@ void DS_AddElementToArray::PrepareToPerform()
 
 	// Set subjectStart to have abs position
 	QRect arrayGeom = QRect(voArray->GetPositionInWorld(), voArray->size());
+	
 	subjectDimensions = QRect(arrayGeom.topRight(), element->size());
+
+	/*
+	QPoint subjectPosition = arrayGeom.topRight();
+	std::cout << "subjectPosition = " << subjectPosition.x() << ", " << subjectPosition.y() << std::endl;
+	std::cout << "\t" << "position = " << position << " * " << element->size().width() << std::endl;
+	subjectPosition.setX(subjectPosition.x() + position * element->size().width());
+	subjectDimensions = QRect(subjectPosition, element->size());*/
+	
 
 	// Set up data for all the sources
 	sources = HistoryToSources(history, element);

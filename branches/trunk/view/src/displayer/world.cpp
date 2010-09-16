@@ -55,6 +55,8 @@ QSize World::sizeHint() const
 
 void World::AddViewableOnSameRow(ViewableObject* viewable)
 {
+	//boost::unique_lock<boost::mutex> lock(worldMutex);
+
 	if (viewables.empty())
 	{
 		viewable->move(50,50);
@@ -66,14 +68,14 @@ void World::AddViewableOnSameRow(ViewableObject* viewable)
 		viewable->move(pos);
 	}
 	
-	// todo hack remove
-	viewable->EnableCommunicationWithView(true);
 	AddViewable(viewable);
 }
 
 
 void World::AddViewableOnNewRow(ViewableObject* viewable)
 {
+	//boost::unique_lock<boost::mutex> lock(worldMutex);
+
 	if (viewables.empty())
 	{
 		viewable->move(50,50);
@@ -84,8 +86,6 @@ void World::AddViewableOnNewRow(ViewableObject* viewable)
 		viewable->move(50,y);
 	}
 	
-	// todo hack remove
-	viewable->EnableCommunicationWithView(true);
 	AddViewable(viewable);
 }
 
@@ -95,19 +95,31 @@ void World::AddViewable(ViewableObject* viewable)
 	viewables.push_back(viewable);
 	connect(viewable, SIGNAL(resized(QResizeEvent*)),	
 						SLOT(topLevelViewableResized(QResizeEvent*)), Qt::DirectConnection);
+
+	connect(viewable, SIGNAL(moved(QMoveEvent*)),
+						SLOT(topLevelViewableMoved(QMoveEvent*)), Qt::DirectConnection);
 }
 
 void World::RemoveViewable(ViewableObject* viewable)
 {
+	//boost::unique_lock<boost::mutex> lock(worldMutex);
+
 	vector<ViewableObject*>::iterator result = std::find(viewables.begin(), viewables.end(), viewable);
-	UL_ASSERT(result != viewables.end());
 	
-	viewables.erase(result);
+	if (result != viewables.end())
+	{
+		viewables.erase(result);
+		//adjustSize();
+	}
+
+	
 }
 
 
 void World::topLevelViewableResized(QResizeEvent* evt)
 {
+	//boost::unique_lock<boost::mutex> lock(worldMutex);
+
 	ViewableObject* viewable = (ViewableObject*) sender();
 	QSize sizeAdjustment = evt->size() - evt->oldSize();
 
@@ -149,9 +161,14 @@ void World::topLevelViewableResized(QResizeEvent* evt)
 		}
 	}
 
+	adjustSize();
+
 }
 
-
+void World::topLevelViewableMoved(QMoveEvent*)
+{
+	adjustSize();
+}
 
 
 

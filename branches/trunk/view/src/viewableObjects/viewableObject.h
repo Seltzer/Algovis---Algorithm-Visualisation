@@ -47,10 +47,6 @@ namespace Algovis_Viewer
 
 		virtual void DrawBoundingBox(const QRect&, QPainter*) {}
 
-		// NB: Returns false if VO hasn't been added to the World
-		// TODO obsolete
-		bool IsTopLevel();
-
 		bool HasParentViewable() const;
 		void SetParentViewable(ViewableObjectContainer*);
 

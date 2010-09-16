@@ -15,9 +15,9 @@ REAL_INT wmain()
 	EnableCommunicationWithView(true);
 
 	//MatrixDemo();
-	MultipleVectorDemoWithDelete();
+	//MultipleVectorDemoWithDelete();
 	//MergeSortDemo();
-	//DoRandomStuffWithAVectorDemo();
+	DoRandomStuffWithAVectorDemo();
 	//InterfaceTestingDemo();
 	//TestDemo();
 	//ScreenDemo();

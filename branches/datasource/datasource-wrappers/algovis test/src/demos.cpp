@@ -137,7 +137,7 @@ void MultipleVectorDemoWithDelete()
 void MergeSortDemo()
 {
 	EnableCommunicationWithView(true);
-	EnableOperandsHighlighting(false);
+	EnableOperandsHighlighting(true);
 
 	SetCaption(string("MergeSortDemo"));
 
@@ -238,7 +238,8 @@ void DoRandomStuffWithAVectorDemo()
 		vector<int> c1, c2;
 		int i;
 		
-		PopulateVectorWithRandomInts(c1, 5, 0, 9);
+		//PopulateVectorWithRandomInts(c1, 5, 0, 9);
+		PopulateVectorWithRandomInts(c1, 20, 0, 9);
 		
 		c2 = c1;
 

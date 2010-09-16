@@ -31,10 +31,21 @@ Action* DS_CreateMatrix::Clone() const
 	return new DS_CreateMatrix(*this);
 }
 
+void DS_CreateMatrix::UpdateHistory(HistoryManager& mgr)
+{
+	BOOST_FOREACH(ID element, elements)
+		elementFactories.push_back(mgr.GetFactory(element));
+}
+
+void DS_CreateMatrix::PrepareToPerform()
+{
+	/*
+	BOOST_FOREACH(ViewableObjectFactory* factory, elementFactories)
+		elementPtrs.*/
+}
+
 void DS_CreateMatrix::Complete(bool displayed)
 {
-	WHERES_WALLY
-
 	Registry* registry = Registry::GetInstance();
 
 	// Verify that matrix hasn't already been registered
