@@ -20,17 +20,17 @@ namespace Algovis
 		DoubleWrapper(double value) 
 			: PrimitiveWrapper(value) {}
 
-		DoubleWrapper(IntWrapper intValue)
-			: PrimitiveWrapper(intValue.AVGetValue()) {}
-
-		DoubleWrapper(FloatWrapper floatValue)
-			: PrimitiveWrapper(floatValue.AVGetValue()) {}
+		template<class T, class U>
+		explicit DoubleWrapper(PrimitiveWrapper<T,U> value)
+			: PrimitiveWrapper((int) value.AVGetValue()) {}
 
 		DoubleWrapper& operator=(const DoubleWrapper& other)
 		{
 			PrimitiveWrapper<DoubleWrapper,double>::operator=(other);
 			return *this;
 		}
+
+		operator double() { return primitive; }
 				
 		void __IAmAPrimitiveWrapper();
 	};

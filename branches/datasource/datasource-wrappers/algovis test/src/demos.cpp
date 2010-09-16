@@ -326,11 +326,10 @@ void ScreenDemo()
 	int count = 10;
 	vector<float> sum;
 	for (int i = 0; i < count; i++)
-		sum.push_back((float)(util::generateRandomNumber(0, 100)) / 10.0f);
+		sum.push_back((rand() % 100) / 10.0f);
 
 	vector<float> sum2;
 	sum2.resize(count-1);
-
 	for (int i = 0; i < count-1; i++)
 		sum2[i] = (sum[i] + sum[i+1]) / 2;
 
@@ -343,7 +342,8 @@ void ScreenDemo()
 
 	vector<int> sortCollection;
 	PopulateVectorWithRandomInts(sortCollection, 9, 0, 9);
-	Vector_BubbleSortAscending(sortCollection);
+	//Vector_BubbleSortAscending(sortCollection);
+	std::sort(sortCollection.begin(), sortCollection.end());
 
 	getchar();
 }
