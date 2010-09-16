@@ -464,6 +464,9 @@ void DS_HighlightOperands::Perform(float progress, QPainter* painter)
 	painter->setFont(operandPtrs[0]->font());
 	painter->setPen(QColor(255,0,255));
 	painter->drawText(QPoint(x,y), op);
+
+	//painter->drawLine(vo1, QPoint(x,y));
+	//painter->drawLine(vo2, QPoint(x,y));
 	painter->setFont(oldFont);
 }
 
