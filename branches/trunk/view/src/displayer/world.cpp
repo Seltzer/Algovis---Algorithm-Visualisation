@@ -55,8 +55,6 @@ QSize World::sizeHint() const
 
 void World::AddViewableOnSameRow(ViewableObject* viewable)
 {
-	//boost::unique_lock<boost::mutex> lock(worldMutex);
-
 	if (viewables.empty())
 	{
 		viewable->move(50,50);
@@ -74,8 +72,6 @@ void World::AddViewableOnSameRow(ViewableObject* viewable)
 
 void World::AddViewableOnNewRow(ViewableObject* viewable)
 {
-	//boost::unique_lock<boost::mutex> lock(worldMutex);
-
 	if (viewables.empty())
 	{
 		viewable->move(50,50);
@@ -102,24 +98,18 @@ void World::AddViewable(ViewableObject* viewable)
 
 void World::RemoveViewable(ViewableObject* viewable)
 {
-	//boost::unique_lock<boost::mutex> lock(worldMutex);
-
 	vector<ViewableObject*>::iterator result = std::find(viewables.begin(), viewables.end(), viewable);
 	
 	if (result != viewables.end())
 	{
 		viewables.erase(result);
-		//adjustSize();
+		adjustSize();
 	}
-
-	
 }
 
 
 void World::topLevelViewableResized(QResizeEvent* evt)
 {
-	//boost::unique_lock<boost::mutex> lock(worldMutex);
-
 	ViewableObject* viewable = (ViewableObject*) sender();
 	QSize sizeAdjustment = evt->size() - evt->oldSize();
 

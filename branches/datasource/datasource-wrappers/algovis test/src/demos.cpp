@@ -30,10 +30,6 @@ void OriginalDemo()
 	// Sorting
 	prt("Sorting:")
 	Vector_BubbleSortAscending(collectionToModify);
-
-
-	prt("Press any key to leave OriginalDemo");
-	getchar();
 }
 
 
@@ -46,17 +42,10 @@ void MatrixDemo()
 	Algovis::AlgoMatrix<int,3,3> matrix(initValue);
 	//Algovis::AlgoMatrix<int,3,3> matrix();
 	
-	FlushAllActions();		
-
-
-	prt("Press any key to leave MatrixDemo");
-	getchar();
 }
 
 void MultipleVectorDemoWithDelete()
 {
-	EnableCommunicationWithView(true);
-
 	{
 		SetCaption(string("MultipleVectorDemoWithDelete"));
 		//EnableOperandsHighlighting(false);
@@ -136,9 +125,7 @@ void MultipleVectorDemoWithDelete()
 
 void MergeSortDemo()
 {
-	EnableCommunicationWithView(true);
 	EnableOperandsHighlighting(true);
-
 	SetCaption(string("MergeSortDemo"));
 
 
@@ -161,7 +148,9 @@ void MergeSortDemo()
 	
 	::PlaceNextTwoOnSameLine();
 	result = merge(c1,c2, 0);
-	
+
+
+
 		/*
 	vector<int> c1;
 	c1.push_back(1);
@@ -175,23 +164,12 @@ void MergeSortDemo()
 	c1.push_back(4);
 	
 	vector<int> result = mergeSort(c1);*/
-	
-
-	
-
-	FlushAllActions();
-	prt("Press any key to leave MergeSortDemo");
-	getchar();
-
-
 }
 
 
 // Tests unconversions.h
 void UnconversionsDemo()
 {
-	EnableCommunicationWithView(true);
-
 	// Populate
 	vector<int> collectionToModify;
 	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
@@ -225,15 +203,10 @@ void UnconversionsDemo()
 	}
 
 	#include "conversions.h"
-
-
-	prt("Press any key to leave UnconversionDemo");
-	getchar();
 }
 
 void DoRandomStuffWithAVectorDemo()
 {
-	EnableCommunicationWithView(true);
 	{
 		vector<int> c1, c2;
 		int i;
@@ -262,41 +235,25 @@ void DoRandomStuffWithAVectorDemo()
 
 		FlushAllActions();
 
-
 		prt("Press any key to delete all viewables");
 		getchar();
 	}
-
-	prt("Press any key to leave DoRandomStuffWithAVectorDemo");
-	getchar();
-
-
 }
 
 
 void InterfaceTestingDemo()
 {
-	EnableCommunicationWithView(true);
-
 	// Populate
 	
 	vector<int> c1;
 	vector< vector<int> > c2;
 	//c1.reserve(200);
-	
-	prt("Press any key to leave InterfaceTestingDemo");
-	getchar();
-
-
-
 }
 
 
 
 void TestDemo()
 {
-	EnableCommunicationWithView(true);
-
 	// Populate
 	vector<int> c1;
 	//c1.reserve(200);
@@ -307,23 +264,11 @@ void TestDemo()
 
 	c1.insert(c1.begin(), 10, 13);
 
-
-	prt("press a key");
-	getchar();
-
 	vector<int> c2 = c1;
-
-
-
-
-	prt("Press any key to leave TestDemo");
-	getchar();
 }
 
 void ScreenDemo()
 {
-	EnableCommunicationWithView(true);
-
 	int count = 10;
 	vector<float> sum;
 	for (int i = 0; i < count; i++)
@@ -344,6 +289,33 @@ void ScreenDemo()
 	PopulateVectorWithRandomInts(sortCollection, 9, 0, 9);
 	Vector_BubbleSortAscending(sortCollection);
 	//std::sort(sortCollection.begin(), sortCollection.end());
+}
 
-	getchar();
+
+void NewDemo()
+{
+	{
+		vector<int> arr;
+		arr.push_back(5);
+		arr.push_back(6);
+
+		int i = 6;
+		arr.insert(arr.begin(), i, 3);
+
+		arr.erase(arr.begin(), arr.begin() + 2);
+
+		::FlushAllActions();
+		prt("Deleting - press any key");
+		getchar();
+	}		
+
+	prt("Deleted");
+
+//	int temp = arr[1];
+//	::EnsureThisIsDisplayed(&temp);
+	
+	
+//	arr[1] = arr[0];
+//	arr[0] = temp;
+
 }

@@ -1,6 +1,11 @@
+cumulative adding
+matrix
+fix mass moves
+highlight operands non-sibling
 
+fix play button
+fix backtracking
 
-***** BEFORE EXHIBITION *****
 
 * Finish existing Wrappers and Viewables (VectorWrapper and matrix) 
 * Write MapWrapper, DequeWrapper and VO_Map
@@ -10,10 +15,6 @@
 	- Make buttons
 * Improve animations
 * Write more Algovis demos
-
-
-***** BEFORE COMPENDIUM DEADLINE *****
-
 * Remove SINGLE_PRINTABLE hackery (mostly removed at this stage)
 * Support custom types by displaying a generic 'user-defined type pic'
 * Write StringWrapper

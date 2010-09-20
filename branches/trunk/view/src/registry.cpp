@@ -179,10 +179,8 @@ bool Registry::DeregisterObject(ID id)
 
 
 	// Create event
-	//DS_Deleted* deleteAction = new DS_Deleted(world, id);
-	//deleteAction->SuppressAnimation();	
-
-	//AddActionToBuffer(deleteAction);
+	DS_Deleted* deleteAction = new DS_Deleted(world, id);
+	AddActionToBuffer(deleteAction);
 
 	return true;
 }

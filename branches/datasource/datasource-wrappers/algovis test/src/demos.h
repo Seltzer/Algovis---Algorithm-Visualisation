@@ -29,6 +29,7 @@ void TestDemo();
 
 void ScreenDemo();
 
+void NewDemo();
 
 
 

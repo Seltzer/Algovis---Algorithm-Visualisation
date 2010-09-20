@@ -9,21 +9,36 @@
 #include "demos.h"
 
 
+using namespace std;
+
 
 REAL_INT wmain()
 {
 	EnableCommunicationWithView(true);
 
-	//OriginalDemo();
-	//MatrixDemo();
+	/*
+	vector<int> a;
+	a.push_back(3);
+
+	vector<vector<int> > hallogallo;
+	hallogallo.push_back(a);*/
+
+	MergeSortDemo();
 	//MultipleVectorDemoWithDelete();
-	//MergeSortDemo();
 	//DoRandomStuffWithAVectorDemo();
+//	NewDemo();
+
+
+	//MatrixDemo();
 	//InterfaceTestingDemo();
 	//TestDemo();
-	ScreenDemo();
 	
 	//Shutdown();
+
+	FlushAllActions();		
+	prt("Press any key to close");
+	getchar();
+
 
 	return 0;
 }

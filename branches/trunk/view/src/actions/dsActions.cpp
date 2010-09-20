@@ -204,7 +204,7 @@ void DS_CreateAction::CreateAndDisplayASAP()
 
 
 ////////////////////// DS_Deleted implementation ////////////////////////////
-DS_Deleted::DS_Deleted(World*, ID dsSubject)
+DS_Deleted::DS_Deleted(World* world, ID dsSubject)
 	: DS_Action(world), dsSubject(dsSubject)
 {
 }
@@ -229,16 +229,12 @@ void DS_Deleted::Complete(bool displayed)
 		ViewableObject* vo = registry->GetRepresentation(dsSubject);
 		vo->setVisible(false);
 		registry->Deregister(dsSubject);
-		//delete vo;
-		//registry->Deregister(dsSubject);
-		//world->RemoveViewable(vo);
-		//vo->setVisible(false);
 
+		if (!vo->HasParentViewable())
+			world->RemoveViewable(vo);
+
+		vo->deleteLater();
 	}
-	
-	
-	
-	
 }
 
 

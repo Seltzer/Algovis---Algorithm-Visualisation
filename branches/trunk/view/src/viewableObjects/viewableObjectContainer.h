@@ -29,6 +29,8 @@ namespace Algovis_Viewer
 
 		ViewableObjectContainer(ID, const void* dsAddress, World*);
 		ViewableObjectContainer(ID, const void* dsAddress, World*, QWidget* parent);
+		~ViewableObjectContainer();
+		
 		virtual bool IsVOContainer() { return true; }
 
 		// For now, return by value
