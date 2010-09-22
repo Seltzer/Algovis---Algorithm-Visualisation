@@ -97,6 +97,10 @@ void ActionAgent::paintEvent(QPaintEvent*)
 	if (!actionPending)
 		return;
 
+	// If currentAction is invalid, we have nothing to do - TODO verify 
+	if (currentAction == INVALID)
+		return;
+
 	// Prepare action for performing/unperforming
 	if (!actionPrepared)
 		PrepareCurrentAction();
@@ -120,7 +124,7 @@ void ActionAgent::paintEvent(QPaintEvent*)
 		// Paint current frame of animation
 		QPainter painter(this);
 
-		if (mode & AgentMode::BACKTRACKING == AgentMode::BACKTRACKING)
+		if ((mode & AgentMode::BACKTRACKING) == AgentMode::BACKTRACKING)
 			actionHistory[currentAction]->Unperform(actionHistory[currentAction]->GetProgress(), &painter);
 		else
 			actionHistory[currentAction]->Perform(actionHistory[currentAction]->GetProgress(), &painter);
@@ -155,7 +159,7 @@ void ActionAgent::FinishCurrentAction()
 	{
 		#if(DEBUG_ACTION_LEVEL >=1)
 			prt("\tAbout to complete action in ON_DEMAND mode");		
-			actionHistory.back()->Complete(true);
+			actionHistory[currentAction]->Complete(!actionHistory[currentAction]->AnimationSuppressed());
 			prt("\tCompleted action");		
 		#else			
 			actionHistory[currentAction]->Complete(!actionHistory[currentAction]->AnimationSuppressed());
@@ -171,7 +175,7 @@ void ActionAgent::FinishCurrentAction()
 	{
 		#if(DEBUG_ACTION_LEVEL >= 1)
 			cout << "\tAbout to uncomplete Action #" << currentAction << " in BACKTRACKING mode" << endl;
-			actionHistory.back()->Uncomplete(true);
+			actionHistory[currentAction]->Uncomplete(!actionHistory[currentAction]->AnimationSuppressed());
 			prt("\tUncompleted action");		
 		#else			
 			actionHistory[currentAction]->Uncomplete(!actionHistory[currentAction]->AnimationSuppressed());
@@ -199,7 +203,7 @@ void ActionAgent::FinishCurrentAction()
 	{
 		#if(DEBUG_ACTION_LEVEL >=1)
 			cout << "\tAbout to complete Action #" << currentAction << " in FORWARDTRACKING mode" << endl;
-			actionHistory.back()->Complete(true);
+			actionHistory[currentAction]->Complete(!actionHistory[currentAction]->AnimationSuppressed());
 			prt("\tCompleted action");		
 		#else			
 			actionHistory[currentAction]->Complete(!actionHistory[currentAction]->AnimationSuppressed());

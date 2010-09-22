@@ -37,6 +37,7 @@ namespace Algovis_Viewer
 	// For updating sourceData
 	// This is a bit of a hacky method so DON'T use it unless you know exactly how it works
 	// Currently used for updating source data which was calculated earlier on while backtracking
+	// Updates dimensions (if they were originally set) and pointer
 	std::vector<SourceData> UpdateSources(std::vector<SourceData>& sourceData);
 
 

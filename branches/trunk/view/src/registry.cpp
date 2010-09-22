@@ -71,14 +71,15 @@ void Registry::AddActionToBuffer(DS_Action* dsAction)
 	if (displayerShuttingDown)
 		return;
 
-	#if (DEBUG_ACTION_LEVEL >= 1)
+	// TODO update debugging.h
+	#if (DEBUG_ACTION_LEVEL >= 2)
 		prt("\tStarting Registry::AddActionToBuffer()");
 	#endif
 	
 	UL_ASSERT(dsAction);
 	actionBuffer.PushBack(dsAction);
 
-	#if (DEBUG_ACTION_LEVEL >= 1)
+	#if (DEBUG_ACTION_LEVEL >= 2)
 		prt("\tFinishing Registry::AddActionToBuffer()");
 	#endif
 }
@@ -187,6 +188,8 @@ bool Registry::DeregisterObject(ID id, bool suppressAnimation)
 		// But suppressing it will ensure that it's never performed. Oh noes!
 		deleteAction->SuppressAnimation();
 	}
+
+	deleteAction->SuppressAnimation();
 
 	AddActionToBuffer(deleteAction);
 	

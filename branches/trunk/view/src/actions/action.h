@@ -19,7 +19,8 @@ namespace Algovis_Viewer
 	 */
 	class Action
 	{
-		
+		enum ActionState { READY, PREPARED, COMPLETED, UNPREPARED };
+
 	public:
 		Action(World*, bool suppressAnimation = false);
 		Action(const Action&);
@@ -35,7 +36,7 @@ namespace Algovis_Viewer
 		// For preparation, such as acquiring drawing responsibility over Viewables etc.
 		// WARNING - don't make any non-GUI-thread-sensitive invocations on Viewables since
 		// this is generally called on the main thread
-		virtual void PrepareToPerform() {}
+		virtual void PrepareToPerform();
 		virtual void PrepareToUnperform() {}
 
 		// Move the animation (if any) forward to the specified point (0->1 scale)
@@ -44,7 +45,7 @@ namespace Algovis_Viewer
 
 		// Perform the side effect (don't just animate) and clean up anything done in PrepareToPerform()
 		virtual void Complete(bool displayed);
-		virtual void Uncomplete(bool displayed) {}
+		virtual void Uncomplete(bool displayed){}
 
 		// virtual bool Undo() = 0;
 
@@ -55,15 +56,19 @@ namespace Algovis_Viewer
 
 		int GetCompleteTime() { return completeTime; }
 
+		ActionState state;
+
 	protected:
 		World* world;
 
 		bool suppressAnimation;
+		bool preparedAtLeastOnce;
 		bool completedAtLeastOnce;
 
 		// 0.2 progress means 20% performed or 20% unperformed
 		float progress;
 
+		// TODO what's this and why isn't it being initialised in ctor?
 		int completeTime;
 
 	};

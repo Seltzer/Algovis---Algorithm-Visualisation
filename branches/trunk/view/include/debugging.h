@@ -30,9 +30,10 @@ namespace Algovis_Viewer
 	#define DEBUG_REGISTRATION_LEVEL 0
 
 	/* 0 = Off
-	 * 1 = Basic action debugging
+	 * 1 = Debugging of actions only in ActionAgent
+	 * 2 = Verbose debugging of all actions which pass through ActionBuffer
 	 */
-	#define DEBUG_ACTION_LEVEL 0
+	#define DEBUG_ACTION_LEVEL 1
 
 	// For changes made to specific VOs (excluding reg/dereg which is covered by DEBUG_REGISTRATION_LEVEL)
 	//#define DEBUG_SP_CHANGES

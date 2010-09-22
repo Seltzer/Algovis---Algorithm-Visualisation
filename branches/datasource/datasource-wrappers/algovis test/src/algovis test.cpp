@@ -30,7 +30,7 @@ REAL_INT wmain()
 
 	//DequeDemo();
 	//MergeSortDemo();
-	//MultipleVectorDemoWithDelete();
+	MultipleVectorDemoWithDelete();
 	//DoRandomStuffWithAVectorDemo();
 	//NewDemo();
 

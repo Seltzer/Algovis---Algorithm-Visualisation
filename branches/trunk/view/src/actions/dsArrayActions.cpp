@@ -72,7 +72,36 @@ void DS_CreateArray::Complete(bool displayed)
 
 	world->adjustSize();
 	Registry::GetInstance()->Register(arrayId, newArray);
+	
+	Action::Complete(displayed);
 }
+
+
+void DS_CreateArray::Uncomplete(bool displayed)
+{
+	if (!completedAtLeastOnce)
+		return;
+
+
+	Registry* registry = Registry::GetInstance();
+
+	UL_ASSERT(registry->IsRegistered(arrayId));
+	VO_Array* voArray = registry->GetRepresentation<VO_Array>(arrayId);
+	
+	// TODO actually delete voArray??? nahhh
+
+	voArray->setVisible(false);
+	world->RemoveViewable(voArray);	
+	world->adjustSize();
+	Registry::GetInstance()->Deregister(arrayId);
+}
+
+
+
+
+
+
+
 
 //////////////// DS_AddElementToArray
 DS_AddElementToArray::DS_AddElementToArray
@@ -111,16 +140,15 @@ void DS_AddElementToArray::PrepareToPerform()
 	Registry* registry = Registry::GetInstance();
 
 	UL_ASSERT(registry->IsRegistered(dsArray,ARRAY));
-
 	voArray = registry->GetRepresentation<VO_Array>(dsArray);
 
-	element = elementFactory->Create(); // Create a viewable for whatever element was added.
+	// Create a viewable for whatever element was added.
+	element = elementFactory->Create(); 
 	
 	// TODO: Do not assume array is shown (and therefore this is not suppressed)
 
 	// Set subjectStart to have abs position
 	QRect arrayGeom = QRect(voArray->GetPositionInWorld(), voArray->size());
-	
 	subjectDimensions = QRect(arrayGeom.topRight(), element->size());
 
 	/*
@@ -130,9 +158,29 @@ void DS_AddElementToArray::PrepareToPerform()
 	subjectPosition.setX(subjectPosition.x() + position * element->size().width());
 	subjectDimensions = QRect(subjectPosition, element->size());*/
 	
-
 	// Set up data for all the sources
 	sources = HistoryToSources(history, element);
+}
+
+
+// See PrepareToPerform for TODOs/comments etc.
+void DS_AddElementToArray::PrepareToUnperform()
+{
+	Registry* registry = Registry::GetInstance();
+
+	UL_ASSERT(registry->IsRegistered(dsArray,ARRAY));
+	voArray = registry->GetRepresentation<VO_Array>(dsArray);
+
+	UL_ASSERT(registry->IsRegistered(dsElement));
+	element = registry->GetRepresentation(dsElement);
+	
+
+	// Set subjectStart to have abs position
+	QRect arrayGeom = QRect(voArray->GetPositionInWorld(), voArray->size());
+	subjectDimensions = QRect(arrayGeom.topRight(), element->size());
+
+	// Update, since dimensions and pointers may have changed
+	sources = UpdateSources(sources);
 }
 
 void DS_AddElementToArray::Perform(float progress, QPainter* painter)
@@ -168,8 +216,14 @@ void DS_AddElementToArray::Perform(float progress, QPainter* painter)
 	}
 }
 
+void DS_AddElementToArray::Unperform(float progress, QPainter* painter)
+{
+	Perform(1.0f - progress, painter);
+}
+
 void DS_AddElementToArray::Complete(bool displayed)
 {
+	printf("*********DS_AddElementToArray::Complete*****************");
 	Registry* registry = Registry::GetInstance();
 
 	// TODO: Do not assume array is shown, and therefore element is shown.
@@ -185,6 +239,17 @@ void DS_AddElementToArray::Complete(bool displayed)
 	}*/
 }
 
+// See Complete for TODOs/comments etc.
+void DS_AddElementToArray::Uncomplete(bool displayed)
+{
+	printf("*********DS_AddElementToArray::Uncomplete*****************");
+	// TODO - Deregister?
+
+	// Remove element from voArray
+	vector<ViewableObject*> elementsToRemove;
+	elementsToRemove.push_back(element);
+	voArray->RemoveElements(elementsToRemove, position, position);
+}
 
 
 //////////////// DS_RemoveElementsFromArray

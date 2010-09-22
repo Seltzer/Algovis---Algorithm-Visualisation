@@ -73,8 +73,8 @@ namespace Algovis_Viewer
 		// Used for backtracking/forwardtracing
 		std::vector<Action*> actionHistory;
 		
-		// Indexes in actionHistory - INVALID if there is no current action
-		unsigned currentAction;
+		// Indexes into actionHistory - INVALID if there is no current action
+		int currentAction;
 
 
 		// Shutdown stuff

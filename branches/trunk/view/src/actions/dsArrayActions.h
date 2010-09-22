@@ -18,6 +18,7 @@ namespace Algovis_Viewer
 		virtual Action* Clone() const;
 
 		virtual void Complete(bool displayed);
+		virtual void Uncomplete(bool displayed);
 
 	private:
 		const ID arrayId;
@@ -38,8 +39,11 @@ namespace Algovis_Viewer
 		virtual void UpdateHistory(HistoryManager& historyManager);
 
 		void PrepareToPerform();
+		void PrepareToUnperform();
 		void Perform(float progress, QPainter* painter);
+		virtual void Unperform(float progress, QPainter*);
 		virtual void Complete(bool displayed);
+		virtual void Uncomplete(bool displayed);
 
 	private:
 		ID dsArray, dsElement;

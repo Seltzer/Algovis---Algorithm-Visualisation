@@ -186,39 +186,6 @@ void DS_Assigned::Perform(float progress, QPainter* painter)
 			source.source->DrawValue(false, QRect(QPoint(x,y),QSize(source.dimensions.width(), source.dimensions.height())),painter);
 		}
 	}
-		
-	//source->DrawWithoutValue(sourceDimensions, painter);
-	//subject->DrawWithoutValue(subjectDimensions, painter);
-
-	/* Bulging is commented out until DrawValue can draw to a specified dimension properly
-
-	QRect updatedBounds = subjectStart;
-	int bulge = int(progress * 100);
-
-	updatedBounds.Left -= bulge;
-	updatedBounds.Right += bulge;
-	updatedBounds.Top -= bulge;
-	updatedBounds.Bottom += bulge;*/
-	
-	// MIGRATION
-	//subject->SetBoundingBox(updatedBounds);
-
-
-	//subject->DrawWithoutValue(QRect(
-	//subject->DrawWithoutValue(
-	//subject->DrawWithoutValue(renderWindow, defaultFont);
-	//subject->DrawValue(updatedBounds,renderWindow, defaultFont);
-
-
-	/*for (std::set<ValueID>::iterator i = history.begin(); i != history.end(); i++)
-	{
-		Registry* reg = Registry::GetInstance();
-		if (i->address != 
-		if (reg->IsRegistered(i->address, SINGLE_PRINTABLE))
-		{
-			VO_SinglePrintable* printable = 
-		}
-	}*/
 }
 
 void DS_Assigned::Unperform(float progress, QPainter* painter)
