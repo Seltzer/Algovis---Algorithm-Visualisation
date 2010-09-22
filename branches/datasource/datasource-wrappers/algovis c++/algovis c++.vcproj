@@ -209,6 +209,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\src\wrappers\dequeWrapper.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\wrappers\dequeWrapper.inl"
+					>
+				</File>
+				<File
 					RelativePath=".\src\wrappers\doubleWrapper.h"
 					>
 				</File>
@@ -222,6 +230,18 @@
 				</File>
 				<File
 					RelativePath=".\src\wrappers\primitiveWrapper.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\wrappers\stringWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\src\wrappers\stringWrapper.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\wrappers\stringWrapper.inl"
 					>
 				</File>
 				<File

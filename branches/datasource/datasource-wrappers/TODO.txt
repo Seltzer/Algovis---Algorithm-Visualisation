@@ -1,29 +1,25 @@
 cumulative adding
-matrix
-fix mass moves
-highlight operands non-sibling
-
+size_type
 fix play button
-fix backtracking
 
 
-* Finish existing Wrappers and Viewables (VectorWrapper and matrix) 
-* Write MapWrapper, DequeWrapper and VO_Map
+* Test deque
+* Implement assign and pop stuff for vector and deque and rest of StringWrapper
+* Implement basic matrix stuff
+* Vary animation durations for different actions
+* Fix backtracking and implement undo for other actions
+* Highlight operands for non-sibling types
+* Write MapWrapper, and VO_Map
 * Improve the UI and fix dodgy stuff:
 	- Fix window resizing
 	- Add snap to current viewable feature
 	- Make buttons
-* Improve animations
-* Write more Algovis demos
 * Remove SINGLE_PRINTABLE hackery (mostly removed at this stage)
 * Support custom types by displaying a generic 'user-defined type pic'
-* Write StringWrapper
 * Improve layout manager so that Viewable translations can trigger layout recalculation, not just 
 			Viewable resizes
 * Display contents of custom types when the user mouses over the user-defined type pic
 * Implement drawing for pointer types 
-* Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
-		arrays of arrays.
 * Implement stats module
 * Port to Linux
 * Turn algovis c++ into a DLL
@@ -35,5 +31,6 @@ fix backtracking
 **** THOUGHTS ****
 * How to deal with "unsigned char"
 * Array deregistration...
-
+* Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
+		arrays of arrays.
 

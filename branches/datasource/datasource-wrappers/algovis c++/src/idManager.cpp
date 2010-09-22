@@ -35,7 +35,7 @@ void IdManager::DestroyInstance()
 }
 	
 IdManager::IdManager()
-	: nextIdToAllocate(0), transplantModeEnabled(false)
+	: nextIdToAllocate(0), destructionAnimationMuted(0), transplantModeEnabled(false)
 {
 	// Construct early
 	SettingsManager::GetInstance();
@@ -195,6 +195,9 @@ void IdManager::ReportDestruction(const Wrapper* wrapper)
 
 		// Orphans die quietly - don't report destruction to the Registry
 		RemoveFromOrphanList(wrapper);	
+		
+		if (destructionAnimationMuted > 0)
+			--destructionAnimationMuted;
 	}
 	else
 	{
@@ -202,10 +205,31 @@ void IdManager::ReportDestruction(const Wrapper* wrapper)
 			cout << "\tReporting destruction to registry (not an orphan)" << endl;
 		#endif
 
-		// Wrapper is not an orphan, so deregister it with the Registry
-		if (communicationWithViewEnabled && SettingsManager::GetInstance()->DestructionReportingEnabled())
-			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(id);
+		// Wrapper is not an orphan, so see if we can deregister it with the Registry
+		if (!communicationWithViewEnabled || !SettingsManager::GetInstance()->DestructionReportingEnabled())
+			return;
+			
+		// We can
+		if (destructionAnimationMuted > 0)
+		{
+			#if (ID_DEBUGGING_LEVEL >= 2)
+				cout << "\tDestruction muted" << endl;
+			#endif
+			
+			--destructionAnimationMuted;
+			// Mute destruction animation
+			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(id, true);
+		}
+		else
+		{
+			Algovis_Viewer::Registry::GetInstance()->DeregisterObject(id, false);
+		}
 	}
+}
+
+void IdManager::MuteDestructionAnimation(unsigned numberOfWrappers)
+{
+	destructionAnimationMuted += numberOfWrappers;
 }
 
 

@@ -50,7 +50,9 @@ bool IsSameClassAs()
     };
 
 HAS_VOID_VOID_FN(PrimitiveCheck, __IAmAPrimitiveWrapper)
+HAS_VOID_VOID_FN(StringCheck, __IAmAStringWrapper)
 HAS_VOID_VOID_FN(VecCheck, __IAmAVectorWrapper)
+HAS_VOID_VOID_FN(DequeCheck, __IAmADequeWrapper)
 HAS_VOID_VOID_FN(MatrixCheck, __IAmAMatrix)	
 
 #undef HAS_VOID_VOID_FN
@@ -64,9 +66,9 @@ HAS_VOID_VOID_FN(MatrixCheck, __IAmAMatrix)
 template<class T>
 Algovis_Viewer::ViewableObjectType GetVOType()
 {
-	if (PrimitiveCheck<T>::value == 1)
+	if ( (PrimitiveCheck<T>::value == 1) || (StringCheck<T>::value == 1) )
 		return Algovis_Viewer::SINGLE_PRINTABLE;
-	else if (VecCheck<T>::value == 1)
+	else if ( (VecCheck<T>::value == 1) || (DequeCheck<T>::value == 1) )
 		return Algovis_Viewer::ARRAY;
 	else if (MatrixCheck<T>::value == 1)
 		return Algovis_Viewer::MATRIX;

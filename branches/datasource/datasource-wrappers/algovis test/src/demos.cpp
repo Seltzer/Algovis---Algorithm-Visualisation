@@ -35,7 +35,6 @@ void OriginalDemo()
 
 void MatrixDemo()
 {
-	EnableCommunicationWithView(true);
 	SetCaption(string("MatrixDemo"));
 
 	int initValue(3);
@@ -43,6 +42,34 @@ void MatrixDemo()
 	//Algovis::AlgoMatrix<int,3,3> matrix();
 	
 }
+
+
+
+void DequeDemo()
+{
+	SetCaption(string("DequeDemo"));
+
+	deque<int> queue;
+
+
+	queue.push_back(100);
+	queue.push_back(101);
+	queue.push_back(102);
+	queue.push_back(103);
+
+	queue.push_front(90);
+	queue.push_front(80);
+	queue.push_front(70);
+	queue.push_front(70);
+	queue.push_front(60);
+	queue.push_front(50);
+	queue.push_front(40);
+	queue.push_front(30);
+
+
+
+}
+
 
 void MultipleVectorDemoWithDelete()
 {

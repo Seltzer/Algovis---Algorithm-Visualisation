@@ -170,17 +170,26 @@ void Registry::AddressChanged(ID id, const void* newAddress)
 }
 
 
-bool Registry::DeregisterObject(ID id)
+bool Registry::DeregisterObject(ID id, bool suppressAnimation)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);
 	#if (DEBUG_REGISTRATION_LEVEL >= 1)
 		cout << "Deregistering " << id << endl;
 	#endif
 
-
 	// Create event
 	DS_Deleted* deleteAction = new DS_Deleted(world, id);
+
+	
+	if (suppressAnimation)
+	{
+		// TODO We want to perform deleteAction but not animate it
+		// But suppressing it will ensure that it's never performed. Oh noes!
+		deleteAction->SuppressAnimation();
+	}
+
 	AddActionToBuffer(deleteAction);
+	
 
 	return true;
 }

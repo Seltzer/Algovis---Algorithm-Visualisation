@@ -16,17 +16,12 @@ REAL_INT wmain()
 {
 	EnableCommunicationWithView(true);
 
-	/*
-	vector<int> a;
-	a.push_back(3);
 
-	vector<vector<int> > hallogallo;
-	hallogallo.push_back(a);*/
-
+	//DequeDemo();
 	MergeSortDemo();
 	//MultipleVectorDemoWithDelete();
 	//DoRandomStuffWithAVectorDemo();
-//	NewDemo();
+	//NewDemo();
 
 
 	//MatrixDemo();

@@ -10,6 +10,8 @@ void OriginalDemo();
 
 void MatrixDemo();
 
+void DequeDemo();
+
 // A bit of sorting, pointless assignment of values between multiple vectors and deletion at the end
 void MultipleVectorDemoWithDelete();
 

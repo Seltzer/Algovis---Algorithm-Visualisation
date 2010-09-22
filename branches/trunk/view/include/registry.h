@@ -74,7 +74,7 @@ namespace Algovis_Viewer
 		
 		// Returns true if the DS object was successfully deregistered and its ViewableObject equivalent deleted
 		// Returns false if the DS object was never registered
-		bool DeregisterObject(ID);
+		bool DeregisterObject(ID, bool suppressAnimation);
 		
 
 		/* PRE-CONDITIONS:
@@ -121,6 +121,7 @@ namespace Algovis_Viewer
 
 		// Only public because actions need them
 		void Register(ID id, ViewableObject* obj);
+		
 		bool Deregister(ID id);
 
 

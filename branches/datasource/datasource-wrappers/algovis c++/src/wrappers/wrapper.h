@@ -5,7 +5,7 @@
 
 
 #include "registry.h"
-#include "userFunctions.h"
+#include "../userFunctions.h"
 #include "../idManager.h"
 #include "../settingsManager.h"
 #include "../typeInterface.h"

@@ -84,6 +84,9 @@ namespace Algovis
 		// Note: If the wrapper isn't an orphan, if displayEnabled,  it will be deregistered with the Registry
 		void ReportDestruction(const Wrapper* wrapperAddress);
 		
+		/* This method mutes the destruction animation for the next numberOfWrappers wrappers.
+		 */
+		void MuteDestructionAnimation(unsigned numberOfWrappers);
 
 
 
@@ -103,6 +106,8 @@ namespace Algovis
 		ID nextIdToAllocate;
 		std::map<const Wrapper*,ID> idMapping;
 
+		
+		unsigned destructionAnimationMuted;
 
 		bool transplantModeEnabled;
 

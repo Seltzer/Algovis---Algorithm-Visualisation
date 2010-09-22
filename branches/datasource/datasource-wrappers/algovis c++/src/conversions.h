@@ -10,6 +10,7 @@
 #include "wrappers/floatWrapper.h"
 #include "wrappers/doubleWrapper.h"
 #include "wrappers/vectorWrapper.h"
+#include "wrappers/dequeWrapper.h"
 
 
 // Miscellaneous data structure includes
@@ -31,7 +32,7 @@
 #define float Algovis::FloatWrapper
 #define double Algovis::DoubleWrapper
 #define vector Algovis::VectorWrapper
-
+#define deque Algovis::DequeWrapper
 
 
 

@@ -1,36 +1,48 @@
 /////////////// CONSTRUCTORS
 
 template <class T, class Alloc>
-VectorWrapper<T,Alloc>::VectorWrapper()
+DequeWrapper<T,Alloc>::DequeWrapper()
 		: value() 
 {
-	construct();
+	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
+
+	if (communicationWithViewEnabled)
+		Algovis_Viewer::Registry::GetInstance()->RegisterArray
+							(id, this, GetVOType<T>());
 };
 
 
 template <class T, class Alloc>
-VectorWrapper<T,Alloc>::VectorWrapper(const allocator_type& a)
+DequeWrapper<T,Alloc>::DequeWrapper(const allocator_type& a)
 		: value(a) 
 {
-	construct();
+	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
+
+	if (communicationWithViewEnabled)
+		Algovis_Viewer::Registry::GetInstance()->RegisterArray
+							(id, this, GetVOType<T>());
 }
 
 	
 template <class T, class Alloc>
-VectorWrapper<T,Alloc>::VectorWrapper(size_type n, const value_type& value = value_type(),
+DequeWrapper<T,Alloc>::DequeWrapper(size_type n, const value_type& value = value_type(),
 										const allocator_type& a = allocator_type())
 		: value(n, value, a) 
 {
-	construct();
+	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
+
+	if (communicationWithViewEnabled)
+		Algovis_Viewer::Registry::GetInstance()->RegisterArray
+							(id, this, GetVOType<T>());
 }
 
 	
 /////////////// COPY CONSTRUCTOR
 template <class T, class Alloc>
-VectorWrapper<T,Alloc>::VectorWrapper(const VectorWrapper& other)
+DequeWrapper<T,Alloc>::DequeWrapper(const DequeWrapper& other)
 		: value(other.value)
 {
-	//printf("VectorWrapper CC");
+	//printf("DequeWrapper CC");
 
 	CopyConstructionInfo info = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
 						
@@ -57,9 +69,9 @@ VectorWrapper<T,Alloc>::VectorWrapper(const VectorWrapper& other)
 
 	
 template <class T, class Alloc>
-VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<T,Alloc>& other)
+DequeWrapper<T,Alloc>& DequeWrapper<T,Alloc>::operator = (const DequeWrapper<T,Alloc>& other)
 {
-	//printf("VectorWrapper CAO");
+	//printf("DequeWrapper CAO");
 
 	if (this == &other)
 		return *this;
@@ -86,7 +98,7 @@ VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<
 		}
 		else if (info.result == CopyAssignmentInfo::ORPHAN_REBIRTH)
 		{
-			// TODO Finish ORPHAN_REBIRTH mode for VectorWrapper CAO
+			// TODO Finish ORPHAN_REBIRTH mode for DequeWrapper CAO
 			/*
 			// I was an orphan and have since been allocated a new id - inform Registry
 			if (communicationWithViewEnabled)
@@ -103,10 +115,8 @@ VectorWrapper<T,Alloc>& VectorWrapper<T,Alloc>::operator = (const VectorWrapper<
 }
 
 template <class T, class Alloc>
-VectorWrapper<T,Alloc>::~VectorWrapper()
+DequeWrapper<T,Alloc>::~DequeWrapper()
 {
-	// Mute destruction animations for all children
-	IdManager::GetInstance()->MuteDestructionAnimation(value.size());
 }
 
 
@@ -121,7 +131,7 @@ VectorWrapper<T,Alloc>::~VectorWrapper()
  *		3.) New size < old size... (oldSize -  newSize) elements are destructed
  */
 template <class T, class Alloc>
-void VectorWrapper<T,Alloc>::resize(size_type size, T val = T())
+void DequeWrapper<T,Alloc>::resize(size_type size, T val = T())
 {
 	if (value.size() == size)
 		return;
@@ -156,27 +166,43 @@ void VectorWrapper<T,Alloc>::resize(size_type size, T val = T())
 
 
 template <class T, class Alloc>
-void VectorWrapper<T,Alloc>::resize(IntWrapper size, T c = T()) 
+void DequeWrapper<T,Alloc>::resize(IntWrapper size, T c = T()) 
 { 
 	resize(size.AVGetValue(), c);
 }
 
 
 template <class T, class Alloc>
-typename VectorWrapper<T,Alloc>::reference VectorWrapper<T,Alloc>::operator[] (const IntWrapper& b) 
+typename DequeWrapper<T,Alloc>::reference DequeWrapper<T,Alloc>::operator[] (const IntWrapper& b) 
 { 
 	return value[b.AVGetValue()]; 
 }
 
 template <class T, class Alloc>
-typename VectorWrapper<T,Alloc>::const_reference VectorWrapper<T,Alloc>::operator[] (const IntWrapper& b) const 
+typename DequeWrapper<T,Alloc>::const_reference DequeWrapper<T,Alloc>::operator[] (const IntWrapper& b) const 
 { 
 	return value[b]; 
 }
 
 
 template <class T, class Alloc>
-void VectorWrapper<T,Alloc>::push_back (const T& x) 
+void DequeWrapper<T,Alloc>::push_front(const T& x)
+{
+	// TODO this probably doesn't work
+	Algovis::IdManager::GetInstance()->EnableTransplantMode(true, IdManager::GetInstance()->GetId(&x));
+	value.push_front(x);
+	Algovis::IdManager::GetInstance()->EnableTransplantMode(false);
+
+	if (communicationWithViewEnabled)
+	{
+		ID newElementId = IdManager::GetInstance()->GetId(&value[0]);
+		Algovis_Viewer::Registry::GetInstance()->AddElementToArray(Id(), newElementId, 0);
+	}
+}
+
+
+template <class T, class Alloc>
+void DequeWrapper<T,Alloc>::push_back (const T& x) 
 { 
 	Algovis::IdManager::GetInstance()->EnableTransplantMode(true, IdManager::GetInstance()->GetId(&x));
 	value.push_back(x);
@@ -190,20 +216,7 @@ void VectorWrapper<T,Alloc>::push_back (const T& x)
 }
 
 template <class T, class Alloc>
-void VectorWrapper<T,Alloc>::push_back_test() 
-{ 
-	value.push_back(2);
-
-	if (communicationWithViewEnabled)
-	{
-		ID newElementId = IdManager::GetInstance()->GetId(&value[value.size()-1]);
-		Algovis_Viewer::Registry::GetInstance()->AddElementToArray(Id(), newElementId, value.size() - 1);
-	}
-}
-
-
-template <class T, class Alloc>
-void VectorWrapper<T,Alloc>::pop_back() 
+void DequeWrapper<T,Alloc>::pop_back() 
 { 
 	Algovis::IdManager::GetInstance()->EnableTransplantMode();
 
@@ -214,7 +227,7 @@ void VectorWrapper<T,Alloc>::pop_back()
 
 
 template <class T, class Alloc>
-typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::insert(iterator position, const T& x)
+typename DequeWrapper<T,Alloc>::iterator DequeWrapper<T,Alloc>::insert(iterator position, const T& x)
 {
 	//std::cout << "insert" << std::endl;
 	std::cout.flush();
@@ -247,7 +260,7 @@ typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::insert(iterato
 //   Source exceptions = elements which have to be moved
 //   Destination exceptions = between position and position+n-1 inclusive
 template <class T, class Alloc>
-void VectorWrapper<T,Alloc>::insert(iterator position, size_type n, const T& x)
+void DequeWrapper<T,Alloc>::insert(iterator position, size_type n, const T& x)
 {
 	unsigned startIndex = position - value.begin();
 
@@ -276,14 +289,14 @@ void VectorWrapper<T,Alloc>::insert(iterator position, size_type n, const T& x)
 
 
 template <class T, class Alloc>
-typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::erase(iterator position)
+typename DequeWrapper<T,Alloc>::iterator DequeWrapper<T,Alloc>::erase(iterator position)
 {
 	// It's slightly less efficient when we call our ranged erase overload, but who cares???
 	return erase(position,position+1);
 }
 
 template <class T, class Alloc>
-typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::erase(iterator first, iterator last)
+typename DequeWrapper<T,Alloc>::iterator DequeWrapper<T,Alloc>::erase(iterator first, iterator last)
 {
 	// Obtain data required for Registry including startIndex, endIndex, ids of elements to erase
 	unsigned startIndex = first - value.begin();
@@ -314,7 +327,7 @@ typename VectorWrapper<T,Alloc>::iterator VectorWrapper<T,Alloc>::erase(iterator
 
 
 template <class T, class Alloc>
-void VectorWrapper<T,Alloc>::clear() 
+void DequeWrapper<T,Alloc>::clear() 
 { 
 	value.clear(); 
 	
@@ -323,14 +336,4 @@ void VectorWrapper<T,Alloc>::clear()
 }
 
 
-
-template <class T, class Alloc>
-void VectorWrapper<T,Alloc>::construct()
-{
-	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
-
-	if (communicationWithViewEnabled)
-		Algovis_Viewer::Registry::GetInstance()->RegisterArray
-							(id, this, GetVOType<T>());
-}
 
