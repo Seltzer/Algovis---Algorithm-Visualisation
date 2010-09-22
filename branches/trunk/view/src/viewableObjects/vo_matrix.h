@@ -38,12 +38,20 @@ namespace Algovis_Viewer
 		ViewableObjectType elementType;
 		unsigned rows, cols;
 		
+		mutable QSize sizeHints[10][10];
+		mutable float rowHeight[10];
+		mutable float columnWidth[10];
+		
 		// TODO temporary
 		(ViewableObject*) elements[10][10];
 				
 		mutable QString titleText;
 		mutable QPoint titleTextPosition;
+		mutable QPoint leftBracketTopCorner, leftBracketBottomCorner;
+		mutable QPoint rightBracketTopCorner, rightBracketBottomCorner;
 	};
+
+
 
 	class VO_MatrixFactory : public ViewableObjectContainerFactory
 	{

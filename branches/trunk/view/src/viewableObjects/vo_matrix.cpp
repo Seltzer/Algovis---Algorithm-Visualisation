@@ -1,9 +1,13 @@
 #include <QPainter>
 #include <QColor>
 #include "boost/foreach.hpp"
+#include "utilities.h"
 
 #include "vo_matrix.h"
 
+
+// todo
+#include <iostream>
 
 
 
@@ -17,10 +21,18 @@ VO_Matrix::VO_Matrix(ID id, const void* dsAddress, World* world, ViewableObjectT
 		: ViewableObjectContainer(id, dsAddress, world, parent), 
 				elementType(elementType), rows(rows), cols(cols)
 {
+	UL_ASSERT(rows < 10);
+	UL_ASSERT(cols < 10);
+
 	for (int row = 1; row <= rows; row++)
 	{
 		for (int col = 1; col <= cols; col++)
 		{
+			// Initialise sizeHints matrix
+			sizeHints[row][col] = QSize();
+
+			// TODO
+			//std::cout << "index = " << ((row - 1) * cols + col - 1) << std::endl;
 			elements[row][col] = initElements[(row - 1) * cols + col - 1];
 			elements[row][col]->SetParentViewable(this);
 			elements[row][col]->SetSizeDictatedByParent(true);
@@ -29,83 +41,113 @@ VO_Matrix::VO_Matrix(ID id, const void* dsAddress, World* world, ViewableObjectT
 			children.push_back(elements[row][col]);
 		}
 	}
+
 	adjustSize();
 }
 
 
 QSize VO_Matrix::sizeHint() const
 {
-	/*
-	static float xGap = 1, yGap = 5;
+	static float columnSpacing = 5, rowSpacing = 5;
+	
+	float x = 0, y = 0;
 
-	float x = 2, y = 2;
-
-	// Address stuff
+	// Place title at (0,0)
 	titleText = QString(titleString.c_str());
 	QFontMetrics metrics(font());
-	titleTextPosition = QPoint(x,metrics.ascent() + y);
-	x += metrics.width(titleText, titleText.length()) + xGap * 4;
+	titleTextPosition = QPoint(x,y + metrics.ascent()); 
 
+	y += metrics.height();
+	y += 5;
+
+	leftBracketTopCorner = QPoint(x,y);
 	
-	// Array elements
-	int maxHeight = metrics.height();
-
-	BOOST_FOREACH(ViewableObject* element, children)
-		maxHeight = max(maxHeight, element->sizeHint().height());
-	maxHeight += yGap;
+	x += columnSpacing;
+	y += rowSpacing;
 
 
-	BOOST_FOREACH(ViewableObject* element, children)
+	// Get required sizes (and rowHeights while we're at it)
+	// Also, adjust y according to rowHeights
+	for (int row = 1; row <= rows; row++)
 	{
-		QSize preferredSize = element->sizeHint();
-		x += preferredSize.width();
+		rowHeight[row] = 0;
+
+		for (int col = 1; col <= cols; col++)
+		{
+			sizeHints[row][col] = elements[row][col]->sizeHint();
+			if (sizeHints[row][col].height() > rowHeight[row])
+				rowHeight[row] = sizeHints[row][col].height();
+		}
+
+		y += rowHeight[row] + rowSpacing;
 	}
 
-	x += 2;
-	y += maxHeight + 2;*/
+	// Get columnWidths
+	// Also, adjust x according to columnWidths
+	for (int col = 1; col <= cols; col++)
+	{
+		columnWidth[col] = 0;
+		for (int row = 1; row <= rows; row++)
+		{
+			if (sizeHints[row][col].width() > columnWidth[col])
+				columnWidth[col] = sizeHints[row][col].width();
+		}
 
-	int x = 100;
-	int y = 100;
+		x += columnWidth[col] + columnSpacing;
+	}
+
+	// Adjust sizeHints according to rowHeights and columnWidths
+	for (int row = 1; row <= rows; row++)
+	{
+		for (int col = 1; col <= cols; col++)
+		{
+			sizeHints[row][col] = QSize(columnWidth[col], rowHeight[row]);
+		}
+	}
+
+	if (x < 50)
+		x = 50;
+	if (y < 50)
+		y = 50;
+
+	leftBracketBottomCorner = QPoint(leftBracketBottomCorner.x(),y);
+	rightBracketTopCorner = QPoint(x, leftBracketTopCorner.y());
+	rightBracketBottomCorner = QPoint(x,y);
+
+
+	x += 2;
+	y += 2;
 
 	return QSize(x,y);
 }
 
 
 void VO_Matrix::adjustSize()
-{/*
-	static float xGap = 1, yGap = 5;
+{
+	static float columnSpacing = 5, rowSpacing = 5;
 
-	float x = 2, y = 2;
+	QSize reqSize = sizeHint();
 
-	// Address stuff
-	titleText = QString(titleString.c_str());
-	QFontMetrics metrics(font());
-	titleTextPosition = QPoint(x,metrics.ascent() + y);
-	x += metrics.width(titleText, titleText.length()) + xGap * 4;
+	float x = leftBracketTopCorner.x() + columnSpacing;
+	float y = leftBracketTopCorner.y() + rowSpacing;
+
 
 	
-	// Array elements
-	int maxHeight = metrics.height();
-
-	BOOST_FOREACH(ViewableObject* element, children)
-		maxHeight = max(maxHeight, element->sizeHint().height());
-	maxHeight += yGap;
-
-
-	BOOST_FOREACH(ViewableObject* element, children)
+	for (int row = 1; row <= rows; row++)
 	{
-		QSize preferredSize = element->sizeHint();
-		element->setGeometry(x,y,preferredSize.width(), maxHeight);
-		x += preferredSize.width();
+		float xOld = x;
+		for (int col = 1; col <= cols; col++)
+		{
+			elements[row][col]->setGeometry(x, y, columnWidth[col], rowHeight[row]);
+			x += columnWidth[col] + columnSpacing;
+		}
+
+		x = xOld;
+		y += rowHeight[row] + rowSpacing;
 	}
 
-	x += 2;
-	y += maxHeight + 2;*/
 
-	int x = 100;
-	int y = 100;
-
-	resize(x, y);
+	resize(reqSize);
 }
 
 
@@ -114,8 +156,20 @@ void VO_Matrix::paintEvent(QPaintEvent*)
 	QPainter painter(this);
 
 	painter.setPen(Qt::green);
-	painter.drawLine(0,0,50,50);
 	
+	painter.drawLine(leftBracketTopCorner, leftBracketBottomCorner);
+	painter.drawLine(leftBracketTopCorner, leftBracketTopCorner + QPoint(20,0));
+	painter.drawLine(leftBracketBottomCorner, leftBracketBottomCorner + QPoint(20,0));
+
+	painter.drawLine(rightBracketTopCorner, rightBracketBottomCorner);
+	painter.drawLine(rightBracketTopCorner, rightBracketTopCorner - QPoint(20,0));
+	painter.drawLine(rightBracketBottomCorner, rightBracketBottomCorner - QPoint(20,0));
+
+
+
+	
+
+
 	/*
 	// Print dsAddress
 	QPainter painter(this);

@@ -38,9 +38,13 @@ void MatrixDemo()
 	SetCaption(string("MatrixDemo"));
 
 	int initValue(3);
-	Algovis::AlgoMatrix<int,3,3> matrix(initValue);
-	//Algovis::AlgoMatrix<int,3,3> matrix();
 	
+	Algovis::AlgoMatrix<int,3,3> matrix(initValue);
+
+	
+	matrix(1,1) = 1000;
+	matrix(2,2) = 2000;
+	matrix(3,3) = 3000;
 }
 
 

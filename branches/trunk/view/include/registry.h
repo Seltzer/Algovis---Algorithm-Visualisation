@@ -94,6 +94,8 @@ namespace Algovis_Viewer
 
 		//void ClearArray(const void* dsArray);
 
+		void SetMatrixElements(ID matrix, std::map<unsigned,ID> elements);
+
 
 
 		// The following functions are all that is needed to trace the history of a primitive

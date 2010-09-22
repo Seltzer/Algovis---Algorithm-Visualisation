@@ -258,6 +258,14 @@ void Registry::ClearArray(const void* dsArray)
 	prt("UNIMPLEMENTED!!!!!!!!!!!!!!!!!!!!!!!");
 }*/
 
+void SetMatrixElements(ID matrix, std::map<unsigned,ID> elements)
+{
+	
+
+
+}
+
+
 void Registry::PrintableAssigned(ID dsAssigned, ID dsSource, const string& newValue)
 {
 	boost::unique_lock<boost::mutex> lock(registryMutex);

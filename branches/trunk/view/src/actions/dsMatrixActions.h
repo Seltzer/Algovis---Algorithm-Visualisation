@@ -32,13 +32,12 @@ namespace Algovis_Viewer
 
 		// Initialised during construction
 		std::vector<ID> elements;
-		
 		// Initialised during UpdateHistory
 		std::vector<ViewableObjectFactory*> elementFactories;
-
-		// Initialised during UpdateHistory
-		std::vector<ViewableObjectFactory*> elementPtrs;
+		// Initialised during PrepareToPerform
+		std::vector<ViewableObject*> elementPtrs;
 	};
+
 
 
 }

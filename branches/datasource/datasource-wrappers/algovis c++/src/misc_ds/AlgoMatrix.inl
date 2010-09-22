@@ -4,10 +4,10 @@ AlgoMatrix<T,rows,cols>::AlgoMatrix()
 	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
 	std::vector<ID> initElements = elementsAsVector();
-
+	
 	if (communicationWithViewEnabled)
 		Algovis_Viewer::Registry::GetInstance()->RegisterMatrix(id, this, GetVOType<T>(), 
-																	rows, cols,initElements);
+																	rows, cols, initElements);
 }
 
 template<class T, int rows, int cols>
@@ -17,6 +17,9 @@ AlgoMatrix<T,rows,cols>::AlgoMatrix(T& initValue)
 	{
 		for (int col = 0; col < cols; col++)
 		{
+			// TODO remove debugging
+			std::cout << elements[row][col] << std::endl;
+			// TODO this isn't being updated in the view
 			elements[row][col] = initValue;
 		}
 	}
@@ -115,7 +118,9 @@ AlgoMatrix<T, rows, cols>& AlgoMatrix<T, rows, cols>::operator = (const AlgoMatr
 template<class T, int rows, int cols>
 T& AlgoMatrix<T,rows,cols>::operator ()(int row, int col)
 {
-	return elements[row][col];
+	UL_ASSERT(row > 0);
+	UL_ASSERT(col > 0);
+	return elements[row - 1][col - 1];
 }
 
 
@@ -128,7 +133,9 @@ std::vector<ID> AlgoMatrix<T,rows,cols>::elementsAsVector()
 	{
 		for (int col = 0; col < cols; col++)
 		{
-			elementsToReturn.push_back(IdManager::GetInstance()->GetId(&elements[row][col]));
+			ID id = IdManager::GetInstance()->GetId(&elements[row][col]);
+			assert(id != INVALID);
+			elementsToReturn.push_back(id);
 		}
 	}
 

@@ -21,7 +21,8 @@ DS_CreateMatrix::DS_CreateMatrix(World* world, ID matrixId, const void* matrixAd
 		
 DS_CreateMatrix::DS_CreateMatrix(const DS_CreateMatrix& other)
 	: DS_CreateAction(other), matrixId(other.matrixId), matrixAddress(other.matrixAddress),
-		elementType(other.elementType), rows(other.rows), cols(other.cols), elements(other.elements)
+		elementType(other.elementType), rows(other.rows), cols(other.cols), 
+		elements(other.elements), elementFactories(other.elementFactories), elementPtrs(other.elementPtrs)
 {
 }
 
@@ -38,10 +39,9 @@ void DS_CreateMatrix::UpdateHistory(HistoryManager& mgr)
 }
 
 void DS_CreateMatrix::PrepareToPerform()
-{
-	/*
+{	
 	BOOST_FOREACH(ViewableObjectFactory* factory, elementFactories)
-		elementPtrs.*/
+		elementPtrs.push_back(factory->Create());
 }
 
 void DS_CreateMatrix::Complete(bool displayed)
@@ -51,29 +51,29 @@ void DS_CreateMatrix::Complete(bool displayed)
 	// Verify that matrix hasn't already been registered
 	UL_ASSERT(!registry->IsRegistered(matrixId));
 
-
-	// ViewableObject equivalents of elements
-	vector<ViewableObject*> matrixElements;
-
-	// Iterate over elements, verify that they are all registered and populate arrayElements
-	BOOST_FOREACH(ID dsElement, elements)
+	// Register matrix elements
+	for (int i = 0; i < elements.size(); i++)
 	{
-		UL_ASSERT(registry->IsRegistered(dsElement));
-		matrixElements.push_back(registry->GetRepresentation(dsElement));
+		UL_ASSERT(!registry->IsRegistered(elements[i]));
+		registry->Register(elements[i], elementPtrs[i]);
+		UL_ASSERT(registry->IsRegistered(elements[i]));
 	}
 
+	// Instantiate and register matrix
+	VO_Matrix* newMatrix = new VO_Matrix(matrixId, matrixAddress, world, elementType, rows, cols, elementPtrs);
+	Registry::GetInstance()->Register(matrixId, newMatrix);
 
-	VO_Matrix* newMatrix = new VO_Matrix(matrixId, matrixAddress, world, elementType, rows, cols, matrixElements);
-	
+
+	// Add newMatrix to world
 	if (BeingCreatedOnSameLine())
 		world->AddViewableOnSameRow(newMatrix);
 	else
 		world->AddViewableOnNewRow(newMatrix);
 
-	
 	newMatrix->adjustSize();
 	newMatrix->setVisible(true);
-	Registry::GetInstance()->Register(matrixId, newMatrix);
+	newMatrix->setEnabled(true);
+	world->adjustSize();
 }
 
 

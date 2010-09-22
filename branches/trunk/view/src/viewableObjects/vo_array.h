@@ -52,6 +52,10 @@ namespace Algovis_Viewer
 		mutable QPoint titleTextPosition;
 	};
 
+
+
+
+
 	class VO_ArrayFactory : public ViewableObjectContainerFactory
 	{
 	protected:
