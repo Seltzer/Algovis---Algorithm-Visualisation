@@ -83,8 +83,11 @@ void DequeDemo()
 	queue.push_front(40);
 	queue.push_front(30);
 
-
-
+	queue.pop_front();
+	queue.pop_front();
+	queue.pop_front();
+	queue.pop_front();
+	queue.pop_front();
 }
 
 
@@ -259,6 +262,7 @@ void DoRandomStuffWithAVectorDemo()
 		PopulateVectorWithRandomInts(c1, 20, 0, 9);
 		
 		c2 = c1;
+	
 
 
 		c1.erase(c1.begin());
@@ -274,6 +278,14 @@ void DoRandomStuffWithAVectorDemo()
 
 		c1.erase(c1.begin()+2, c1.end());
 		PopulateVectorWithRandomInts(c1, 5, 0, 9);
+	
+		c1.pop_back();
+		c1.pop_back();
+		c1.pop_back();
+		c1.push_back(7000);
+		c1.push_back(8000);
+		c1.push_back(9000);
+
 		c1.erase(c1.begin(), c1.end());
 
 

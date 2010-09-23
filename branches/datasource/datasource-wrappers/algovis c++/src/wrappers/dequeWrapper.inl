@@ -215,14 +215,45 @@ void DequeWrapper<T,Alloc>::push_back (const T& x)
 	}
 }
 
+// Similar to erase, except for one element
+template <class T, class Alloc>
+void DequeWrapper<T,Alloc>::pop_front() 
+{ 
+	unsigned index = 0;
+
+	std::vector<ID> elementToErase;
+	elementToErase.push_back(Algovis::IdManager::GetInstance()->GetId(&(value[index])));
+
+	// Enable transplant mode as we want copy assigned elements to retain their ids
+	// Disable drawing as we don't want element destruction to be communicated to the view
+	Algovis::IdManager::GetInstance()->EnableTransplantMode(true);
+	EnableCommunicationWithView(false);
+	value.pop_front();
+	EnableCommunicationWithView(true);
+	Algovis::IdManager::GetInstance()->EnableTransplantMode(false);
+
+	// Inform Registry of pop_front
+	Algovis_Viewer::Registry::GetInstance()->RemoveElementsFromArray
+				(Id(), elementToErase, index, index);
+}
+
 template <class T, class Alloc>
 void DequeWrapper<T,Alloc>::pop_back() 
 { 
-	Algovis::IdManager::GetInstance()->EnableTransplantMode();
+	// Get data required by Registry
+	unsigned index = value.size() - 1;
+	std::vector<ID> elementToErase;
+	elementToErase.push_back(IdManager::GetInstance()->GetId(&value[index]));
 
+	// Perform actual pop_back
+	Algovis::IdManager::GetInstance()->EnableTransplantMode(true);
+	EnableCommunicationWithView(false);
 	value.pop_back(); 
+	EnableCommunicationWithView(true);
+	Algovis::IdManager::GetInstance()->EnableTransplantMode(false);
 
-	Algovis::IdManager::GetInstance()->DisableTransplantMode();
+	// Inform Registry of pop_back
+	Algovis_Viewer::Registry::GetInstance()->RemoveElementsFromArray(Id(), elementToErase, index, index);
 }
 
 

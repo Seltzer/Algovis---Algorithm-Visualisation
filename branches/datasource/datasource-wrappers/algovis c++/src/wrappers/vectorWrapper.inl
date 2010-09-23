@@ -205,11 +205,20 @@ void VectorWrapper<T,Alloc>::push_back_test()
 template <class T, class Alloc>
 void VectorWrapper<T,Alloc>::pop_back() 
 { 
-	Algovis::IdManager::GetInstance()->EnableTransplantMode();
+	// Get data required by Registry
+	unsigned index = value.size() - 1;
+	std::vector<ID> elementToErase;
+	elementToErase.push_back(IdManager::GetInstance()->GetId(&value[index]));
 
+	// Perform actual pop_back
+	Algovis::IdManager::GetInstance()->EnableTransplantMode(true);
+	EnableCommunicationWithView(false);
 	value.pop_back(); 
+	EnableCommunicationWithView(true);
+	Algovis::IdManager::GetInstance()->EnableTransplantMode(false);
 
-	Algovis::IdManager::GetInstance()->DisableTransplantMode();
+	// Inform Registry of pop_back
+	Algovis_Viewer::Registry::GetInstance()->RemoveElementsFromArray(Id(), elementToErase, index, index);
 }
 
 

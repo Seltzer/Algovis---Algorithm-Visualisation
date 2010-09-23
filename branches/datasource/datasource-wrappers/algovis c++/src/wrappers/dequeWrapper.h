@@ -11,7 +11,7 @@ namespace Algovis
 
 
 
-
+// TODO Finish swap/clear/assign
 template <class T, class Alloc = std::allocator<T> >
 class DequeWrapper : public Wrapper
 {
@@ -71,11 +71,9 @@ public:
 
 	
 	// Modifiers
-	// assign TODO
-	// TODO finish these
 	void push_front(const T&);
 	void push_back(const T&);
-	//void pop_front();
+	void pop_front();
 	void pop_back();
 	iterator insert(iterator position, const T& x);
 	void insert(iterator position, size_type n, const T& x);

@@ -28,9 +28,9 @@ REAL_INT wmain()
 
 
 
-	//DequeDemo();
+	DequeDemo();
 	//MergeSortDemo();
-	MultipleVectorDemoWithDelete();
+	//MultipleVectorDemoWithDelete();
 	//DoRandomStuffWithAVectorDemo();
 	//NewDemo();
 

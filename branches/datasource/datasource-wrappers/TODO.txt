@@ -1,11 +1,9 @@
 cumulative adding
-size_type
-fix play button
-set action buffer size
 
+* Test with different ActionBuffer sizes - allow user to set action buffer size
 * Test deque
-* Implement assign and pop stuff for vector and deque and rest of StringWrapper
-* Add tranpose action
+* Finish wrappers
+* Add transpose animation
 * Vary animation durations for different actions
 * Fix backtracking and implement undo for other actions
 * Highlight operands for non-sibling types
@@ -13,7 +11,7 @@ set action buffer size
 * Improve the UI and fix dodgy stuff:
 	- Fix window resizing
 	- Add snap to current viewable feature
-	- Make buttons
+	- Make buttons or at least fix the play button
 * Remove SINGLE_PRINTABLE hackery (mostly removed at this stage)
 * Support custom types by displaying a generic 'user-defined type pic'
 * Improve layout manager so that Viewable translations can trigger layout recalculation, not just 

@@ -14,7 +14,7 @@ namespace Algovis
 
 
 
-
+// TODO Finish swap/clear/assign
 template <class T, class Alloc = std::allocator<T> >
 class VectorWrapper : public Wrapper
 {
@@ -82,28 +82,19 @@ public:
 	inline reference front() { return value.front(); }
 	inline reference back() { return value.back(); }
 
-	
+	// Modifiers
 	void push_back(const T&);
-
+	void pop_back();
 	// For testing purposes since it minimises # of temp creations - pushes 2 onto the end of the vector
 	void push_back_test(); 
-
-	// TODO finish
-	void pop_back();
-
-	
 	iterator insert(iterator position, const T& x);
 	void insert(iterator position, size_type n, const T& x);
-
-	
 	/*
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last)
 	{
 		value.insert<InputIterator>(position, first, last);
 	}*/
-
-
 	iterator erase(iterator position);
 	iterator erase(iterator first, iterator last);
 	
