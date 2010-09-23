@@ -35,7 +35,7 @@ REAL_INT wmain()
 	//NewDemo();
 
 
-	MatrixDemo();
+	//MatrixDemo();
 	//InterfaceTestingDemo();
 	//TestDemo();
 	

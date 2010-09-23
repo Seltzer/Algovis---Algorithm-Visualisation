@@ -1,6 +1,6 @@
 #include "boost/foreach.hpp"
 #include "action.h"
-
+#include "../../include/registry.h"
 
 
 
@@ -13,10 +13,11 @@ Action::Action(World* world, bool suppressAnimation)
 	: world(world), suppressAnimation(suppressAnimation), state(READY),
 		preparedAtLeastOnce(false), completedAtLeastOnce(false), progress(0.0f)
 {
+	reg = Registry::GetInstance();
 }
 
 Action::Action(const Action& other)
-	: world(other.world), suppressAnimation(other.suppressAnimation), state(other.state),
+	: world(other.world), reg(other.reg), suppressAnimation(other.suppressAnimation), state(other.state),
 		preparedAtLeastOnce(other.preparedAtLeastOnce), completedAtLeastOnce(other.completedAtLeastOnce), 
 			progress(other.progress), completeTime(other.completeTime)
 {

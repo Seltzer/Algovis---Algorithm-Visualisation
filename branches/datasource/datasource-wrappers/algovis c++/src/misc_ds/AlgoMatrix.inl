@@ -142,3 +142,28 @@ std::vector<ID> AlgoMatrix<T,rows,cols>::elementsAsVector()
 	return elementsToReturn;
 
 }
+
+
+template<class T, int rows, int cols>
+void AlgoMatrix<T,rows,cols>::Transpose()
+{
+	// Mute assignments
+	EnableCommunicationWithView(false);
+	
+	// Visit elements below matrix diagonal
+	for (int row = 2; row <= rows; row++)
+	{
+		for (int col = 1; col < row; col++)
+		{
+			// Swap i,j with j,i
+			int temp = elements[row - 1][col - 1];
+			elements[row - 1][col - 1] = elements[col - 1][row - 1];
+			elements[col - 1][row - 1] = temp;
+		}
+	}
+	
+	EnableCommunicationWithView(true);
+
+	// Report transpose to View
+	Algovis_Viewer::Registry::GetInstance()->TransposeMatrix(Id());
+}

@@ -9,8 +9,8 @@ class QPainter;
 namespace Algovis_Viewer
 {
 
-
 	class World;
+	class Registry;
 	
 	/* Abstract Action class which is subclassed by dsAction and uiAction
 	 *
@@ -60,6 +60,7 @@ namespace Algovis_Viewer
 
 	protected:
 		World* world;
+		Registry* reg;
 
 		bool suppressAnimation;
 		bool preparedAtLeastOnce;

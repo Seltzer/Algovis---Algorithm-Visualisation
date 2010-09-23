@@ -24,7 +24,6 @@ ViewableObjectContainer::ViewableObjectContainer(ID id, const void* dsAddress, W
 {
 }
 
-//ViewableObjectContainer::
 ViewableObjectContainer::~ViewableObjectContainer()
 {
 	BOOST_FOREACH(ViewableObject* child, children)

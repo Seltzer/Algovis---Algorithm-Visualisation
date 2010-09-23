@@ -39,6 +39,24 @@ namespace Algovis_Viewer
 	};
 
 
+	class DS_MatrixTranspose : public DS_Action
+	{
+	
+	public:
+		DS_MatrixTranspose(World*, ID matrixId);
+		DS_MatrixTranspose(const DS_MatrixTranspose&);
+		virtual Action* Clone() const;
+
+
+		//virtual void UpdateHistory(HistoryManager&); 
+		virtual void PrepareToPerform() {printf("*******8hello");}
+		virtual void Complete(bool displayed);
+
+	private:
+		const ID matrixId;
+
+	};
+
 
 }
 

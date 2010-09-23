@@ -55,6 +55,12 @@ namespace Algovis_Viewer
 			: ViewableObjectFactory(id, dsAddress, world, parent), value(value)
 		{}
 		virtual ViewableObject* Create();
+
+		// TODO hack hack
+		void UpdateValue(std::string value)
+		{
+			this->value = value;
+		}
 	};
 
 }

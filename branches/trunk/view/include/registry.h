@@ -94,7 +94,7 @@ namespace Algovis_Viewer
 
 		//void ClearArray(const void* dsArray);
 
-		void SetMatrixElements(ID matrix, std::map<unsigned,ID> elements);
+		void TransposeMatrix(ID matrix);
 
 
 

@@ -64,7 +64,7 @@ void DS_CreateSP::Complete(bool displayed)
 		
 		element->adjustSize();
 		element->setVisible(true);
-		Registry::GetInstance()->Register(id, element);
+		reg->Register(id, element);
 
 	}
 }
@@ -119,10 +119,8 @@ void DS_Assigned::PrepareToPerform()
 {
 	//subject->EnableCommunicationWithView(false);
 
-	Registry* registry = Registry::GetInstance();
-
-	UL_ASSERT(registry->IsRegistered(dsAssigned, SINGLE_PRINTABLE));
-	subject = registry->GetRepresentation<VO_SinglePrintable>(dsAssigned);
+	UL_ASSERT(reg->IsRegistered(dsAssigned, SINGLE_PRINTABLE));
+	subject = reg->GetRepresentation<VO_SinglePrintable>(dsAssigned);
 	UL_ASSERT(subject);
 
 	// Set subjectStart to have abs position
@@ -142,10 +140,8 @@ void DS_Assigned::PrepareToPerform()
 void DS_Assigned::PrepareToUnperform()
 {
 	// Pretty similar to PrepareToPerform
-	Registry* registry = Registry::GetInstance();
-
-	UL_ASSERT(registry->IsRegistered(dsAssigned, SINGLE_PRINTABLE));
-	subject = registry->GetRepresentation<VO_SinglePrintable>(dsAssigned);
+	UL_ASSERT(reg->IsRegistered(dsAssigned, SINGLE_PRINTABLE));
+	subject = reg->GetRepresentation<VO_SinglePrintable>(dsAssigned);
 	UL_ASSERT(subject);
 
 	// Set subjectStart to have abs position
@@ -265,10 +261,8 @@ void DS_Modified::PrepareToPerform()
 {
 	//subject->EnableCommunicationWithView(false);
 
-	Registry* registry = Registry::GetInstance();
-
-	UL_ASSERT(registry->IsRegistered(dsModified, SINGLE_PRINTABLE));
-	subject = registry->GetRepresentation<VO_SinglePrintable>(dsModified);
+	UL_ASSERT(reg->IsRegistered(dsModified, SINGLE_PRINTABLE));
+	subject = reg->GetRepresentation<VO_SinglePrintable>(dsModified);
 	UL_ASSERT(subject);
 
 	// Set subjectStart to have abs position
@@ -360,8 +354,6 @@ bool DS_HighlightOperands::FetchOperandPtrs()
 	// Check whether we already have them or not
 	if (operandPtrs.size() < operands.size())
 	{
-		Registry* reg = Registry::GetInstance();
-	
 		BOOST_FOREACH(ID op, operands)
 		{
 			if (!reg->IsRegistered(op, SINGLE_PRINTABLE))

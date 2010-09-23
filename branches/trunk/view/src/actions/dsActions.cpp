@@ -25,10 +25,11 @@ SourceData ValueIDToSourceData(ValueID id, ViewableObject* subject)
 	sourceData.source = NULL;
 	sourceData.isSibling = false;
 
-	Registry* registry = Registry::GetInstance();
-	if (registry->IsRegistered(id.id, SINGLE_PRINTABLE))
+	Registry* reg = Registry::GetInstance();
+
+	if (reg->IsRegistered(id.id, SINGLE_PRINTABLE))
 	{
-		VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(id.id);
+		VO_SinglePrintable* source = reg->GetRepresentation<VO_SinglePrintable>(id.id);
 
 		if (source != NULL)
 		{
@@ -60,10 +61,10 @@ vector<SourceData> UpdateSources(vector<SourceData>& sourceData)
 		updatedSource.dimensions = QRect(0,0,0,0);
 		
 		// Attempt to update pointer and dimensions
-		Registry* registry = Registry::GetInstance();
-		if (registry->IsRegistered(updatedSource.valueId.id, SINGLE_PRINTABLE))
+		Registry* reg = Registry::GetInstance();
+		if (reg->IsRegistered(updatedSource.valueId.id, SINGLE_PRINTABLE))
 		{
-			VO_SinglePrintable* source = registry->GetRepresentation<VO_SinglePrintable>(updatedSource.valueId.id);
+			VO_SinglePrintable* source = reg->GetRepresentation<VO_SinglePrintable>(updatedSource.valueId.id);
 
 			if (source != NULL)
 			{
@@ -372,7 +373,7 @@ void DS_EnsureDisplayed::UpdateHistory(HistoryManager& historyMgr)
 
 void DS_EnsureDisplayed::PrepareToPerform()
 {
-	UL_ASSERT(!Registry::GetInstance()->IsRegistered(id));
+	UL_ASSERT(!reg->IsRegistered(id));
 }
 
 void DS_EnsureDisplayed::Complete(bool displayed)
@@ -386,7 +387,7 @@ void DS_EnsureDisplayed::Complete(bool displayed)
 	
 	vo->adjustSize();
 	vo->setVisible(true);
-	Registry::GetInstance()->Register(id, vo);
+	reg->Register(id, vo);
 }
 
 

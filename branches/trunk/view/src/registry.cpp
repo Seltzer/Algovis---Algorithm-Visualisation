@@ -261,11 +261,12 @@ void Registry::ClearArray(const void* dsArray)
 	prt("UNIMPLEMENTED!!!!!!!!!!!!!!!!!!!!!!!");
 }*/
 
-void SetMatrixElements(ID matrix, std::map<unsigned,ID> elements)
+void Registry::TransposeMatrix(ID matrix)
 {
-	
+	boost::unique_lock<boost::mutex> lock(registryMutex);
 
-
+	DS_MatrixTranspose action(world, matrix);
+	AddActionToBuffer(&action);
 }
 
 

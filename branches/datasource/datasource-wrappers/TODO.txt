@@ -1,11 +1,11 @@
 cumulative adding
 size_type
 fix play button
-
+set action buffer size
 
 * Test deque
 * Implement assign and pop stuff for vector and deque and rest of StringWrapper
-* Implement basic matrix stuff
+* Add tranpose action
 * Vary animation durations for different actions
 * Fix backtracking and implement undo for other actions
 * Highlight operands for non-sibling types

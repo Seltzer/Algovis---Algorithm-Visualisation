@@ -28,10 +28,12 @@ namespace Algovis_Viewer
 		virtual void DrawValue(bool includingChildren, QRect&, QPainter*);
 		virtual void DrawBoundingBox(const QRect&, QPainter*);
 
+		void Transpose();
 
 		// Get number of elements in array
 		unsigned GetRows();
 		unsigned GetCols();
+	
 
 
 	private:

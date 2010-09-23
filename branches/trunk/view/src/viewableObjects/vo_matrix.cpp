@@ -5,11 +5,14 @@
 
 #include "vo_matrix.h"
 
+// TODO hack
+#include "vo_singlePrintable.h"
 
 // todo
 #include <iostream>
 
 
+using namespace std;
 
 namespace Algovis_Viewer
 {
@@ -215,6 +218,24 @@ void VO_Matrix::DrawBoundingBox(const QRect& desiredBB, QPainter* painter)
 	//painter->drawRect(desiredBB);
 }
 
+
+void VO_Matrix::Transpose()
+{
+	printf("******MATRIX TRANSPOSE***********");
+	for (int row = 2; row <= rows; row++)
+	{
+		for (int col = 1; col < row; col++)
+		{
+			// TODO zomg hack
+			VO_SinglePrintable* sp1 = (VO_SinglePrintable*) elements[row][col];
+			VO_SinglePrintable* sp2 = (VO_SinglePrintable*) elements[col][row];
+
+			string temp(sp1->GetValue());
+			sp1->UpdateValue(sp2->GetValue());
+			sp2->UpdateValue(temp);
+		}
+	}
+}
 
 
 unsigned VO_Matrix::GetRows()

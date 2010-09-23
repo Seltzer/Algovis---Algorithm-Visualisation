@@ -35,7 +35,15 @@ Action* DS_CreateMatrix::Clone() const
 void DS_CreateMatrix::UpdateHistory(HistoryManager& mgr)
 {
 	BOOST_FOREACH(ID element, elements)
+	{
+		mgr.SetVisible(element, true);
+		//mgr.ResetHistory(element);
+		// TODO Does anything else need to be done??? This is half-copied from DS_AddElementToArray::UpdateHistory
+
 		elementFactories.push_back(mgr.GetFactory(element));
+	}
+
+	DS_Action::UpdateHistory(mgr);
 }
 
 void DS_CreateMatrix::PrepareToPerform()
@@ -46,22 +54,20 @@ void DS_CreateMatrix::PrepareToPerform()
 
 void DS_CreateMatrix::Complete(bool displayed)
 {
-	Registry* registry = Registry::GetInstance();
-
 	// Verify that matrix hasn't already been registered
-	UL_ASSERT(!registry->IsRegistered(matrixId));
+	UL_ASSERT(!reg->IsRegistered(matrixId));
 
 	// Register matrix elements
 	for (int i = 0; i < elements.size(); i++)
 	{
-		UL_ASSERT(!registry->IsRegistered(elements[i]));
-		registry->Register(elements[i], elementPtrs[i]);
-		UL_ASSERT(registry->IsRegistered(elements[i]));
+		UL_ASSERT(!reg->IsRegistered(elements[i]));
+		reg->Register(elements[i], elementPtrs[i]);
+		UL_ASSERT(reg->IsRegistered(elements[i]));
 	}
 
 	// Instantiate and register matrix
 	VO_Matrix* newMatrix = new VO_Matrix(matrixId, matrixAddress, world, elementType, rows, cols, elementPtrs);
-	Registry::GetInstance()->Register(matrixId, newMatrix);
+	reg->Register(matrixId, newMatrix);
 
 
 	// Add newMatrix to world
@@ -74,6 +80,44 @@ void DS_CreateMatrix::Complete(bool displayed)
 	newMatrix->setVisible(true);
 	newMatrix->setEnabled(true);
 	world->adjustSize();
+}
+
+
+
+DS_MatrixTranspose::DS_MatrixTranspose(World* world, ID matrixId)
+	: DS_Action(world), matrixId(matrixId)
+{
+}
+
+DS_MatrixTranspose::DS_MatrixTranspose(const DS_MatrixTranspose& other)
+	: DS_Action(other), matrixId(other.matrixId)
+{
+}
+
+Action* DS_MatrixTranspose::Clone() const
+{
+	return new DS_MatrixTranspose(*this);
+}
+
+
+void DS_MatrixTranspose::Complete(bool displayed) 
+{
+	UL_ASSERT(reg->IsRegistered(matrixId));
+	VO_Matrix* matrix = reg->GetRepresentation<VO_Matrix>(matrixId);
+	matrix->Transpose();
+
+	// TODO
+	/*
+	if (!completedAtLeastOnce)
+	{
+		subject->UpdateValue(newValue, completeTime);
+		Action::Complete(displayed);
+	}
+	else
+	{
+		subject->UpdateValue(newValue);
+	}*/
+
 }
 
 

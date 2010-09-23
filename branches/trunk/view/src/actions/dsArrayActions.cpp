@@ -41,10 +41,8 @@ Action* DS_CreateArray::Clone() const
 
 void DS_CreateArray::Complete(bool displayed)
 {
-	Registry* registry = Registry::GetInstance();
-
 	// Verify that array hasn't already been registered
-	UL_ASSERT(!registry->IsRegistered(arrayId));
+	UL_ASSERT(!reg->IsRegistered(arrayId));
 
 
 	// ViewableObject equivalents of elements
@@ -53,8 +51,8 @@ void DS_CreateArray::Complete(bool displayed)
 	// Iterate over elements, verify that they are all registered and populate arrayElements
 	BOOST_FOREACH(ID dsElement, elements)
 	{
-		UL_ASSERT(registry->IsRegistered(dsElement));
-		arrayElements.push_back(registry->GetRepresentation(dsElement));
+		UL_ASSERT(reg->IsRegistered(dsElement));
+		arrayElements.push_back(reg->GetRepresentation(dsElement));
 	}
 
 
@@ -71,7 +69,7 @@ void DS_CreateArray::Complete(bool displayed)
 	newArray->setVisible(true);
 
 	world->adjustSize();
-	Registry::GetInstance()->Register(arrayId, newArray);
+	reg->Register(arrayId, newArray);
 	
 	Action::Complete(displayed);
 }
@@ -82,18 +80,15 @@ void DS_CreateArray::Uncomplete(bool displayed)
 	if (!completedAtLeastOnce)
 		return;
 
-
-	Registry* registry = Registry::GetInstance();
-
-	UL_ASSERT(registry->IsRegistered(arrayId));
-	VO_Array* voArray = registry->GetRepresentation<VO_Array>(arrayId);
+	UL_ASSERT(reg->IsRegistered(arrayId));
+	VO_Array* voArray = reg->GetRepresentation<VO_Array>(arrayId);
 	
 	// TODO actually delete voArray??? nahhh
 
 	voArray->setVisible(false);
 	world->RemoveViewable(voArray);	
 	world->adjustSize();
-	Registry::GetInstance()->Deregister(arrayId);
+	reg->Deregister(arrayId);
 }
 
 
@@ -137,10 +132,8 @@ void DS_AddElementToArray::UpdateHistory(HistoryManager& historyManager)
 
 void DS_AddElementToArray::PrepareToPerform()
 {
-	Registry* registry = Registry::GetInstance();
-
-	UL_ASSERT(registry->IsRegistered(dsArray,ARRAY));
-	voArray = registry->GetRepresentation<VO_Array>(dsArray);
+	UL_ASSERT(reg->IsRegistered(dsArray,ARRAY));
+	voArray = reg->GetRepresentation<VO_Array>(dsArray);
 
 	// Create a viewable for whatever element was added.
 	element = elementFactory->Create(); 
@@ -166,13 +159,11 @@ void DS_AddElementToArray::PrepareToPerform()
 // See PrepareToPerform for TODOs/comments etc.
 void DS_AddElementToArray::PrepareToUnperform()
 {
-	Registry* registry = Registry::GetInstance();
+	UL_ASSERT(reg->IsRegistered(dsArray,ARRAY));
+	voArray = reg->GetRepresentation<VO_Array>(dsArray);
 
-	UL_ASSERT(registry->IsRegistered(dsArray,ARRAY));
-	voArray = registry->GetRepresentation<VO_Array>(dsArray);
-
-	UL_ASSERT(registry->IsRegistered(dsElement));
-	element = registry->GetRepresentation(dsElement);
+	UL_ASSERT(reg->IsRegistered(dsElement));
+	element = reg->GetRepresentation(dsElement);
 	
 
 	// Set subjectStart to have abs position
@@ -223,18 +214,15 @@ void DS_AddElementToArray::Unperform(float progress, QPainter* painter)
 
 void DS_AddElementToArray::Complete(bool displayed)
 {
-	printf("*********DS_AddElementToArray::Complete*****************");
-	Registry* registry = Registry::GetInstance();
-
 	// TODO: Do not assume array is shown, and therefore element is shown.
-	UL_ASSERT(!registry->IsRegistered(dsElement));
-	registry->Register(dsElement, element);
+	UL_ASSERT(!reg->IsRegistered(dsElement));
+	reg->Register(dsElement, element);
 
 	voArray->AddElement(element, position);
 
 	/*if (displayed)
 	{
-		int time = Registry::GetInstance()->CurrentTime();
+		int time = reg->CurrentTime();
 		element->ResetHistory(ValueID(element->GetId(), time));
 	}*/
 }
@@ -242,7 +230,6 @@ void DS_AddElementToArray::Complete(bool displayed)
 // See Complete for TODOs/comments etc.
 void DS_AddElementToArray::Uncomplete(bool displayed)
 {
-	printf("*********DS_AddElementToArray::Uncomplete*****************");
 	// TODO - Deregister?
 
 	// Remove element from voArray
@@ -276,7 +263,7 @@ void DS_RemoveElementsFromArray::PrepareToPerform()
 	UL_ASSERT(endIndex >= startIndex);
 	UL_ASSERT(elements.size() == endIndex - startIndex + 1);
 
-	dsArray = Registry::GetInstance()->GetRepresentation<VO_Array>(arrayId);
+	dsArray = reg->GetRepresentation<VO_Array>(arrayId);
 	UL_ASSERT(dsArray);
 
 	// Don't grab pointers until we actually perform the action
@@ -312,12 +299,10 @@ Action* DS_AddressChanged::Clone() const
 
 void DS_AddressChanged::Complete(bool displayed)
 {
-	Registry* registry = Registry::GetInstance();
+	UL_ASSERT(reg->IsRegistered(id));
+	const void* oldAddress = reg->GetRepresentation(id)->GetDSAddress();
 
-	UL_ASSERT(registry->IsRegistered(id));
-	const void* oldAddress = registry->GetRepresentation(id)->GetDSAddress();
-
-	ViewableObject* viewable = registry->GetRepresentation(id);
+	ViewableObject* viewable = reg->GetRepresentation(id);
 	UL_ASSERT(viewable);
 
 	viewable->SetDSAddress(newAddress);
