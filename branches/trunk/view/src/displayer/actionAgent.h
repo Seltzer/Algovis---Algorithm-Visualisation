@@ -41,6 +41,7 @@ namespace Algovis_Viewer
 	
 	private:
 		void PrepareCurrentAction();
+		void DrawCurrentFrame(QPainter*);
 		void FinishCurrentAction();
 
 		float AnimDuration();
@@ -55,7 +56,7 @@ namespace Algovis_Viewer
 
 		boost::mutex performActionMutex;
 		bool actionPending;
-		bool actionPrepared;
+		//bool actionPrepared;
 		boost::condition_variable_any actionPendingCondVar;
 
 		// ActionAgent operation mode (valid combinations are PAUSED plus one of the first three)
@@ -83,10 +84,6 @@ namespace Algovis_Viewer
 	};
 
 }
-
-
-
-
 
 
 

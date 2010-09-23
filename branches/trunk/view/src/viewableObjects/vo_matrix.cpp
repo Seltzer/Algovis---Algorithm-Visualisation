@@ -221,20 +221,50 @@ void VO_Matrix::DrawBoundingBox(const QRect& desiredBB, QPainter* painter)
 
 void VO_Matrix::Transpose()
 {
-	printf("******MATRIX TRANSPOSE***********");
-	for (int row = 2; row <= rows; row++)
+	// Inefficient but who cares?
+	bool processed[10][10];
+	for (int row = 1; row <= rows; row++)
 	{
-		for (int col = 1; col < row; col++)
+		for (int col = 1; col <= cols; col++)
 		{
-			// TODO zomg hack
-			VO_SinglePrintable* sp1 = (VO_SinglePrintable*) elements[row][col];
-			VO_SinglePrintable* sp2 = (VO_SinglePrintable*) elements[col][row];
-
-			string temp(sp1->GetValue());
-			sp1->UpdateValue(sp2->GetValue());
-			sp2->UpdateValue(temp);
+			processed[row][col] = false;
 		}
 	}
+
+	for (int row = 1; row <= rows; row++)
+	{
+		for (int col = 1; col <= cols; col++)
+		{
+			if (!processed[row][col])
+			{
+				if (row <= cols && col <= rows)
+				{
+					// Swap positions of two existing elements
+					VO_SinglePrintable* temp = (VO_SinglePrintable*) elements[row][col];
+					elements[row][col] = elements[col][row];
+					elements[col][row] = temp;
+				}
+				else
+				{
+					// Element is being moved to an unoccupied position
+					elements[col][row] = elements[row][col];
+					elements[row][col] = NULL;
+				}
+
+				processed[row][col] = true;
+				processed[col][row] = true;
+			}
+		}
+	}
+
+	// Swap dimensions
+	unsigned temp = rows;
+	rows = cols;
+	cols = temp;
+
+	// aaaand recalculate matrix dimensions
+	adjustSize();
+
 }
 
 

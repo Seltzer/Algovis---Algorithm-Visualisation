@@ -1,5 +1,5 @@
-template<class T, int rows, int cols>
-AlgoMatrix<T,rows,cols>::AlgoMatrix()
+template<class T, int dimensions>
+AlgoSquareMatrix<T, dimensions>::AlgoSquareMatrix()
 {
 	ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
@@ -7,15 +7,15 @@ AlgoMatrix<T,rows,cols>::AlgoMatrix()
 	
 	if (communicationWithViewEnabled)
 		Algovis_Viewer::Registry::GetInstance()->RegisterMatrix(id, this, GetVOType<T>(), 
-																	rows, cols, initElements);
+																	dimensions, dimensions, initElements);
 }
 
-template<class T, int rows, int cols>
-AlgoMatrix<T,rows,cols>::AlgoMatrix(T& initValue)
+template<class T, int dimensions>
+AlgoSquareMatrix<T, dimensions>::AlgoSquareMatrix(T& initValue)
 {
-	for (int row = 0; row < rows; row++)
+	for (int row = 0; row < dimensions; row++)
 	{
-		for (int col = 0; col < cols; col++)
+		for (int col = 0; col < dimensions; col++)
 		{
 			// TODO remove debugging
 			std::cout << elements[row][col] << std::endl;
@@ -31,15 +31,15 @@ AlgoMatrix<T,rows,cols>::AlgoMatrix(T& initValue)
 
 	if (communicationWithViewEnabled)
 		Algovis_Viewer::Registry::GetInstance()->RegisterMatrix(id, this, GetVOType<T>(), 
-																	rows, cols,initElements);
+																	dimensions, dimensions,initElements);
 }
 
-template<class T, int rows, int cols>
-AlgoMatrix<T, rows, cols>::AlgoMatrix(const AlgoMatrix& other)
+template<class T, int dimensions>
+AlgoSquareMatrix<T, dimensions>::AlgoSquareMatrix(const AlgoSquareMatrix<T, dimensions>& other)
 {
-	for (int row = 0; row < rows; row++)
+	for (int row = 0; row < dimensions; row++)
 	{
-		for (int col = 0; col < cols; col++)
+		for (int col = 0; col < dimensions; col++)
 		{
 			elements[row][col] = other.elements[row][col];
 		}
@@ -52,6 +52,7 @@ AlgoMatrix<T, rows, cols>::AlgoMatrix(const AlgoMatrix& other)
 	{
 		if (info.result == CopyConstructionInfo::NORMAL_CC)
 		{
+			// TODO fill in this method - below commented out code is copied from vector CC
 			/*
 			std::vector<ID> elements;
 			for (std::vector<T>::iterator it = value.begin(); it < value.end(); it++)
@@ -71,17 +72,17 @@ AlgoMatrix<T, rows, cols>::AlgoMatrix(const AlgoMatrix& other)
 
 
 // TODO finish
-template<class T, int rows, int cols>
-AlgoMatrix<T, rows, cols>& AlgoMatrix<T, rows, cols>::operator = (const AlgoMatrix<T, rows, cols>& other)
+template<class T, int dimensions>
+AlgoSquareMatrix<T, dimensions>& AlgoSquareMatrix<T, dimensions>::operator = (const AlgoSquareMatrix<T, dimensions>& other)
 {
 	printf("AlgoMatrix CAO");
 
 	if (this == &other)
 		return *this;
 
-	for (int row = 0; row < rows; row++)
+	for (int row = 0; row < dimensions; row++)
 	{
-		for (int col = 0; col < cols; col++)
+		for (int col = 0; col < dimensions; col++)
 		{
 			elements[row][col] = other.elements[row][col];
 		}
@@ -115,8 +116,8 @@ AlgoMatrix<T, rows, cols>& AlgoMatrix<T, rows, cols>::operator = (const AlgoMatr
 
 
 
-template<class T, int rows, int cols>
-T& AlgoMatrix<T,rows,cols>::operator ()(int row, int col)
+template<class T, int dimensions>
+T& AlgoSquareMatrix<T, dimensions>::operator ()(int row, int col)
 {
 	UL_ASSERT(row > 0);
 	UL_ASSERT(col > 0);
@@ -124,14 +125,14 @@ T& AlgoMatrix<T,rows,cols>::operator ()(int row, int col)
 }
 
 
-template<class T, int rows, int cols>
-std::vector<ID> AlgoMatrix<T,rows,cols>::elementsAsVector()
+template<class T, int dimensions>
+std::vector<ID> AlgoSquareMatrix<T, dimensions>::elementsAsVector()
 {
 	std::vector<ID> elementsToReturn;
 	
-	for (int row = 0; row < rows; row++)
+	for (int row = 0; row < dimensions; row++)
 	{
-		for (int col = 0; col < cols; col++)
+		for (int col = 0; col < dimensions; col++)
 		{
 			ID id = IdManager::GetInstance()->GetId(&elements[row][col]);
 			assert(id != INVALID);
@@ -144,14 +145,14 @@ std::vector<ID> AlgoMatrix<T,rows,cols>::elementsAsVector()
 }
 
 
-template<class T, int rows, int cols>
-void AlgoMatrix<T,rows,cols>::Transpose()
+template<class T, int dimensions>
+void AlgoSquareMatrix<T,dimensions>::Transpose()
 {
 	// Mute assignments
 	EnableCommunicationWithView(false);
 	
-	// Visit elements below matrix diagonal
-	for (int row = 2; row <= rows; row++)
+	// Examine elements below diagonal
+	for (int row = 2; row <= dimensions; row++)
 	{
 		for (int col = 1; col < row; col++)
 		{
@@ -163,6 +164,7 @@ void AlgoMatrix<T,rows,cols>::Transpose()
 	}
 	
 	EnableCommunicationWithView(true);
+
 
 	// Report transpose to View
 	Algovis_Viewer::Registry::GetInstance()->TransposeMatrix(Id());

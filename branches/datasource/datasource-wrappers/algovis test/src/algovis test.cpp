@@ -15,26 +15,17 @@ using namespace std;
 REAL_INT wmain()
 {
 	EnableCommunicationWithView(true);
-/*
-
-	vector<int> a;
-	a.push_back(1);
-	a.push_back(2);
-	a.push_back(3);
-	a.push_back(4);
-
-
-	vector<int> b(a);*/
 
 
 
-	DequeDemo();
-	//MergeSortDemo();
+	MergeSortDemo();
 	//MultipleVectorDemoWithDelete();
 	//DoRandomStuffWithAVectorDemo();
 	//NewDemo();
 
 
+
+		//DequeDemo();
 	//MatrixDemo();
 	//InterfaceTestingDemo();
 	//TestDemo();

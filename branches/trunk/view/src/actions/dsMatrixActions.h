@@ -49,11 +49,16 @@ namespace Algovis_Viewer
 
 
 		//virtual void UpdateHistory(HistoryManager&); 
-		virtual void PrepareToPerform() {printf("*******8hello");}
+		virtual void PrepareToPerform();
+		virtual void Perform(float progress, QPainter*);
 		virtual void Complete(bool displayed);
 
 	private:
 		const ID matrixId;
+		VO_Matrix* matrix;
+		
+		float xDist[10][10];
+		float yDist[10][10];
 
 	};
 

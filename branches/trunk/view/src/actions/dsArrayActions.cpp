@@ -24,13 +24,13 @@ namespace Algovis_Viewer
 DS_CreateArray::DS_CreateArray(World* world, ID arrayId, const void* arrayAddress, 
 								ViewableObjectType elementType, vector<ID> elements)
 		: DS_CreateAction(world, false), arrayId(arrayId), arrayAddress(arrayAddress), 
-				elementType(elementType), elements(elements)
+				elementType(elementType), voArray(NULL), elements(elements)
 {
 }
 
 DS_CreateArray::DS_CreateArray(const DS_CreateArray& other)
 	: DS_CreateAction(other), arrayId(other.arrayId),arrayAddress(other.arrayAddress), 
-		elementType(other.elementType), elements(other.elements)
+		elementType(other.elementType), voArray(other.voArray), elements(other.elements)
 {
 }
 
@@ -45,31 +45,32 @@ void DS_CreateArray::Complete(bool displayed)
 	UL_ASSERT(!reg->IsRegistered(arrayId));
 
 
-	// ViewableObject equivalents of elements
-	vector<ViewableObject*> arrayElements;
-
-	// Iterate over elements, verify that they are all registered and populate arrayElements
-	BOOST_FOREACH(ID dsElement, elements)
+	if (!completedAtLeastOnce)
 	{
-		UL_ASSERT(reg->IsRegistered(dsElement));
-		arrayElements.push_back(reg->GetRepresentation(dsElement));
+		// Iterate over elements, verify that they are all registered and populate arrayElements
+		vector<ViewableObject*> arrayElements;
+
+		BOOST_FOREACH(ID dsElement, elements)
+		{
+			UL_ASSERT(reg->IsRegistered(dsElement));
+			arrayElements.push_back(reg->GetRepresentation(dsElement));
+		}
+
+		// Instantiate newArray
+		voArray = new VO_Array(arrayId, arrayAddress, world, elementType, arrayElements);
 	}
-
-
-	VO_Array* newArray = new VO_Array(arrayId, arrayAddress, world, elementType, arrayElements);
 	
 	if (BeingCreatedOnSameLine())
-		world->AddViewableOnSameRow(newArray);
+		world->AddViewableOnSameRow(voArray);
 	else
-		world->AddViewableOnNewRow(newArray);
-
+		world->AddViewableOnNewRow(voArray);
 	
 	
-	newArray->adjustSize();
-	newArray->setVisible(true);
+	voArray->adjustSize();
+	voArray->setVisible(true);
 
 	world->adjustSize();
-	reg->Register(arrayId, newArray);
+	reg->Register(arrayId, voArray);
 	
 	Action::Complete(displayed);
 }
@@ -80,8 +81,8 @@ void DS_CreateArray::Uncomplete(bool displayed)
 	if (!completedAtLeastOnce)
 		return;
 
-	UL_ASSERT(reg->IsRegistered(arrayId));
-	VO_Array* voArray = reg->GetRepresentation<VO_Array>(arrayId);
+	//UL_ASSERT(reg->IsRegistered(arrayId));
+	//VO_Array* voArray = reg->GetRepresentation<VO_Array>(arrayId);
 	
 	// TODO actually delete voArray??? nahhh
 
@@ -89,6 +90,8 @@ void DS_CreateArray::Uncomplete(bool displayed)
 	world->RemoveViewable(voArray);	
 	world->adjustSize();
 	reg->Deregister(arrayId);
+
+	Action::Uncomplete(displayed);
 }
 
 
@@ -101,7 +104,8 @@ void DS_CreateArray::Uncomplete(bool displayed)
 //////////////// DS_AddElementToArray
 DS_AddElementToArray::DS_AddElementToArray
 		(World* world, ID dsArray, ID dsElement, unsigned position)
-			: DS_DataFlowAction(world, false), dsArray(dsArray), dsElement(dsElement), position(position)
+			: DS_DataFlowAction(world, false), dsArray(dsArray), dsElement(dsElement), position(position),
+				voArray(NULL), elementFactory(NULL), element(NULL)
 {
 }
 
@@ -135,8 +139,11 @@ void DS_AddElementToArray::PrepareToPerform()
 	UL_ASSERT(reg->IsRegistered(dsArray,ARRAY));
 	voArray = reg->GetRepresentation<VO_Array>(dsArray);
 
+
 	// Create a viewable for whatever element was added.
-	element = elementFactory->Create(); 
+	if (!element)
+		element = elementFactory->Create(); 
+
 	
 	// TODO: Do not assume array is shown (and therefore this is not suppressed)
 
@@ -144,15 +151,14 @@ void DS_AddElementToArray::PrepareToPerform()
 	QRect arrayGeom = QRect(voArray->GetPositionInWorld(), voArray->size());
 	subjectDimensions = QRect(arrayGeom.topRight(), element->size());
 
-	/*
-	QPoint subjectPosition = arrayGeom.topRight();
-	std::cout << "subjectPosition = " << subjectPosition.x() << ", " << subjectPosition.y() << std::endl;
-	std::cout << "\t" << "position = " << position << " * " << element->size().width() << std::endl;
-	subjectPosition.setX(subjectPosition.x() + position * element->size().width());
-	subjectDimensions = QRect(subjectPosition, element->size());*/
-	
+
 	// Set up data for all the sources
-	sources = HistoryToSources(history, element);
+	if (!completedAtLeastOnce)
+		sources = HistoryToSources(history, element);
+	else
+		sources = UpdateSources(sources);
+
+	Action::PrepareToPerform();
 }
 
 
@@ -162,16 +168,26 @@ void DS_AddElementToArray::PrepareToUnperform()
 	UL_ASSERT(reg->IsRegistered(dsArray,ARRAY));
 	voArray = reg->GetRepresentation<VO_Array>(dsArray);
 
-	UL_ASSERT(reg->IsRegistered(dsElement));
-	element = reg->GetRepresentation(dsElement);
-	
+	/*
+	//UL_ASSERT(reg->IsRegistered(dsElement));
+	if (reg->IsRegistered(dsElement))
+	{
+		element = reg->GetRepresentation(dsElement);
+		UL_ASSERT(element);
 
-	// Set subjectStart to have abs position
+		// Set subjectStart to have abs position
+		QRect arrayGeom = QRect(voArray->GetPositionInWorld(), voArray->size());
+		subjectDimensions = QRect(arrayGeom.topRight(), element->size());
+	}*/
+
 	QRect arrayGeom = QRect(voArray->GetPositionInWorld(), voArray->size());
 	subjectDimensions = QRect(arrayGeom.topRight(), element->size());
 
+
 	// Update, since dimensions and pointers may have changed
 	sources = UpdateSources(sources);
+
+	Action::PrepareToUnperform();
 }
 
 void DS_AddElementToArray::Perform(float progress, QPainter* painter)
@@ -215,10 +231,19 @@ void DS_AddElementToArray::Unperform(float progress, QPainter* painter)
 void DS_AddElementToArray::Complete(bool displayed)
 {
 	// TODO: Do not assume array is shown, and therefore element is shown.
-	UL_ASSERT(!reg->IsRegistered(dsElement));
-	reg->Register(dsElement, element);
+	//UL_ASSERT(!reg->IsRegistered(dsElement));
+	//reg->Register(dsElement, element);
+	if (!reg->IsRegistered(dsElement))
+	{
+		reg->Register(dsElement, element);
+	}
+
+	UL_ASSERT(reg->IsRegistered(dsArray,ARRAY));
+	voArray = reg->GetRepresentation<VO_Array>(dsArray);
 
 	voArray->AddElement(element, position);
+
+	Action::Complete(displayed);
 
 	/*if (displayed)
 	{
@@ -235,7 +260,12 @@ void DS_AddElementToArray::Uncomplete(bool displayed)
 	// Remove element from voArray
 	vector<ViewableObject*> elementsToRemove;
 	elementsToRemove.push_back(element);
+	UL_ASSERT(reg->IsRegistered(dsArray,ARRAY));
+	voArray = reg->GetRepresentation<VO_Array>(dsArray);
+
 	voArray->RemoveElements(elementsToRemove, position, position);
+
+	Action::Uncomplete(displayed);
 }
 
 
@@ -267,6 +297,7 @@ void DS_RemoveElementsFromArray::PrepareToPerform()
 	UL_ASSERT(dsArray);
 
 	// Don't grab pointers until we actually perform the action
+	Action::PrepareToPerform();
 }
 
 
@@ -274,6 +305,8 @@ void DS_RemoveElementsFromArray::Complete(bool displayed)
 {
 	vector<ViewableObject*> elementPtrs = ConvertIdsToViewablePtrs(elements,SINGLE_PRINTABLE);
 	dsArray->RemoveElements(elementPtrs, startIndex, endIndex);
+
+	Action::Complete(displayed);
 }
 
 
@@ -306,6 +339,7 @@ void DS_AddressChanged::Complete(bool displayed)
 	UL_ASSERT(viewable);
 
 	viewable->SetDSAddress(newAddress);
+	Action::Complete(displayed);
 }
 
 

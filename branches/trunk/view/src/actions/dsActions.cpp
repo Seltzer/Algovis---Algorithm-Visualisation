@@ -223,19 +223,19 @@ Action* DS_Deleted::Clone() const
 
 void DS_Deleted::Complete(bool displayed)
 {
-	Registry* registry = Registry::GetInstance();
-	
-	if (registry->IsRegistered(dsSubject))
+	if (reg->IsRegistered(dsSubject))
 	{		
-		ViewableObject* vo = registry->GetRepresentation(dsSubject);
+		ViewableObject* vo = reg->GetRepresentation(dsSubject);
 		vo->setVisible(false);
-		registry->Deregister(dsSubject);
+		reg->Deregister(dsSubject);
 
 		if (!vo->HasParentViewable())
 			world->RemoveViewable(vo);
 
 		vo->deleteLater();
 	}
+
+	Action::Complete(displayed);
 }
 
 
@@ -277,6 +277,8 @@ void DS_CompositeAction::PrepareToPerform()
 		if (!subActions[i]->AnimationSuppressed())
 			subActions[i]->PrepareToPerform();
 	}
+
+	Action::PrepareToPerform();
 }
 
 void DS_CompositeAction::PrepareToUnperform()
@@ -286,6 +288,8 @@ void DS_CompositeAction::PrepareToUnperform()
 		if (!subActions[i]->AnimationSuppressed())
 			subActions[i]->PrepareToUnperform();
 	}
+
+	Action::PrepareToUnperform();
 }
 
 void DS_CompositeAction::Perform(float progress, QPainter* painter)
@@ -305,12 +309,16 @@ void DS_CompositeAction::Complete(bool displayed)
 {
 	for (unsigned i = 0; i < subActions.size(); i++)
 		subActions[i]->Complete(displayed);
+
+	Action::Complete(displayed);
 }
 
 void DS_CompositeAction::Uncomplete(bool displayed)
 {
 	for (int i = subActions.size() - 1; i >= 0; i--)
 		subActions[i]->Uncomplete(displayed);
+
+	Action::Uncomplete(displayed);
 }
 
 
@@ -343,6 +351,7 @@ Action* DS_SetCaption::Clone() const
 void DS_SetCaption::Complete(bool)
 {
 	Displayer::GetInstance()->SetCaption(newCaption);
+	Action::Complete(true);
 }
 
 
@@ -374,6 +383,7 @@ void DS_EnsureDisplayed::UpdateHistory(HistoryManager& historyMgr)
 void DS_EnsureDisplayed::PrepareToPerform()
 {
 	UL_ASSERT(!reg->IsRegistered(id));
+	Action::PrepareToPerform();
 }
 
 void DS_EnsureDisplayed::Complete(bool displayed)
@@ -388,6 +398,8 @@ void DS_EnsureDisplayed::Complete(bool displayed)
 	vo->adjustSize();
 	vo->setVisible(true);
 	reg->Register(id, vo);
+
+	Action::Complete(displayed);
 }
 
 

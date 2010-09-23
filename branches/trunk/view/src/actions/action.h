@@ -19,9 +19,10 @@ namespace Algovis_Viewer
 	 */
 	class Action
 	{
-		enum ActionState { READY, PREPARED, COMPLETED, UNPREPARED };
 
 	public:
+		enum ActionState { READY, PREPARED, COMPLETED, UNPREPARED };
+
 		Action(World*, bool suppressAnimation = false);
 		Action(const Action&);
 		virtual Action* Clone() const = 0;
@@ -37,7 +38,7 @@ namespace Algovis_Viewer
 		// WARNING - don't make any non-GUI-thread-sensitive invocations on Viewables since
 		// this is generally called on the main thread
 		virtual void PrepareToPerform();
-		virtual void PrepareToUnperform() {}
+		virtual void PrepareToUnperform();
 
 		// Move the animation (if any) forward to the specified point (0->1 scale)
 		virtual void Perform(float progress, QPainter*) {}
@@ -45,7 +46,7 @@ namespace Algovis_Viewer
 
 		// Perform the side effect (don't just animate) and clean up anything done in PrepareToPerform()
 		virtual void Complete(bool displayed);
-		virtual void Uncomplete(bool displayed){}
+		virtual void Uncomplete(bool displayed);
 
 		// virtual bool Undo() = 0;
 

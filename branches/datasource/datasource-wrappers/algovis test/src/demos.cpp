@@ -40,24 +40,19 @@ void MatrixDemo()
 
 	int initValue(3);
 	
-	Algovis::AlgoMatrix<int,3,3> matrix(initValue);
+	Algovis::AlgoSquareMatrix<int,3> matrix(initValue);
+
 	
 	matrix(1,1) = 1000;
 	matrix(2,2) = 2000;
 	matrix(3,3) = 3000;
 
-
 	matrix(2,1) = 21;
 	matrix(3,1) = 31;
 	matrix(3,2) = 32;
 
-
+	// Transpose currently doesn't have a proper animation
 	matrix.Transpose();
-	/*
-	vector<int> vec;
-	
-	vec.push_back(initValue);
-	vec[0] = 4;*/
 }
 
 

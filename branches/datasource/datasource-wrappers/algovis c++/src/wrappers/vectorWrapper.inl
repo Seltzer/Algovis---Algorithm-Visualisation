@@ -218,7 +218,8 @@ void VectorWrapper<T,Alloc>::pop_back()
 	Algovis::IdManager::GetInstance()->EnableTransplantMode(false);
 
 	// Inform Registry of pop_back
-	Algovis_Viewer::Registry::GetInstance()->RemoveElementsFromArray(Id(), elementToErase, index, index);
+	if (communicationWithViewEnabled)
+		Algovis_Viewer::Registry::GetInstance()->RemoveElementsFromArray(Id(), elementToErase, index, index);
 }
 
 

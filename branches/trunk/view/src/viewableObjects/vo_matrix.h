@@ -3,7 +3,7 @@
 
 
 #include "viewableObjectContainer.h"
-
+#include "../actions/dsMatrixActions.h"
 
 
 namespace Algovis_Viewer
@@ -12,6 +12,7 @@ namespace Algovis_Viewer
 
 	class VO_Matrix : public ViewableObjectContainer
 	{
+		friend DS_MatrixTranspose;
 
 	public:
 		VO_Matrix(ID id, const void* dsAddress, World* world, ViewableObjectType elementType, 

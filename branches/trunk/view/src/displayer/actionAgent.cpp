@@ -18,8 +18,7 @@ namespace Algovis_Viewer
 
 ActionAgent::ActionAgent(QWidget* parent, World* world, QPoint& position, QSize& dimensions)
 	: Component(parent, position, dimensions), world(world), actionPending(false), 
-			actionPrepared(false), mode(AgentMode::ON_DEMAND),
-			animLength(0.5f), animationsSuppressed(false), 
+			mode(AgentMode::ON_DEMAND), animLength(0.5f), animationsSuppressed(false), 
 				performActionCount(0), currentAction(INVALID), shuttingDown(false)
 {
 	setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -76,9 +75,13 @@ void ActionAgent::PerformAndAnimateActionAsync(const Action* newAction)
 		return;
 	}
 
+	#if(DEBUG_ACTION_LEVEL >=1)
+		prt("About to lodge action in ActionAgent::actionHistory");		
+	#endif
+
+
 	Action* clone = newAction->Clone();
 	actionHistory.push_back(clone);
-	actionPrepared = false;
 	currentAction = actionHistory.size() - 1;
 
 	// Do this last
@@ -97,15 +100,15 @@ void ActionAgent::paintEvent(QPaintEvent*)
 	if (!actionPending)
 		return;
 
-	// If currentAction is invalid, we have nothing to do - TODO verify 
+	// currentAction is INVALID if we're right at the front or back of actionHistory
+	// So if currentAction == INVALID, we have nothing to do
 	if (currentAction == INVALID)
 		return;
 
 	// Prepare action for performing/unperforming
-	if (!actionPrepared)
-		PrepareCurrentAction();
+	PrepareCurrentAction();
 	
-	
+
 	bool paused = (mode & AgentMode::PAUSED) == AgentMode::PAUSED;
 
 	// Advance animation if not in paused mode
@@ -117,17 +120,12 @@ void ActionAgent::paintEvent(QPaintEvent*)
 			actionHistory[currentAction]->IsFinishedAnimating()) )
 	{
 		// Animation is suppressed for this action or all actions, or the animation is finished
+		// So, complete the action
 		FinishCurrentAction();
 	}
 	else
 	{
-		// Paint current frame of animation
-		QPainter painter(this);
-
-		if ((mode & AgentMode::BACKTRACKING) == AgentMode::BACKTRACKING)
-			actionHistory[currentAction]->Unperform(actionHistory[currentAction]->GetProgress(), &painter);
-		else
-			actionHistory[currentAction]->Perform(actionHistory[currentAction]->GetProgress(), &painter);
+		DrawCurrentFrame(&QPainter(this));
 	}
 }
 
@@ -135,25 +133,47 @@ void ActionAgent::PrepareCurrentAction()
 {
 	if ((mode & AgentMode::BACKTRACKING) == AgentMode::BACKTRACKING)
 	{
-		actionHistory[currentAction]->PrepareToUnperform();
+		if (actionHistory[currentAction]->state != Action::UNPREPARED)
+		{
+			actionHistory[currentAction]->PrepareToUnperform();
+
+			animStartTime = QTime::currentTime();
+			actionHistory[currentAction]->SetProgress(0.00f);
+
+
+			#if(DEBUG_ACTION_LEVEL >=1)
+				prt("Unprepared current action inside ActionAgent");		
+			#endif
+		}
 		
-		// what if action has already started???
-		animStartTime = QTime::currentTime();
-		actionHistory[currentAction]->SetProgress(0.00f);
 	}
 	else
 	{
-		actionHistory[currentAction]->PrepareToPerform();
-		animStartTime = QTime::currentTime();
-	}
+		if (actionHistory[currentAction]->state != Action::PREPARED)
+		{
+			actionHistory[currentAction]->PrepareToPerform();
+			actionHistory[currentAction]->state = Action::PREPARED;
 
-	actionPrepared = true;
+			animStartTime = QTime::currentTime();
+
+			#if(DEBUG_ACTION_LEVEL >=1)
+				prt("Prepared current action inside ActionAgent");		
+			#endif
+		}
+	}
+}
+
+void ActionAgent::DrawCurrentFrame(QPainter* painter)
+{
+	if ((mode & AgentMode::BACKTRACKING) == AgentMode::BACKTRACKING)
+		actionHistory[currentAction]->Unperform(actionHistory[currentAction]->GetProgress(), painter);
+	else
+		actionHistory[currentAction]->Perform(actionHistory[currentAction]->GetProgress(), painter);
 }
 
 void ActionAgent::FinishCurrentAction()
 {
 	animStartTime = QTime();
-	actionPrepared = false;
 
 	if ((mode & AgentMode::ON_DEMAND) == AgentMode::ON_DEMAND)
 	{
@@ -180,6 +200,7 @@ void ActionAgent::FinishCurrentAction()
 		#else			
 			actionHistory[currentAction]->Uncomplete(!actionHistory[currentAction]->AnimationSuppressed());
 		#endif
+
 
 		if (currentAction > 0)
 		{
@@ -289,31 +310,30 @@ void ActionAgent::backtrack()
 		return;
 	
 
-	if (currentAction = INVALID)
+	if (currentAction == INVALID)
 	{
 		// No action is being performed, so the first action to backtrack is the last one in ActionHistory
 		currentAction = actionHistory.size() - 1;
-		actionPrepared = false;
 	}
 	else
 	{
 		// Action is currently being performed - should be the last one
 		UL_ASSERT(currentAction == actionHistory.size() - 1);
-		actionHistory[currentAction]->SetProgress(1.00f - actionHistory[currentAction]->GetProgress());
+
+		// This allows us to backtrack through the action currently being performed
+		//actionHistory[currentAction]->SetProgress(1.00f - actionHistory[currentAction]->GetProgress());
+		
+		// On the other hand, it saves us many headaches if we start backtracking at action before the current
+		currentAction = actionHistory.size() - 2;
 	}
 
 	// Set mode to BACKTRACKING while preserving PAUSED mode
 	mode = (AgentMode) (AgentMode::BACKTRACKING | (mode & AgentMode::PAUSED));
 	actionPending = true;
-
-	prt("backtracking");
 }
 
 void ActionAgent::forwardtrack()
 {
-	prt("forward tracking");
-
-
 	boost::unique_lock<boost::mutex> lock(modeMutex);
 
 	// Must be in backtracking mode

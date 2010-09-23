@@ -1,34 +1,35 @@
-cumulative adding
-
-* Test with different ActionBuffer sizes - allow user to set action buffer size
-* Test deque
-* Finish wrappers
+************ need to get this stuff done **********************
+* Test History stuff (cumulative adding, etc.) - test with different actionbuffer sizes, allow user to set
+          actionbuffer size
+* Finish and test wrappers
 * Add transpose animation
-* Vary animation durations for different actions
-* Fix backtracking and implement undo for other actions
+* backtracking/forwardtracking
 * Highlight operands for non-sibling types
+* Fix testing and communicationWithViewEnabled
+
+************ maybe **********************
+* Remove SINGLE_PRINTABLE hackery amap (mostly removed at this stage)
+* Improve layout manager so that Viewable translations can trigger layout recalculation, not just 
+			Viewable resizes
 * Write MapWrapper, and VO_Map
 * Improve the UI and fix dodgy stuff:
 	- Fix window resizing
 	- Add snap to current viewable feature
 	- Make buttons or at least fix the play button
-* Remove SINGLE_PRINTABLE hackery (mostly removed at this stage)
+
+
+************ probably won't get this stuff done **********************
 * Support custom types by displaying a generic 'user-defined type pic'
-* Improve layout manager so that Viewable translations can trigger layout recalculation, not just 
-			Viewable resizes
 * Display contents of custom types when the user mouses over the user-defined type pic
+* Vary animation durations for different actions
 * Implement drawing for pointer types 
 * Implement stats module
 * Port to Linux
 * Turn algovis c++ into a DLL
 
-***** BUGS *****
-* Ambiguous < op when using vec.size_type
-* Deal with assertion in DS_CreateSP::PrepareToPerform that is predicated on the array being registered
 
 **** THOUGHTS ****
 * How to deal with "unsigned char"
-* Array deregistration...
 * Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
 		arrays of arrays.
 

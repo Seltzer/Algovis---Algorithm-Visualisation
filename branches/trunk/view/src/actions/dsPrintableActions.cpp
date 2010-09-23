@@ -65,8 +65,9 @@ void DS_CreateSP::Complete(bool displayed)
 		element->adjustSize();
 		element->setVisible(true);
 		reg->Register(id, element);
-
 	}
+
+	Action::Complete(displayed);
 }
 
 
@@ -135,6 +136,8 @@ void DS_Assigned::PrepareToPerform()
 	{
 		sources = UpdateSources(sources);
 	}
+
+	Action::PrepareToPerform();
 }
 
 void DS_Assigned::PrepareToUnperform()
@@ -149,6 +152,8 @@ void DS_Assigned::PrepareToUnperform()
 
 	// Update, since dimensions and pointers may have changed
 	sources = UpdateSources(sources);
+
+	Action::PrepareToUnperform();
 }
 
 void DS_Assigned::Perform(float progress, QPainter* painter)
@@ -192,19 +197,17 @@ void DS_Assigned::Unperform(float progress, QPainter* painter)
 void DS_Assigned::Complete(bool displayed)
 {
 	if (!completedAtLeastOnce)
-	{
 		subject->UpdateValue(newValue, completeTime);
-		Action::Complete(displayed);
-	}
 	else
-	{
 		subject->UpdateValue(newValue);
-	}
+
+	Action::Complete(displayed);
 }
 
 void DS_Assigned::Uncomplete(bool displayed)
 {
 	subject->UpdateValue(oldValue);
+	Action::Uncomplete(displayed);	
 }
 
 
@@ -270,6 +273,7 @@ void DS_Modified::PrepareToPerform()
 
 	// Set up data for all the sources
 	sources = HistoryToSources(history, subject);
+	Action::PrepareToPerform();
 }
 
 void DS_Modified::Perform(float progress, QPainter* painter)
@@ -308,6 +312,7 @@ void DS_Modified::Perform(float progress, QPainter* painter)
 void DS_Modified::Complete(bool displayed)
 {
 	subject->UpdateValue(value, completeTime);
+	Action::Complete(displayed);
 }
 
 /////////////////// DS_HighlightOperands
@@ -340,6 +345,7 @@ void DS_HighlightOperands::UpdateHistory(HistoryManager& historyManager)
 void DS_HighlightOperands::PrepareToPerform()
 {
 	FetchOperandPtrs();
+	Action::PrepareToPerform();
 }
 
 void DS_HighlightOperands::PrepareToUnperform()
@@ -347,6 +353,7 @@ void DS_HighlightOperands::PrepareToUnperform()
 	// Pointers could be dead by now, so refetch them
 	operandPtrs.clear();
 	FetchOperandPtrs();
+	Action::PrepareToUnperform();
 }
 
 bool DS_HighlightOperands::FetchOperandPtrs()
@@ -438,11 +445,17 @@ void DS_HighlightOperands::Complete(bool displayed)
 {
 	BOOST_FOREACH(VO_SinglePrintable* vo, operandPtrs)
 		vo->SetBoundingBoxColour(originalBBColour);
+
+	Action::Complete(displayed);
 }
 
+// Pretty much identical to Complete
 void DS_HighlightOperands::Uncomplete(bool displayed)
 {
-	return Complete(displayed);
+	BOOST_FOREACH(VO_SinglePrintable* vo, operandPtrs)
+		vo->SetBoundingBoxColour(originalBBColour);
+
+	Action::Uncomplete(displayed);
 }
 
 

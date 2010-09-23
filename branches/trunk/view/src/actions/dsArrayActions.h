@@ -24,6 +24,8 @@ namespace Algovis_Viewer
 		const ID arrayId;
 		const void* arrayAddress;
 		ViewableObjectType elementType;
+		VO_Array* voArray;
+
 		std::vector<ID> elements;
 	};
 
@@ -52,6 +54,7 @@ namespace Algovis_Viewer
 		unsigned position;
 
 		VO_Array* voArray;
+		
 		ViewableObjectFactory* elementFactory;
 		ViewableObject* element;
 		std::string value;

@@ -30,13 +30,28 @@ Action::~Action()
 
 void Action::PrepareToPerform()
 {
+	progress = 0;
+	state = Action::PREPARED;
 	preparedAtLeastOnce = true;
+}
+
+void Action::PrepareToUnperform()
+{
+	progress = 0;
+	state = Action::UNPREPARED;
 }
 
 void Action::Complete(bool displayed)
 {
+	state = COMPLETED;
 	completedAtLeastOnce = true;
 }
+
+void Action::Uncomplete(bool displayed)
+{
+	state = READY;
+}
+
 
 void Action::SuppressAnimation()
 {

@@ -4,6 +4,10 @@
 #include "../../include/registry.h"
 #include "../displayer/world.h"
 
+// todo hack
+#include <QPoint>
+#include <QPainter>
+
 
 using namespace std;
 
@@ -50,6 +54,8 @@ void DS_CreateMatrix::PrepareToPerform()
 {	
 	BOOST_FOREACH(ViewableObjectFactory* factory, elementFactories)
 		elementPtrs.push_back(factory->Create());
+
+	Action::PrepareToPerform();
 }
 
 void DS_CreateMatrix::Complete(bool displayed)
@@ -80,6 +86,8 @@ void DS_CreateMatrix::Complete(bool displayed)
 	newMatrix->setVisible(true);
 	newMatrix->setEnabled(true);
 	world->adjustSize();
+
+	Action::Complete(displayed);
 }
 
 
@@ -99,6 +107,45 @@ Action* DS_MatrixTranspose::Clone() const
 	return new DS_MatrixTranspose(*this);
 }
 
+void DS_MatrixTranspose::PrepareToPerform()
+{	
+	UL_ASSERT(reg->IsRegistered(matrixId));
+	matrix = reg->GetRepresentation<VO_Matrix>(matrixId);
+
+	for (int row = 1; row <= matrix->rows; row++)
+	{
+		for (int col = 1; col <= matrix->cols; col++)
+		{
+			xDist[row][col] = matrix->elements[row][col]->y() - matrix->elements[row][col]->x();
+			yDist[row][col] = matrix->elements[row][col]->x() - matrix->elements[row][col]->y();
+		}
+	}
+
+}
+
+
+void DS_MatrixTranspose::Perform(float progress, QPainter* painter)
+{
+	// TODO This animation is far from complete
+	/*
+	for (int row = 1; row <= matrix->rows; row++)
+	{
+		for (int col = 1; col <= matrix->cols; col++)
+		{
+			QPoint pos = matrix->elements[row][col]->GetPositionInWorld();
+			QPoint offset((int) (xDist[row][col] * sin(progress)), (int) (yDist[row][col] * cos(progress)));
+			pos.operator +=(offset);
+
+			QRect bb(QPoint(pos.x(), pos.y()), matrix->elements[row][col]->size());
+
+			painter->setPen(Qt::white);	
+			matrix->elements[row][col]->DrawValue(true, bb, painter);
+			painter->setPen(Qt::green);	
+			matrix->elements[row][col]->DrawBoundingBox(bb, painter);
+		}
+	}*/
+}
+
 
 void DS_MatrixTranspose::Complete(bool displayed) 
 {
@@ -106,18 +153,7 @@ void DS_MatrixTranspose::Complete(bool displayed)
 	VO_Matrix* matrix = reg->GetRepresentation<VO_Matrix>(matrixId);
 	matrix->Transpose();
 
-	// TODO
-	/*
-	if (!completedAtLeastOnce)
-	{
-		subject->UpdateValue(newValue, completeTime);
-		Action::Complete(displayed);
-	}
-	else
-	{
-		subject->UpdateValue(newValue);
-	}*/
-
+	Action::Complete(displayed);
 }
 
 
