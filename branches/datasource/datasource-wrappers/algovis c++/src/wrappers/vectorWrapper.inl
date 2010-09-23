@@ -327,8 +327,9 @@ void VectorWrapper<T,Alloc>::clear()
 { 
 	value.clear(); 
 	
-	if (communicationWithViewEnabled)
-		Algovis_Viewer::Registry::GetInstance()->ClearArray(this);
+	
+	/*if (communicationWithViewEnabled)
+		Algovis_Viewer::Registry::GetInstance()->ClearArray(this);*/
 }
 
 

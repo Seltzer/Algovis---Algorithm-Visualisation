@@ -325,26 +325,32 @@ void TestDemo()
 
 void ScreenDemo()
 {
-	int count = 10;
-	vector<float> sum;
+	static int count = 10;
+	static vector<float> sum;
 	for (int i = 0; i < count; i++)
 		sum.push_back((rand() % 100) / 10.0f);
 
-	vector<float> sum2;
+	static vector<float> sum2;
 	for (int i = 0; i < count-1; i++)
 		sum2.push_back((sum[i] + sum[i+1]) / 2);
 
-	vector<int> fib;
+	static vector<int> fib;
 	fib.reserve(12);
 	fib.push_back(1);
 	fib.push_back(1);
 	for (int i = 0; i < 10; i++)
 		fib.push_back(fib[i] + fib[i+1]);
 
-	vector<int> sortCollection;
+	static vector<int> sortCollection;
 	PopulateVectorWithRandomInts(sortCollection, 9, 0, 9);
 	Vector_BubbleSortAscending(sortCollection);
 	//std::sort(sortCollection.begin(), sortCollection.end());
+
+	sum.erase(sum.begin(), sum.end());
+	sum2.erase(sum2.begin(), sum2.end());
+	fib.erase(fib.begin(), fib.end());
+	sortCollection.erase(sortCollection.begin(), sortCollection.end());
+
 }
 
 

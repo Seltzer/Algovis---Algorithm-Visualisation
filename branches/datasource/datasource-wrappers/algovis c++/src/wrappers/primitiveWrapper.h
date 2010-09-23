@@ -54,7 +54,7 @@ namespace Algovis
 			//std::cout << "PrimitiveWrapper C2 called - registering " << this << " with value " << primitive << std::endl;
 			ID id = IdManager::GetInstance()->GetIdForConstruction(this);
 
-			if (communicationWithViewEnabled && SettingsManager::GetInstance()->ConstructionReportingEnabled())
+			if (communicationWithViewEnabled)
 			{
 				ID sourceId = INVALID;
 
@@ -73,7 +73,7 @@ namespace Algovis
 			//std::cout << "PrimitiveType CC called id = " << id << ", otherId = " << otherId << std::endl;
 			CopyConstructionInfo info = IdManager::GetInstance()->GetIdForCopyConstruction(this, &other);
 						
-			if (communicationWithViewEnabled && SettingsManager::GetInstance()->CopyConstructionReportingEnabled())
+			if (communicationWithViewEnabled)
 			{
 				if (info.result == CopyConstructionInfo::NORMAL_CC)
 				{

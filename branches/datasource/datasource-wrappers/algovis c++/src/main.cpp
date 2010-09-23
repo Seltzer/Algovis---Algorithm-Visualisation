@@ -46,7 +46,8 @@ void EnsureThisIsDisplayed(Algovis::Wrapper* wrapper)
 
 void FlushAllActions()
 {
-	Algovis_Viewer::Registry::GetInstance()->FlushAllActions();
+	if (communicationWithViewEnabled)
+		Algovis_Viewer::Registry::GetInstance()->FlushAllActions();
 }
 
 void Shutdown()

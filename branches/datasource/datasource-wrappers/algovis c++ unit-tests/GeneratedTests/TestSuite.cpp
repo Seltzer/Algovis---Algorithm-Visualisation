@@ -14,12 +14,12 @@
 int main() {
  return CxxTest::ErrorPrinter().run();
 }
-#include "d:/Project/branches/datasource/datasource-wrappers/algovis c++ unit-tests//Tests/AlgoVisTestSuite.h"
+#include "d:/Programming/Project4/branches/datasource/datasource-wrappers/algovis c++ unit-tests//Tests/AlgoVisTestSuite.h"
 
 static AlgoVisTestSuite suite_AlgoVisTestSuite;
 
 static CxxTest::List Tests_AlgoVisTestSuite = { 0, 0 };
-CxxTest::StaticSuiteDescription suiteDescription_AlgoVisTestSuite( "d:/Project/branches/datasource/datasource-wrappers/algovis c++ unit-tests//Tests/AlgoVisTestSuite.h", 18, "AlgoVisTestSuite", suite_AlgoVisTestSuite, Tests_AlgoVisTestSuite );
+CxxTest::StaticSuiteDescription suiteDescription_AlgoVisTestSuite( "d:/Programming/Project4/branches/datasource/datasource-wrappers/algovis c++ unit-tests//Tests/AlgoVisTestSuite.h", 18, "AlgoVisTestSuite", suite_AlgoVisTestSuite, Tests_AlgoVisTestSuite );
 
 static class TestDescription_AlgoVisTestSuite_testIntWrapper : public CxxTest::RealTestDescription {
 public:
