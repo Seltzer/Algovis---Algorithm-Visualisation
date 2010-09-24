@@ -37,9 +37,6 @@ namespace Algovis_Viewer
 
 		std::vector<ViewableObject*> viewables;
 		
-		// hack TODO
-		boost::mutex worldMutex;
-
 		void AddViewable(ViewableObject*);
 		
 	private slots:

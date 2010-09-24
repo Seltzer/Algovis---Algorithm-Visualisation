@@ -45,13 +45,12 @@ namespace Algovis_Viewer
 		mutable float rowHeight[10];
 		mutable float columnWidth[10];
 		
-		// TODO temporary
-		(ViewableObject*) elements[10][10];
-				
 		mutable QString titleText;
 		mutable QPoint titleTextPosition;
 		mutable QPoint leftBracketTopCorner, leftBracketBottomCorner;
 		mutable QPoint rightBracketTopCorner, rightBracketBottomCorner;
+
+		(ViewableObject*) elements[10][10];
 	};
 
 

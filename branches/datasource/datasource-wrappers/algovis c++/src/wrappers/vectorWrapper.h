@@ -98,12 +98,9 @@ public:
 	iterator erase(iterator position);
 	iterator erase(iterator first, iterator last);
 	
-	// TODO
 	void swap (VectorWrapper<T,Alloc>& vector) { value.swap(vector.AVGetValue()); }
 	void clear(); 
 	
-
-	// TODO don't know much about allocators
 	inline allocator_type get_allocator() const { return value.get_allocator(); };
 
 

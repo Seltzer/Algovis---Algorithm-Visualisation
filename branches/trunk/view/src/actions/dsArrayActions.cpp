@@ -168,7 +168,7 @@ void DS_AddElementToArray::PrepareToUnperform()
 	UL_ASSERT(reg->IsRegistered(dsArray,ARRAY));
 	voArray = reg->GetRepresentation<VO_Array>(dsArray);
 
-	/*
+	
 	//UL_ASSERT(reg->IsRegistered(dsElement));
 	if (reg->IsRegistered(dsElement))
 	{
@@ -178,11 +178,7 @@ void DS_AddElementToArray::PrepareToUnperform()
 		// Set subjectStart to have abs position
 		QRect arrayGeom = QRect(voArray->GetPositionInWorld(), voArray->size());
 		subjectDimensions = QRect(arrayGeom.topRight(), element->size());
-	}*/
-
-	QRect arrayGeom = QRect(voArray->GetPositionInWorld(), voArray->size());
-	subjectDimensions = QRect(arrayGeom.topRight(), element->size());
-
+	}
 
 	// Update, since dimensions and pointers may have changed
 	sources = UpdateSources(sources);

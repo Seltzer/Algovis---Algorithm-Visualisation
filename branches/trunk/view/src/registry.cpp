@@ -71,7 +71,6 @@ void Registry::AddActionToBuffer(DS_Action* dsAction)
 	if (displayerShuttingDown)
 		return;
 
-	// TODO update debugging.h
 	#if (DEBUG_ACTION_LEVEL >= 2)
 		prt("\tStarting Registry::AddActionToBuffer()");
 	#endif

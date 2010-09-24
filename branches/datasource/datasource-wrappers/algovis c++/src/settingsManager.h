@@ -6,7 +6,7 @@
 namespace Algovis
 {
 	
-
+	// Note: this is unused (TODO remove)
 	// TODO Provide a generic settings class as we'll have many more settings in the future
 	class SettingsManager
 	{

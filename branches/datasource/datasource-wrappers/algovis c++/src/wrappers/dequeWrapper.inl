@@ -188,7 +188,6 @@ typename DequeWrapper<T,Alloc>::const_reference DequeWrapper<T,Alloc>::operator[
 template <class T, class Alloc>
 void DequeWrapper<T,Alloc>::push_front(const T& x)
 {
-	// TODO this probably doesn't work
 	Algovis::IdManager::GetInstance()->EnableTransplantMode(true, IdManager::GetInstance()->GetId(&x));
 	value.push_front(x);
 	Algovis::IdManager::GetInstance()->EnableTransplantMode(false);

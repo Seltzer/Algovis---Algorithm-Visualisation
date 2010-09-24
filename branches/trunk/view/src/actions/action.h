@@ -70,7 +70,7 @@ namespace Algovis_Viewer
 		// 0.2 progress means 20% performed or 20% unperformed
 		float progress;
 
-		// TODO what's this and why isn't it being initialised in ctor?
+		// TODO should this be initialised in the ctor?
 		int completeTime;
 
 	};

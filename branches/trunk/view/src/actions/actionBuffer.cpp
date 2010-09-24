@@ -102,8 +102,8 @@ bool ActionBuffer::CanCombine(Action* tested, Action* other, int otherTime)
 	DS_DataFlowAction* dfAction = dynamic_cast<DS_DataFlowAction*>(tested);
 	DS_DataFlowAction* dfOther = dynamic_cast<DS_DataFlowAction*>(other);
 	if (dfAction == NULL || dfOther == NULL) // Not even a dataflow action, don't worry
-		return false;
-	// TODO zomg this is killing stuff
+		return false;		// TODO zomg this is killing stuff when we return true
+	
 
 	std::set<ValueID> sources = dfAction->GetSources();
 	std::set<ID> otherSubjects = dfOther->GetSubjects();

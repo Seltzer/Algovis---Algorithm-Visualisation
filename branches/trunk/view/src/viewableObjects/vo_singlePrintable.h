@@ -56,7 +56,6 @@ namespace Algovis_Viewer
 		{}
 		virtual ViewableObject* Create();
 
-		// TODO hack hack
 		void UpdateValue(std::string value)
 		{
 			this->value = value;

@@ -1,3 +1,7 @@
+
+animation duration
+
+
 ************ need to get this stuff done **********************
 * Test History stuff (cumulative adding, etc.) - test with different actionbuffer sizes, allow user to set
           actionbuffer size

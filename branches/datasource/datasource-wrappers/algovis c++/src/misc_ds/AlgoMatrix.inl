@@ -17,8 +17,6 @@ AlgoSquareMatrix<T, dimensions>::AlgoSquareMatrix(T& initValue)
 	{
 		for (int col = 0; col < dimensions; col++)
 		{
-			// TODO remove debugging
-			std::cout << elements[row][col] << std::endl;
 			// TODO this isn't being updated in the view
 			elements[row][col] = initValue;
 		}

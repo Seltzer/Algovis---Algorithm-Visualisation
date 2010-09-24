@@ -4,15 +4,11 @@
 #include "utilities.h"
 
 #include "vo_matrix.h"
-
-// TODO hack
 #include "vo_singlePrintable.h"
 
-// todo
-#include <iostream>
-
-
 using namespace std;
+
+
 
 namespace Algovis_Viewer
 {
@@ -34,8 +30,6 @@ VO_Matrix::VO_Matrix(ID id, const void* dsAddress, World* world, ViewableObjectT
 			// Initialise sizeHints matrix
 			sizeHints[row][col] = QSize();
 
-			// TODO
-			//std::cout << "index = " << ((row - 1) * cols + col - 1) << std::endl;
 			elements[row][col] = initElements[(row - 1) * cols + col - 1];
 			elements[row][col]->SetParentViewable(this);
 			elements[row][col]->SetSizeDictatedByParent(true);

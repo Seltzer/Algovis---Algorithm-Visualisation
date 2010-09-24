@@ -1,0 +1,7 @@
+dev docs:
+
+action lifetime
+example of wrapper and its actions
+matrix transpose
+
+copy some of the stuff from the view dev docs

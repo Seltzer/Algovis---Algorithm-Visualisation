@@ -1,12 +1,11 @@
 #include "boost/foreach.hpp"
+#include <QPoint>
+#include <QPainter>
+
 #include "dsMatrixActions.h"
 #include "../viewableObjects/vo_matrix.h"
 #include "../../include/registry.h"
 #include "../displayer/world.h"
-
-// todo hack
-#include <QPoint>
-#include <QPainter>
 
 
 using namespace std;
