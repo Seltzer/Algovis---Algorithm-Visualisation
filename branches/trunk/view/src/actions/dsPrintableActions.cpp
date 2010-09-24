@@ -45,6 +45,11 @@ void DS_CreateSP::UpdateHistory(HistoryManager& historyManager)
 	historyManager.ResetHistory(id);
 	historyManager.SetValue(id, value);
 	historyManager.SetFactory(id, myFactory);
+	if (createAndDisplayASAP)
+	{
+		historyManager.SetVisible(id, true);
+		suppressAnimation = false;
+	}
 
 	DS_Action::UpdateHistory(historyManager);
 
@@ -72,8 +77,8 @@ void DS_CreateSP::Complete(bool displayed)
 
 
 ////////////////////// DS_Assigned implementation ////////////////////////////
-DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string newValue, bool tracked)
-	: DS_DataFlowAction(world), newValue(newValue), dsAssigned(dsAssigned), dsSource(dsSource), tracked(tracked)
+DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string newValue, bool valueChanged)
+	: DS_DataFlowAction(world), newValue(newValue), dsAssigned(dsAssigned), dsSource(dsSource), valueChanged(valueChanged)
 {
 	//ViewableObject* viewable = (ViewableObject*)subject;
 	//subjects.insert(viewable); // May need to keep the original printable pointer?
@@ -81,7 +86,7 @@ DS_Assigned::DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string n
 
 DS_Assigned::DS_Assigned(const DS_Assigned& other)
 	: DS_DataFlowAction(other), dsAssigned(other.dsAssigned), dsSource(other.dsSource), 
-			oldValue(other.oldValue), newValue(other.newValue),
+			oldValue(other.oldValue), newValue(other.newValue), valueChanged(other.valueChanged),
 	subject(other.subject), sources(other.sources), subjectDimensions(other.subjectDimensions)
 {
 }
@@ -110,7 +115,8 @@ void DS_Assigned::UpdateHistory(HistoryManager& historyManager)
 			historyManager.ResetHistory(dsAssigned); // I don't know... seemed like a good idea at the time
 	}
 
-	historyManager.SetValue(dsAssigned, newValue);
+	if (valueChanged)
+		historyManager.SetValue(dsAssigned, newValue);
 
 	DS_Action::UpdateHistory(historyManager);
 }
@@ -197,16 +203,19 @@ void DS_Assigned::Unperform(float progress, QPainter* painter)
 void DS_Assigned::Complete(bool displayed)
 {
 	if (!completedAtLeastOnce)
-		subject->UpdateValue(newValue, completeTime);
+		if (valueChanged)
+			subject->UpdateValue(newValue, completeTime);
 	else
-		subject->UpdateValue(newValue);
+		if (valueChanged)
+			subject->UpdateValue(newValue);
 
 	Action::Complete(displayed);
 }
 
 void DS_Assigned::Uncomplete(bool displayed)
 {
-	subject->UpdateValue(oldValue);
+	if (valueChanged)
+		subject->UpdateValue(oldValue);
 	Action::Uncomplete(displayed);	
 }
 

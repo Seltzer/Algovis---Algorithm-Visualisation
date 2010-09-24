@@ -77,14 +77,16 @@ vector<T> merge(vector<T> v1, vector<T> v2, unsigned level)
 	if (v1.empty())
 		return vector<T>(v2);
 
-
 	// Recursive cases
 	if (v1[0] <= v2[0])
 	{
 		// Extract smallest element in the two vectors
 		::PlaceNextOnSameLineAsLast();
-		vector<T> singleElementVec;
-		singleElementVec.push_back(v1[0]);
+		//vector<T> singleElementVec;
+		//singleElementVec.push_back(v1[0]);
+		//::EnsureNextIsDisplayed();
+		T singleElement = v1[0];
+		EnsureThisIsDisplayed(&singleElement);
 
 		v1.erase(v1.begin());
 
@@ -94,7 +96,7 @@ vector<T> merge(vector<T> v1, vector<T> v2, unsigned level)
 
 		::PlaceNextTwoOnSameLine();
 		returnVec = merge(v1,v2, level + 1);
-		returnVec.insert(returnVec.begin(), singleElementVec[0]);
+		returnVec.insert(returnVec.begin(), singleElement);
 
 		return returnVec;
 	}
@@ -103,8 +105,11 @@ vector<T> merge(vector<T> v1, vector<T> v2, unsigned level)
 	{
 		// Extract smallest element in the two vectors
 		::PlaceNextOnSameLineAsLast();
-		vector<T> singleElementVec;
-		singleElementVec.push_back(v2[0]);
+		//vector<T> singleElementVec;
+		//singleElementVec.push_back(v2[0]);
+		//::EnsureNextIsDisplayed();
+		T singleElement = v2[0];
+		EnsureThisIsDisplayed(&singleElement);
 
 		v2.erase(v2.begin());
 
@@ -114,7 +119,7 @@ vector<T> merge(vector<T> v1, vector<T> v2, unsigned level)
 
 		::PlaceNextTwoOnSameLine();
 		returnVec = merge(v1,v2, level + 1);
-		returnVec.insert(returnVec.begin(), singleElementVec[0]);
+		returnVec.insert(returnVec.begin(), singleElement);
 
 		return returnVec;
 	}

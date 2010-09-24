@@ -377,6 +377,7 @@ Action* DS_EnsureDisplayed::Clone() const
 void DS_EnsureDisplayed::UpdateHistory(HistoryManager& historyMgr)
 {
 	voFactory = historyMgr.GetFactory(id);
+	historyMgr.SetVisible(id, true); // Displayed
 }
 
 

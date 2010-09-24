@@ -19,7 +19,7 @@ void PlaceNextOnSameLineAsLast();
 void PlaceNextTwoOnSameLine();
 
 // Enforcing display
-void EnsureNextIsDisplayed();
+//void EnsureNextIsDisplayed(); // Removed as often does not perform as a user would expect.
 void EnsureThisIsDisplayed(Algovis::Wrapper*);
 
 

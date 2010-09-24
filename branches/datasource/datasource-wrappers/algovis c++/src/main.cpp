@@ -28,10 +28,10 @@ void PlaceNextTwoOnSameLine()
 	Algovis_Viewer::Registry::GetInstance()->PlaceNextTwoOnSameLine();
 }
 
-void EnsureNextIsDisplayed()
+/*void EnsureNextIsDisplayed()
 {
 	Algovis_Viewer::Registry::GetInstance()->EnsureNextIsDisplayed();
-}
+}*/
 
 void SetCaption(std::string& newCaption)
 {
@@ -41,7 +41,8 @@ void SetCaption(std::string& newCaption)
 void EnsureThisIsDisplayed(Algovis::Wrapper* wrapper)
 {
 	Algovis::ID id = Algovis::IdManager::GetInstance()->GetId(wrapper);
-	Algovis_Viewer::Registry::GetInstance()->DisplayThis(id);
+	Algovis_Viewer::Registry* registry = Algovis_Viewer::Registry::GetInstance();
+	registry->DisplayThis(id);
 }
 
 void FlushAllActions()

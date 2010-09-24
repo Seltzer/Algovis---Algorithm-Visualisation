@@ -348,6 +348,10 @@ void Registry::DisplayThis(ID id)
 
 	AddActionToBuffer(&action);
 
+	// Display assignment
+	DS_Assigned assignedAction(world, id, id, "", false);
+
+	AddActionToBuffer(&assignedAction);
 }
 
 

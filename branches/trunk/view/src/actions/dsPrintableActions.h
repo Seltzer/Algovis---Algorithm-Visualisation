@@ -29,7 +29,7 @@ namespace Algovis_Viewer
 	class DS_Assigned : public DS_DataFlowAction
 	{
 	public:
-		DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string newValue, bool tracked);
+		DS_Assigned(World* world, ID dsAssigned, ID dsSource, std::string newValue, bool valueChanged);
 		DS_Assigned(const DS_Assigned& other);
 		virtual Action* Clone() const;
 
@@ -50,7 +50,7 @@ namespace Algovis_Viewer
 		ID dsSource;
 
 		std::string oldValue, newValue;
-		bool tracked;
+		bool valueChanged;
 
 		// Animation stuff (set in PrepareToPerform)
 		VO_SinglePrintable* subject;
