@@ -168,7 +168,7 @@ void MultipleVectorDemoWithDelete()
 void MergeSortDemo()
 {
 	EnableOperandsHighlighting(true);
-	SetCaption(string("MergeSortDemo"));
+	SetCaption(string("Recursive Merge Demo"));
 
 
 
@@ -189,23 +189,8 @@ void MergeSortDemo()
 	c2.push_back(4);
 	
 	::PlaceNextTwoOnSameLine();
-	result = merge(c1,c2, 0);
+	result = recursiveMerge(c1,c2, 0);
 
-
-
-		/*
-	vector<int> c1;
-	c1.push_back(1);
-	c1.push_back(5);
-	c1.push_back(3);
-	c1.push_back(2);
-	c1.push_back(4);
-	c1.push_back(8);
-	c1.push_back(5);
-	c1.push_back(3);
-	c1.push_back(4);
-	
-	vector<int> result = mergeSort(c1);*/
 }
 
 

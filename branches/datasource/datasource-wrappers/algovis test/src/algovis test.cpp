@@ -16,16 +16,11 @@ REAL_INT wmain()
 {
 	EnableCommunicationWithView(true);
 
-
-
 	MergeSortDemo();
 	//MultipleVectorDemoWithDelete();
 	//DoRandomStuffWithAVectorDemo();
 	//NewDemo();
-
-
-
-		//DequeDemo();
+	//DequeDemo();
 	//MatrixDemo();
 	//InterfaceTestingDemo();
 	//TestDemo();

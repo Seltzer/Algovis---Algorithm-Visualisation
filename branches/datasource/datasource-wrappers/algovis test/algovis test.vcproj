@@ -179,7 +179,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\arrayAlgorithms.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\arrayAlgorithms.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\arrayAlgorithms.inl"
 				>
 			</File>
 			<File

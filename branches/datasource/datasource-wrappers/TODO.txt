@@ -1,39 +1,41 @@
-
-animation duration
-
-
-************ need to get this stuff done **********************
-* Test History stuff (cumulative adding, etc.) - test with different actionbuffer sizes, allow user to set
-          actionbuffer size
-* Finish and test wrappers
-* Add transpose animation
-* backtracking/forwardtracking
-* Highlight operands for non-sibling types
-* Fix testing and communicationWithViewEnabled
-
-************ maybe **********************
-* Remove SINGLE_PRINTABLE hackery amap (mostly removed at this stage)
-* Improve layout manager so that Viewable translations can trigger layout recalculation, not just 
-			Viewable resizes
-* Write MapWrapper, and VO_Map
-* Improve the UI and fix dodgy stuff:
-	- Fix window resizing
-	- Add snap to current viewable feature
-	- Make buttons or at least fix the play button
+We need to port the entire solution to Linux. This will involve:
+	- Converting the algovis c++ (DS) and view projects from Windows DLLs to Linux dynamic libraries
+	- Providing Linux equivalent code for any Windows-specific code (there isn't much)
+	- Setting up some sort of build script which mimics our Visual Studio solution. It must represent
+		build/linking dependencies between projects, and include directories. 	
 
 
-************ probably won't get this stuff done **********************
-* Support custom types by displaying a generic 'user-defined type pic'
-* Display contents of custom types when the user mouses over the user-defined type pic
-* Vary animation durations for different actions
+*********** C++ Data Source TODO ***********************
+* Finish and further test existing wrappers
+	- Implement assign/swap for VectorWrapper/DequeWrapper
+	- Finish implementing StringWrapper
+* Write wrappers for unsigned types, and std::map
+* The C++ Data Source is currently a static lib. We should convert it to a DLL at some stage.
+
+
+*********** View TODO
+* Animation Duration stuff:
+	- Allow user to control animation duration using a slider
+	- Vary animation durations for different actions - currently all animations have a duration of 0.5 seconds
+		whether they are simple assignment animations or composite actions consisting of many atomic actions.
+* Finish implementing backtracking and forwardtracking through actions
+* Test that the History works properly with different demos using different ActionBuffer sizes
+* Add an animation to the matrix transpose action
+* Improve the DS_HighlightOperands action. The animation only works for two operands when the operands
+have the same y coordinate (i.e. two elements in the same array)
+* Remove any SINGLE_PRINTABLE hackery. There are hacks present
+* Improve the automatic layout management. Currently when a Viewable resizes (i.e. an array enlarging when an 
+element is added), it triggers the layout recalculation of all Viewables. This results in Viewables being automatically
+moved around to preserve the existing spacing between them. It should be possible for these automatic movements
+(but not manual user dragging movements) to trigger further layout recalculation.
+* The View should automatically scroll to the viewable which is currently
+* Turn the Windows styles buttons into custom buttons which are more aesthetically pleasing.
+* Support custom types by displaying them as a generic 'user-defined type pic'
+	- The data source is able to compare the memory addresses of wrappers and user-defined objects in order
+		to figure out whether wrappers are part of a class and should be displayed as such. This isn't required
+		now, but will be required if this is to be used as a visual debugger
 * Implement drawing for pointer types 
-* Implement stats module
-* Port to Linux
-* Turn algovis c++ into a DLL
-
-
-**** THOUGHTS ****
-* How to deal with "unsigned char"
-* Allow users to orient arrays vertically as well as horizontally - could be useful when drawing
-		arrays of arrays.
-
+* Implement a statistics module.
+* Allow the user to specify the ActionBuffer size. Increasing the ActionBuffer size allows for more actions
+to be combined to give a higher level of abstraction. Currently we use an ActionBuffer size of 3 so that
+swaps (3 assignment operations) can be detected and combined into a single animation.
