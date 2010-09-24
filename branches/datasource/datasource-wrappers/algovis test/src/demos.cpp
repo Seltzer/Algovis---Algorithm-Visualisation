@@ -5,85 +5,35 @@
 
 using namespace std;
 
-void OriginalDemo()
+
+void RecursiveMergeDemo()
 {
-	EnableCommunicationWithView(true);
-
-	// Populate
-	vector<int> collectionToModify;
-
-	collectionToModify.reserve(50);
-	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
+	EnableOperandsHighlighting(true);
+	SetCaption(string("Recursive Merge Demo"));
 
 
-	// Testing
-	int a = 5;
-	a = a;
+
+	::PlaceNextTwoOnSameLine();
+	vector<int> c1, c2;
+
+	::PlaceNextOnSameLineAsLast();
+	vector<int> result;
+
+	c1.push_back(1);
+	c1.push_back(2);
+	c1.push_back(3);
+	c1.push_back(4);
+
+	c2.push_back(1);
+	c2.push_back(1);
+	c2.push_back(3);
+	c2.push_back(4);
 	
-	for (int i = 7; i >= 0; --i)
-	{
-		collectionToModify[i] = collectionToModify[i] + collectionToModify[i+1];
-		//util::PlatformSleep(0.2);
-	}
+	::PlaceNextTwoOnSameLine();
+	result = recursiveMerge(c1,c2, 0);
 
-
-	// Sorting
-	prt("Sorting:")
-	Vector_BubbleSortAscending(collectionToModify);
 }
 
-
-void MatrixDemo()
-{
-	SetCaption(string("MatrixDemo"));
-
-
-	int initValue(3);
-	
-	Algovis::AlgoSquareMatrix<int,3> matrix(initValue);
-
-	
-	matrix(1,1) = 1000;
-	matrix(2,2) = 2000;
-	matrix(3,3) = 3000;
-
-	matrix(2,1) = 21;
-	matrix(3,1) = 31;
-	matrix(3,2) = 32;
-
-	// Transpose currently doesn't have a proper animation
-	matrix.Transpose();
-}
-
-
-
-void DequeDemo()
-{
-	SetCaption(string("DequeDemo"));
-
-	deque<int> queue;
-
-
-	queue.push_back(100);
-	queue.push_back(101);
-	queue.push_back(102);
-	queue.push_back(103);
-
-	queue.push_front(90);
-	queue.push_front(80);
-	queue.push_front(70);
-	queue.push_front(70);
-	queue.push_front(60);
-	queue.push_front(50);
-	queue.push_front(40);
-	queue.push_front(30);
-
-	queue.pop_front();
-	queue.pop_front();
-	queue.pop_front();
-	queue.pop_front();
-	queue.pop_front();
-}
 
 
 void MultipleVectorDemoWithDelete()
@@ -128,16 +78,7 @@ void MultipleVectorDemoWithDelete()
 		while(sortOccurred);
 
 
-
-
-		// Do stuff with other vectors
-		//c2.reserve(50);
-		//c3.reserve(50);
-		//c4.reserve(50);
-		//c5.reserve(50);
-		//c6.reserve(50);
-
-		
+	
 		PopulateVectorWithRandomInts(c2, 9, 0, 9);
 		PopulateVectorWithRandomInts(c3, 9, 0, 99);
 		PopulateVectorWithRandomInts(c4, 9, 0, 999);
@@ -165,72 +106,6 @@ void MultipleVectorDemoWithDelete()
 
 
 
-void MergeSortDemo()
-{
-	EnableOperandsHighlighting(true);
-	SetCaption(string("Recursive Merge Demo"));
-
-
-
-	::PlaceNextTwoOnSameLine();
-	vector<int> c1, c2;
-
-	::PlaceNextOnSameLineAsLast();
-	vector<int> result;
-
-	c1.push_back(1);
-	c1.push_back(2);
-	c1.push_back(3);
-	c1.push_back(4);
-
-	c2.push_back(1);
-	c2.push_back(1);
-	c2.push_back(3);
-	c2.push_back(4);
-	
-	::PlaceNextTwoOnSameLine();
-	result = recursiveMerge(c1,c2, 0);
-
-}
-
-
-// Tests unconversions.h
-void UnconversionsDemo()
-{
-	// Populate
-	vector<int> collectionToModify;
-	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
-
-
-	// Testing
-	int a = 5;
-	a = a;
-	
-	for (int i = 7; i >= 0; --i)
-	{
-		collectionToModify[i] = collectionToModify[i] + collectionToModify[i+1];
-		util::PlatformSleep(0.5);
-	}
-
-
-	#include "unconversions.h"
-
-
-	vector<int> nonWrapperCollection;
-	nonWrapperCollection.push_back(1);	
-	nonWrapperCollection.push_back(2);	
-	nonWrapperCollection.push_back(3);	
-	nonWrapperCollection.push_back(2);	
-	nonWrapperCollection.push_back(1);	
-
-
-	for (vector<int>::iterator it = nonWrapperCollection.begin(); it < nonWrapperCollection.end(); it++)
-	{
-		prtVar(*it);
-	}
-
-	#include "conversions.h"
-}
 
 void DoRandomStuffWithAVectorDemo()
 {
@@ -277,31 +152,6 @@ void DoRandomStuffWithAVectorDemo()
 }
 
 
-void InterfaceTestingDemo()
-{
-	// Populate
-	
-	vector<int> c1;
-	vector< vector<int> > c2;
-	//c1.reserve(200);
-}
-
-
-
-void TestDemo()
-{
-	// Populate
-	vector<int> c1;
-	//c1.reserve(200);
-	
-	
-	PopulateVectorWithRandomInts(c1, 5, 0, 9);
-	getchar();
-
-	c1.insert(c1.begin(), 10, 13);
-
-	vector<int> c2 = c1;
-}
 
 void ScreenDemo()
 {
@@ -334,30 +184,70 @@ void ScreenDemo()
 }
 
 
-void NewDemo()
+void MatrixDemo()
 {
-	{
-		vector<int> arr;
-		arr.push_back(5);
-		arr.push_back(6);
+	SetCaption(string("MatrixDemo"));
 
-		int i = 6;
-		arr.insert(arr.begin(), i, 3);
 
-		arr.erase(arr.begin(), arr.begin() + 2);
-
-		::FlushAllActions();
-		prt("Deleting - press any key");
-		getchar();
-	}		
-
-	prt("Deleted");
-
-//	int temp = arr[1];
-//	::EnsureThisIsDisplayed(&temp);
+	int initValue(3);
 	
-	
-//	arr[1] = arr[0];
-//	arr[0] = temp;
+	Algovis::AlgoSquareMatrix<int,3> matrix;
 
+	
+	matrix(1,1) = 1000;
+	matrix(2,2) = 2000;
+	matrix(3,3) = 3000;
+
+	matrix(2,1) = 21;
+	matrix(3,1) = 31;
+	matrix(3,2) = 32;
+
+	// Transpose currently doesn't have a proper animation
+	matrix.Transpose();
 }
+
+
+
+
+
+
+// Tests unconversions.h
+void UnconversionsDemo()
+{
+	// Populate
+	vector<int> collectionToModify;
+	PopulateVectorWithRandomInts(collectionToModify, 9, 0, 9);
+
+
+	// Testing
+	int a = 5;
+	a = a;
+	
+	for (int i = 7; i >= 0; --i)
+	{
+		collectionToModify[i] = collectionToModify[i] + collectionToModify[i+1];
+		util::PlatformSleep(0.5);
+	}
+
+
+	// from this point onwards, data structures will not be visualised
+	#include "unconversions.h"
+	
+	vector<int> nonWrapperCollection;
+	nonWrapperCollection.push_back(1);	
+	nonWrapperCollection.push_back(2);	
+	nonWrapperCollection.push_back(3);	
+	nonWrapperCollection.push_back(2);	
+	nonWrapperCollection.push_back(1);	
+
+
+	for (vector<int>::iterator it = nonWrapperCollection.begin(); it < nonWrapperCollection.end(); it++)
+	{
+		prtVar(*it);
+	}
+
+	#include "conversions.h"
+}
+
+
+

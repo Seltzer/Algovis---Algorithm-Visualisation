@@ -3,35 +3,23 @@
 
 
 #include "utilities.h"
-//#include "conversions.h"
 
-// Our original demo featuring vector population, cumulative adding, bubblesorting
-void OriginalDemo();
 
-void MatrixDemo();
 
-void DequeDemo();
+void ScreenDemo();
+
+void RecursiveMergeDemo();
 
 // A bit of sorting, pointless assignment of values between multiple vectors and deletion at the end
 void MultipleVectorDemoWithDelete();
 
 void DoRandomStuffWithAVectorDemo();
 
-
-// Incomplete - currently working on the merging part which won't work until we have
-// vector resizing working properly
-void MergeSortDemo();
+void MatrixDemo();
 
 // Kinda incomplete atm - for testing unconversions.h
 void UnconversionsDemo();
 
-void InterfaceTestingDemo();
-
-void TestDemo();
-
-void ScreenDemo();
-
-void NewDemo();
 
 
 

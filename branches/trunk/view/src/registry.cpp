@@ -411,7 +411,6 @@ void Registry::Register(ID id, ViewableObject* viewable)
 
 bool Registry::Deregister(ID id)
 {
-	cout << "Registry::Deregister for ID" << id << endl;
 	WriterLock<LockManager<1>,1> lock(*this);
 
 	UL_ASSERT(IsRegistered(id));

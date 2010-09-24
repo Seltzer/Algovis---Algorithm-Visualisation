@@ -33,7 +33,7 @@ namespace Algovis_Viewer
 	 * 1 = Debugging of actions only in ActionAgent
 	 * 2 = Verbose debugging of all actions which pass through ActionBuffer
 	 */
-	#define DEBUG_ACTION_LEVEL 1
+	#define DEBUG_ACTION_LEVEL 0
 
 	// For changes made to specific VOs (excluding reg/dereg which is covered by DEBUG_REGISTRATION_LEVEL)
 	//#define DEBUG_SP_CHANGES
