@@ -1,63 +1,32 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "algovis c++", "algovis c++\algovis c++.vcproj", "{BB45DA32-95B6-470A-9FAD-F09A68560F4B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{A6DF0867-321A-4775-B808-D3CFD1408910} = {A6DF0867-321A-4775-B808-D3CFD1408910}
-		{0F8FA599-5004-4421-A227-E73683D09892} = {0F8FA599-5004-4421-A227-E73683D09892}
-		{BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6} = {BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "algovis c++ unit-tests", "algovis c++ unit-tests\algovis c++ unit-tests.vcproj", "{72E686BC-56D9-49CE-8E9B-BEA39B806A0C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BB45DA32-95B6-470A-9FAD-F09A68560F4B} = {BB45DA32-95B6-470A-9FAD-F09A68560F4B}
-		{A6DF0867-321A-4775-B808-D3CFD1408910} = {A6DF0867-321A-4775-B808-D3CFD1408910}
-		{56A3809B-33B0-466C-A592-DB730C4D0202} = {56A3809B-33B0-466C-A592-DB730C4D0202}
-		{BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6} = {BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "algovis test", "algovis test\algovis test.vcproj", "{FADB562F-3F3E-4717-AC90-C25C719371C1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BB45DA32-95B6-470A-9FAD-F09A68560F4B} = {BB45DA32-95B6-470A-9FAD-F09A68560F4B}
-		{A6DF0867-321A-4775-B808-D3CFD1408910} = {A6DF0867-321A-4775-B808-D3CFD1408910}
-		{0F8FA599-5004-4421-A227-E73683D09892} = {0F8FA599-5004-4421-A227-E73683D09892}
-		{BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6} = {BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utilities-lib", "..\..\resources\utilities-lib\utilities-lib.vcproj", "{BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6}"
-	ProjectSection(ProjectDependencies) = postProject
-		{A6DF0867-321A-4775-B808-D3CFD1408910} = {A6DF0867-321A-4775-B808-D3CFD1408910}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-graphics", "..\..\resources\SFML\build\vc2008\sfml-graphics.vcproj", "{FA4620B1-393A-4719-9BB4-3BC8CAA70C4B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C061A27D-7CA0-4179-9869-672FA04A86A8} = {C061A27D-7CA0-4179-9869-672FA04A86A8}
-		{0F9CE5F0-4D89-4314-9147-8AAB1B8842ED} = {0F9CE5F0-4D89-4314-9147-8AAB1B8842ED}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-window", "..\..\resources\SFML\build\vc2008\sfml-window.vcproj", "{0F9CE5F0-4D89-4314-9147-8AAB1B8842ED}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-system", "..\..\resources\SFML\build\vc2008\sfml-system.vcproj", "{C061A27D-7CA0-4179-9869-672FA04A86A8}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{5C56C1E0-0A2F-4177-A9AB-803F0988D936}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "boost-subset", "..\..\resources\boost\boost-subset\boost-subset.vcproj", "{A6DF0867-321A-4775-B808-D3CFD1408910}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TODO", "TODO", "{443441BB-71B0-4840-8AEA-784FFE9D9D0C}"
 	ProjectSection(SolutionItems) = preProject
 		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cxxtest", "..\..\resources\cxxtest\v3.10.1\cxxtest.vcproj", "{56A3809B-33B0-466C-A592-DB730C4D0202}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "algovis c++", "algovis c++\algovis c++.vcxproj", "{BB45DA32-95B6-470A-9FAD-F09A68560F4B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "view", "..\..\trunk\view\view.vcproj", "{0F8FA599-5004-4421-A227-E73683D09892}"
-	ProjectSection(ProjectDependencies) = postProject
-		{A6DF0867-321A-4775-B808-D3CFD1408910} = {A6DF0867-321A-4775-B808-D3CFD1408910}
-		{C061A27D-7CA0-4179-9869-672FA04A86A8} = {C061A27D-7CA0-4179-9869-672FA04A86A8}
-		{FA4620B1-393A-4719-9BB4-3BC8CAA70C4B} = {FA4620B1-393A-4719-9BB4-3BC8CAA70C4B}
-		{0F9CE5F0-4D89-4314-9147-8AAB1B8842ED} = {0F9CE5F0-4D89-4314-9147-8AAB1B8842ED}
-		{BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6} = {BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "algovis c++ unit-tests", "algovis c++ unit-tests\algovis c++ unit-tests.vcxproj", "{72E686BC-56D9-49CE-8E9B-BEA39B806A0C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "algovis test", "algovis test\algovis test.vcxproj", "{FADB562F-3F3E-4717-AC90-C25C719371C1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utilities-lib", "..\..\resources\utilities-lib\utilities-lib.vcxproj", "{BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-graphics", "..\..\resources\SFML\build\vc2008\sfml-graphics.vcxproj", "{FA4620B1-393A-4719-9BB4-3BC8CAA70C4B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-window", "..\..\resources\SFML\build\vc2008\sfml-window.vcxproj", "{0F9CE5F0-4D89-4314-9147-8AAB1B8842ED}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfml-system", "..\..\resources\SFML\build\vc2008\sfml-system.vcxproj", "{C061A27D-7CA0-4179-9869-672FA04A86A8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "boost-subset", "..\..\resources\boost\boost-subset\boost-subset.vcxproj", "{A6DF0867-321A-4775-B808-D3CFD1408910}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cxxtest", "..\..\resources\cxxtest\v3.10.1\cxxtest.vcxproj", "{56A3809B-33B0-466C-A592-DB730C4D0202}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "view", "..\..\trunk\view\view.vcxproj", "{0F8FA599-5004-4421-A227-E73683D09892}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -190,10 +159,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6} = {5C56C1E0-0A2F-4177-A9AB-803F0988D936}
 		{FA4620B1-393A-4719-9BB4-3BC8CAA70C4B} = {5C56C1E0-0A2F-4177-A9AB-803F0988D936}
 		{0F9CE5F0-4D89-4314-9147-8AAB1B8842ED} = {5C56C1E0-0A2F-4177-A9AB-803F0988D936}
 		{C061A27D-7CA0-4179-9869-672FA04A86A8} = {5C56C1E0-0A2F-4177-A9AB-803F0988D936}
-		{BCF21EF2-13E9-4240-8FA6-A089BE1CC3C6} = {5C56C1E0-0A2F-4177-A9AB-803F0988D936}
 		{A6DF0867-321A-4775-B808-D3CFD1408910} = {5C56C1E0-0A2F-4177-A9AB-803F0988D936}
 		{56A3809B-33B0-466C-A592-DB730C4D0202} = {5C56C1E0-0A2F-4177-A9AB-803F0988D936}
 	EndGlobalSection

@@ -11,78 +11,105 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGUID>{72E686BC-56D9-49CE-8E9B-BEA39B806A0C}</ProjectGUID>
+    <ProjectGuid>{72E686BC-56D9-49CE-8E9B-BEA39B806A0C}</ProjectGuid>
     <RootNamespace>algoviscunittests</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(LocalAppData)\Microsoft\VisualStudio\10.0\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(LocalAppData)\Microsoft\VisualStudio\10.0\Microsoft.Cpp.$(Platform).user.props')" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">c:\Program Files\cxxtest;$(ReferencePath)</ReferencePath>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
     <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">c:\Program Files\cxxtest;$(ReferencePath)</ReferencePath>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"c:\Program Files";$(IncludePath)</IncludePath>
-    <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</PreBuildEventUseInBuild>
-    <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</PostBuildEventUseInBuild>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Message>Building unit-tests</Message>
-      <Command>python "$(SolutionDir)\..\..\resources\cxxtest\v3.10.1\cxxtestgen.py" --error-printer -o TestSuite.cpp "$(ProjectDir)\Tests\AlgoVisTestSuite.h"</Command>
+      <Command>python "$(SolutionDir)\..\..\resources\cxxtest\v3.10.1\cxxtestgen.py" --error-printer -o "$(ProjectDir)\GeneratedTests\TestSuite.cpp" "$(ProjectDir)\Tests\AlgoVisTestSuite.h"</Command>
     </PreBuildEvent>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\resources\utilities-lib\include;$(SolutionDir)\algovis c++\src;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR)\include;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\;$(SolutionDir)..\..\resources\boost;$(SolutionDir)..\..\resources;$(SolutionDir)..\..\resources\SFML\include;$(SolutionDir)..\..\trunk\view\include;$(SolutionDir)\algovis c++\src;..\..\..\resources\utilities-lib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <PostBuildEvent>
       <Command>"$(OutDir)$(ProjectName).exe"</Command>
     </PostBuildEvent>
-    <Link>
-      <AdditionalDependencies>utilities-lib.lib;;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Debug;</AdditionalLibraryDirectories>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Message>Building unit-tests</Message>
-      <Command>python "$(SolutionDir)\..\..\cxxtest\v3.10.1\cxxtestgen.py" --runner=ParenPrinter -o TestSuite.cpp "$(ProjectDir)\Tests\AlgoVisTestSuite.h"</Command>
+      <Command>python "$(SolutionDir)\..\..\resources\cxxtest\v3.10.1\cxxtestgen.py" --error-printer -o "$(ProjectDir)\GeneratedTests\TestSuite.cpp" "$(ProjectDir)\Tests\AlgoVisTestSuite.h"</Command>
     </PreBuildEvent>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\algovis c++\src;$(SolutionDir)..\..\cxxtest\v3.10.1\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR)\include;$(SolutionDir)..\..\resources\cxxtest\v3.10.1\;$(SolutionDir)..\..\resources\boost;$(SolutionDir)..\..\resources;$(SolutionDir)..\..\resources\SFML\include;$(SolutionDir)..\..\trunk\view\include;$(SolutionDir)\algovis c++\src;..\..\..\resources\utilities-lib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <PostBuildEvent>
       <Command>"$(OutDir)$(ProjectName).exe"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Tests\AlgoMatrixTests.h" />
     <ClInclude Include="Tests\AlgoVisTestSuite.h" />
+    <ClInclude Include="Tests\charWrapperTests.h" />
+    <ClInclude Include="Tests\doubleWrapperTests.h" />
+    <ClInclude Include="Tests\FloatWrapperTests.h" />
+    <ClInclude Include="Tests\IntWrapperTests.h" />
+    <ClInclude Include="Tests\VectorWrapperTests.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="docs\experiment.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GeneratedTests\TestSuite.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\resources\boost\boost-subset\boost-subset.vcxproj">
+      <Project>{a6df0867-321a-4775-b808-d3cfd1408910}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\resources\cxxtest\v3.10.1\cxxtest.vcxproj">
+      <Project>{56a3809b-33b0-466c-a592-db730c4d0202}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\resources\utilities-lib\utilities-lib.vcxproj">
+      <Project>{bcf21ef2-13e9-4240-8fa6-a089be1cc3c6}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
     <ProjectReference Include="..\algovis c++\algovis c++.vcxproj">
       <Project>{bb45da32-95b6-470a-9fad-f09a68560f4b}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="TestSuite.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

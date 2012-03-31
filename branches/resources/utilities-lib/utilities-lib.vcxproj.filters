@@ -1,17 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="include">
-      <UniqueIdentifier>{8458a942-f0e2-4db9-bed9-1c0391bd137b}</UniqueIdentifier>
+    <Filter Include="docs">
+      <UniqueIdentifier>{b9722e3c-17a0-4731-ac21-5b1f7163455e}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>{d77bf170-ea56-4b21-8f5c-02974d90ee14}</UniqueIdentifier>
+      <UniqueIdentifier>{d6f3e5a8-ed58-4d70-af42-141628840c08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{8df013c5-6253-4761-90c7-dbd9d142d7f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\utilities.h">
-      <Filter>include</Filter>
-    </ClInclude>
+    <None Include="docs\utilities-lib TODO.txt">
+      <Filter>docs</Filter>
+    </None>
+    <None Include="src\lockManager.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\threadsafeBuffer.inl">
+      <Filter>src</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\process.cpp">
@@ -23,5 +32,34 @@
     <ClCompile Include="src\strings.cpp">
       <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\dataStructures.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enum.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\exceptions.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lockManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\macros.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\process.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\templateMP.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\threadsafeBuffer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utilities.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

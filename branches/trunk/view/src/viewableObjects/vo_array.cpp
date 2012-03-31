@@ -102,7 +102,8 @@ QSize VO_Array::sizeHint() const
 	float x = 2, y = 2;
 
 	// Address stuff
-	titleText = QString(titleString.c_str());
+	// FIXME titleText = QString(titleString.c_str());
+	titleText = titleString.c_str();
 	QFontMetrics metrics(font());
 	titleTextPosition = QPoint(x,metrics.ascent() + y);
 	x += metrics.width(titleText, titleText.length()) + xGap * 4;
@@ -136,7 +137,8 @@ void VO_Array::adjustSize()
 	float x = 2, y = 2;
 
 	// Address stuff
-	titleText = QString(titleString.c_str());
+	// FIXME titleText = QString(titleString.c_str());
+	titleText = titleString.c_str();
 	QFontMetrics metrics(font());
 	titleTextPosition = QPoint(x,metrics.ascent() + y);
 	x += metrics.width(titleText, titleText.length()) + xGap * 4;

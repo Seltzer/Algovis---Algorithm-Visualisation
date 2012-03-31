@@ -2,27 +2,48 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="src">
-      <UniqueIdentifier>{4efb224c-4871-4444-ba3d-9341d531199d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\display">
-      <UniqueIdentifier>{3bdb1e41-7e69-4641-8438-55988803f18f}</UniqueIdentifier>
+      <UniqueIdentifier>{11f2f05d-6c77-4e2a-8b6f-df1880b806f9}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\wrappers">
-      <UniqueIdentifier>{6547fb40-d778-4795-b208-b01d1bcbc8d5}</UniqueIdentifier>
+      <UniqueIdentifier>{e7f5c1fa-1304-46c0-90f2-31af21ab4f01}</UniqueIdentifier>
     </Filter>
-    <Filter Include="tests">
-      <UniqueIdentifier>{41f4e0a2-1a93-403f-b992-5d164f1646f9}</UniqueIdentifier>
+    <Filter Include="src\misc_ds">
+      <UniqueIdentifier>{f6fb0f56-830e-4288-b546-2018d2870a44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="docs">
+      <UniqueIdentifier>{cdb653a6-b6ec-44ee-95c1-237d831f65db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\conversions.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\display\display.h">
-      <Filter>src\display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\registry.h">
+    <ClInclude Include="src\idManager.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\operatorOverloads.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\settingsManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\typeInterface.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\unconversions.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userFunctions.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrapperWorkarounds.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrappers\charWrapper.h">
+      <Filter>src\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wrappers\dequeWrapper.h">
+      <Filter>src\wrappers</Filter>
     </ClInclude>
     <ClInclude Include="src\wrappers\doubleWrapper.h">
       <Filter>src\wrappers</Filter>
@@ -36,16 +57,48 @@
     <ClInclude Include="src\wrappers\primitiveWrapper.h">
       <Filter>src\wrappers</Filter>
     </ClInclude>
+    <ClInclude Include="src\wrappers\stringWrapper.h">
+      <Filter>src\wrappers</Filter>
+    </ClInclude>
     <ClInclude Include="src\wrappers\vectorWrapper.h">
       <Filter>src\wrappers</Filter>
     </ClInclude>
     <ClInclude Include="src\wrappers\wrapper.h">
       <Filter>src\wrappers</Filter>
     </ClInclude>
+    <ClInclude Include="src\misc_ds\AlgoMatrix.h">
+      <Filter>src\misc_ds</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\display\displayPipe.cpp">
-      <Filter>src\display</Filter>
+    <ClCompile Include="src\idManager.cpp">
+      <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\operatorOverloads.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\settingsManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wrappers\stringWrapper.cpp">
+      <Filter>src\wrappers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\wrappers\dequeWrapper.inl">
+      <Filter>src\wrappers</Filter>
+    </None>
+    <None Include="src\wrappers\stringWrapper.inl">
+      <Filter>src\wrappers</Filter>
+    </None>
+    <None Include="src\wrappers\vectorWrapper.inl">
+      <Filter>src\wrappers</Filter>
+    </None>
+    <None Include="src\misc_ds\AlgoMatrix.inl">
+      <Filter>src\misc_ds</Filter>
+    </None>
   </ItemGroup>
 </Project>

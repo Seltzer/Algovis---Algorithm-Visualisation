@@ -1,30 +1,201 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="include">
+      <UniqueIdentifier>{18d2794d-9dd5-4060-b460-fe44ab0f9924}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="src">
+      <UniqueIdentifier>{7b65f2b9-a1ed-4e42-8c30-f0c7f51ee45a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="src\displayer">
+      <UniqueIdentifier>{5b95d010-968b-407f-a7b9-7e26161b12dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\viewableObjects">
+      <UniqueIdentifier>{f77de2f1-1d06-409b-a68f-264f1d46fa31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\actions">
+      <UniqueIdentifier>{1468f3cf-1f40-4524-ad4c-d042f6baa6e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{402c6808-286a-4c71-8253-0a6eade684bf}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{68a42781-b027-4a19-bf87-45bf0607fb02}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{a0ad0d87-efa8-43e4-9ffa-dafdd14dd011}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="display.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="display.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="include\common.h">
+      <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\debugging.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\viewableObjects\vo_matrix.h">
+      <Filter>src\viewableObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\viewableObjects\vo_singlePrintable.h">
+      <Filter>src\viewableObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actions\action.h">
+      <Filter>src\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actions\actionBuffer.h">
+      <Filter>src\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actions\dsActions.h">
+      <Filter>src\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actions\dsArrayActions.h">
+      <Filter>src\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actions\dsMatrixActions.h">
+      <Filter>src\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actions\dsPrintableActions.h">
+      <Filter>src\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actions\historyManager.h">
+      <Filter>src\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="util\lockManager.h">
+      <Filter>util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\registry.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\displayer\actionAgent.cpp">
+      <Filter>src\displayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\displayer\components.cpp">
+      <Filter>src\displayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\displayer\displayer.cpp">
+      <Filter>src\displayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\displayer\world.cpp">
+      <Filter>src\displayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viewableObjects\viewableObject.cpp">
+      <Filter>src\viewableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viewableObjects\viewableObjectContainer.cpp">
+      <Filter>src\viewableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viewableObjects\vo_array.cpp">
+      <Filter>src\viewableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viewableObjects\vo_matrix.cpp">
+      <Filter>src\viewableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viewableObjects\vo_singlePrintable.cpp">
+      <Filter>src\viewableObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actions\action.cpp">
+      <Filter>src\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actions\actionBuffer.cpp">
+      <Filter>src\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actions\dsActions.cpp">
+      <Filter>src\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actions\dsArrayActions.cpp">
+      <Filter>src\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actions\dsMatrixActions.cpp">
+      <Filter>src\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actions\dsPrintableActions.cpp">
+      <Filter>src\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actions\historyManager.cpp">
+      <Filter>src\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_actionAgent.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_components.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_displayer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_viewableObject.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_viewableObjectContainer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_world.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_actionAgent.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_components.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_displayer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_viewableObject.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_viewableObjectContainer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_world.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\registry.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="util\lockManager.inl">
+      <Filter>util</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="include\registry.h">
+      <Filter>include</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\displayer\actionAgent.h">
+      <Filter>src\displayer</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\displayer\components.h">
+      <Filter>src\displayer</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\displayer\displayer.h">
+      <Filter>src\displayer</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\displayer\world.h">
+      <Filter>src\displayer</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\viewableObjects\viewableObject.h">
+      <Filter>src\viewableObjects</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\viewableObjects\viewableObjectContainer.h">
+      <Filter>src\viewableObjects</Filter>
+    </CustomBuild>
+    <CustomBuild Include="src\viewableObjects\vo_array.h">
+      <Filter>src\viewableObjects</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

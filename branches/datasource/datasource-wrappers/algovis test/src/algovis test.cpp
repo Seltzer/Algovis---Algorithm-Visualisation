@@ -26,7 +26,7 @@ REAL_INT wmain()
 	//RecursiveMergeDemo();
 
 	// Demos which do random things with vectors
-	//MultipleVectorDemoWithDelete();
+	MultipleVectorDemoWithDelete();
 	//DoRandomStuffWithAVectorDemo();
 		
 	// Demo which creates a matrix, sets a few of its values and transposes it 

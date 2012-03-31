@@ -14,7 +14,7 @@ namespace Algovis_Viewer
 
 VO_SinglePrintable::VO_SinglePrintable(ID id, const void* dsAddress, World* world,
 					const std::string& value, QWidget* parent)
-					: ViewableObject(id, dsAddress, world, parent), value(value), graphicalText(NULL), modifiedTime(0)
+					: ViewableObject(id, dsAddress, world, parent), value(value), graphicalText((const char*)NULL), modifiedTime(0)
 {
 }
 
@@ -27,7 +27,8 @@ VO_SinglePrintable::~VO_SinglePrintable()
 
 QSize VO_SinglePrintable::sizeHint() const
 {
-	graphicalText = QString(value.c_str());
+	// FIXME graphicalText = QString(value.c_str());
+	graphicalText = value.c_str();
 	
 	QFontMetrics metrics(font());
 	graphicalTextPosition = QPoint(1,metrics.ascent());

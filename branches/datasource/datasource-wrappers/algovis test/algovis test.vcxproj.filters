@@ -2,12 +2,31 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="src">
-      <UniqueIdentifier>{c05483c0-9248-4bfd-96e5-da00ea5ce5f1}</UniqueIdentifier>
+      <UniqueIdentifier>{974c6934-bf63-4aa7-ad2f-a74538c1d847}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\algovis test.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\arrayAlgorithms.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\arrayAlgorithms.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\demos.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\arrayAlgorithms.inl">
+      <Filter>src</Filter>
+    </None>
   </ItemGroup>
 </Project>

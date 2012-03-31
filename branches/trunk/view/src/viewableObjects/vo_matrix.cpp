@@ -50,7 +50,9 @@ QSize VO_Matrix::sizeHint() const
 	float x = 0, y = 0;
 
 	// Place title at (0,0)
-	titleText = QString(titleString.c_str());
+	// FIXME titleText = QString(titleString.c_str());
+	titleText = titleString.c_str();
+
 	QFontMetrics metrics(font());
 	titleTextPosition = QPoint(x,y + metrics.ascent()); 
 

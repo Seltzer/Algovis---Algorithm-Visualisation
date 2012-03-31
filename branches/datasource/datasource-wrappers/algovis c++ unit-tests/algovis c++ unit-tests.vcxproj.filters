@@ -2,15 +2,46 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Tests">
-      <UniqueIdentifier>{dbde67fc-c843-4d27-bf88-abf40967a8a3}</UniqueIdentifier>
+      <UniqueIdentifier>{68538dfa-16a6-4850-b439-4a0eabf03ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="docs">
+      <UniqueIdentifier>{e5b2bef8-5fcd-4e0e-a3b3-9106a1600eb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Tests">
+      <UniqueIdentifier>{1b389a06-3c5d-47d9-aeb6-9f90284dd1b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Tests\AlgoMatrixTests.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
     <ClInclude Include="Tests\AlgoVisTestSuite.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests\charWrapperTests.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests\doubleWrapperTests.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests\FloatWrapperTests.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests\IntWrapperTests.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests\VectorWrapperTests.h">
       <Filter>Tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestSuite.cpp" />
+    <None Include="docs\experiment.txt">
+      <Filter>docs</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GeneratedTests\TestSuite.cpp">
+      <Filter>Generated Tests</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
