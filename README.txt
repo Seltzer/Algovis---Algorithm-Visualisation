@@ -1,4 +1,10 @@
+Algovis was developed by Nathan Pitman and David Olsen as our final year university project. One day, one or both of us will pick up where we left off :)
+
+
+
 **************************************** Algovis README *******************************************
+
+
 
 
 1.0 Introduction
